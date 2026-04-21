@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile — VTU Student Portal</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="inner">
+        <a href="dashboard.html" class="brand" aria-label="VTU Student Portal">
+          <span class="brand-mark">VTU</span>
+          <span>Student Portal</span>
+        </a>
+        <nav aria-label="Main navigation">
+          <ul class="nav-links">
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="profile.html" class="active">Profile</a></li>
+            <li><a href="#" id="nav-logout">Logout</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <h1 class="page-title">Student profile</h1>
+      <p class="page-sub">Your name appears first, followed by your profile picture. Update your details below.</p>
+
+      <div class="card wide">
+        <div id="profile-msg" class="msg hidden" role="status"></div>
+
+        <section aria-labelledby="profile-display-heading">
+          <h2 id="profile-display-heading" class="hidden">Profile display</h2>
+          <div class="profile-hero">
+            <div class="name-block">
+              <h1 id="profile-name-display">—</h1>
+            </div>
+            <div class="profile-row">
+              <div class="avatar-wrap">
+                <img id="profile-img" class="avatar hidden" alt="Profile picture" width="120" height="120" />
+                <div id="profile-initial" class="avatar-placeholder" aria-hidden="true">?</div>
+              </div>
+              <div class="profile-meta">
+                <p class="meta-line" id="profile-email-display"></p>
+                <p class="meta-line" id="profile-domain-city"></p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-block" aria-labelledby="edit-heading">
+          <h2 id="edit-heading">Edit profile</h2>
+          <form id="profile-form">
+            <div class="form-group">
+              <label for="pf-name">Full name</label>
+              <input type="text" id="pf-name" name="name" required autocomplete="name" />
+            </div>
+            <div class="form-group">
+              <label for="pf-email">Email (read-only)</label>
+              <input type="email" id="pf-email" readonly />
+            </div>
+            <div class="form-group">
+              <label for="pf-domain">Programme / Domain</label>
+              <select id="pf-domain" name="domain" required>
+                <option value="MCA">MCA — Master of Computer Applications</option>
+                <option value="CSE">CSE — Computer Science &amp; Engineering</option>
+                <option value="ISE">ISE — Information Science &amp; Engineering</option>
+                <option value="ECE">ECE — Electronics &amp; Communication</option>
+                <option value="ME">ME — Mechanical Engineering</option>
+                <option value="CV">CV — Civil Engineering</option>
+                <option value="MBA">MBA — Master of Business Administration</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="pf-city">City</label>
+              <input type="text" id="pf-city" name="city" required autocomplete="address-level2" />
+            </div>
+            <div class="form-group">
+              <label for="pf-usn">University seat number (USN)</label>
+              <input type="text" id="pf-usn" name="usn" placeholder="e.g. 1XX22XX000" autocomplete="off" />
+            </div>
+            <div class="form-group">
+              <label for="pf-semester">Current semester</label>
+              <input type="text" id="pf-semester" name="semester" placeholder="e.g. 4th semester" />
+            </div>
+            <div class="form-group">
+              <label for="pf-note">Department / academic note</label>
+              <textarea id="pf-note" name="departmentNote" rows="3" placeholder="Section, batch, or advisor details"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="pf-photo">Profile picture</label>
+              <input type="file" id="pf-photo" accept="image/*" />
+              <p style="font-size: 0.8rem; color: var(--vtu-muted); margin-top: 0.35rem">JPEG or PNG recommended. Image is stored locally in your browser.</p>
+            </div>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+            <a href="dashboard.html" class="btn btn-outline" style="margin-left: 0.5rem">Back to dashboard</a>
+          </form>
+        </section>
+
+        <section class="section-block" aria-labelledby="college-info-heading">
+          <h2 id="college-info-heading">College information</h2>
+          <div class="college-grid">
+            <article class="college-card">
+              <h3>Examination &amp; results</h3>
+              <p>Apply for photocopy / revaluation as per VTU circulars. Grade cards and transcripts follow university timelines.</p>
+            </article>
+            <article class="college-card">
+              <h3>Scholarships</h3>
+              <p>Government and institutional scholarships — submit documents through the college office within deadlines.</p>
+            </article>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script src="js/auth.js"></script>
+    <script>
+      (function () {
+        const user = requireAuthRedirect();
+        if (!user) return;
+
+        document.getElementById("nav-logout").addEventListener("click", function (e) {
+          e.preventDefault();
+          logoutUser();
+          window.location.href = "login.html";
+        });
+
+        const nameEl = document.getElementById("profile-name-display");
+        const emailEl = document.getElementById("profile-email-display");
+        const domainCityEl = document.getElementById("profile-domain-city");
+        const imgEl = document.getElementById("profile-img");
+        const initialEl = document.getElementById("profile-initial");
+        const msgEl = document.getElementById("profile-msg");
+
+        function render(user) {
+          nameEl.textContent = user.name;
+          emailEl.textContent = user.email;
+          domainCityEl.textContent = user.domain + " · " + user.city;
+          const initial = (user.name && user.name.trim()[0]) ? user.name.trim()[0].toUpperCase() : "?";
+          initialEl.textContent = initial;
+
+          if (user.profilePicture) {
+            imgEl.src = user.profilePicture;
+            imgEl.classList.remove("hidden");
+            initialEl.classList.add("hidden");
+          } else {
+            imgEl.classList.add("hidden");
+            imgEl.removeAttribute("src");
+            initialEl.classList.remove("hidden");
+          }
+
+          document.getElementById("pf-name").value = user.name;
+          document.getElementById("pf-email").value = user.email;
+          document.getElementById("pf-domain").value = user.domain;
+          document.getElementById("pf-city").value = user.city;
+          document.getElementById("pf-usn").value = user.usn || "";
+          document.getElementById("pf-semester").value = user.semester || "";
+          document.getElementById("pf-note").value = user.departmentNote || "";
+        }
+
+        render(user);
+
+        document.getElementById("profile-form").addEventListener("submit", async function (e) {
+          e.preventDefault();
+          msgEl.className = "msg hidden";
+
+          const name = document.getElementById("pf-name").value.trim();
+          const domain = document.getElementById("pf-domain").value;
+          const city = document.getElementById("pf-city").value.trim();
+          const usn = document.getElementById("pf-usn").value.trim();
+          const semester = document.getElementById("pf-semester").value.trim();
+          const departmentNote = document.getElementById("pf-note").value.trim();
+          const fileInput = document.getElementById("pf-photo");
+
+          if (!name || !domain || !city) {
+            msgEl.textContent = "Name, programme, and city are required.";
+            msgEl.className = "msg error";
+            return;
+          }
+
+          const updates = { name, domain, city, usn, semester, departmentNote };
+
+          if (fileInput.files && fileInput.files[0]) {
+            const f = fileInput.files[0];
+            if (f.size > 800 * 1024) {
+              msgEl.textContent = "Image must be under 800 KB.";
+              msgEl.className = "msg error";
+              return;
+            }
+            const dataUrl = await readFileAsDataUrl(f);
+            updates.profilePicture = dataUrl;
+          }
+
+          updateUserProfile(user.email, updates);
+          const fresh = getUserByEmail(user.email);
+          render(fresh);
+
+          msgEl.textContent = "Profile saved successfully.";
+          msgEl.className = "msg success";
+          fileInput.value = "";
+        });
+
+        function readFileAsDataUrl(file) {
+          return new Promise(function (resolve, reject) {
+            const r = new FileReader();
+            r.onload = function () {
+              resolve(r.result);
+            };
+            r.onerror = reject;
+            r.readAsDataURL(file);
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>
