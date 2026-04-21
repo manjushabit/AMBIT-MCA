@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Portal - Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>AMBIT College Student Dashboard</h1>
+      <p id="welcomeText" class="subtitle">Track your profile and academic activities at AMBIT College.</p>
+    </div>
+    <button id="logoutBtn" class="btn-secondary">Logout</button>
+  </header>
+
+  <main class="dashboard-layout">
+    <section class="panel profile-panel">
+      <h2>Profile Section</h2>
+
+      <div class="photo-box">
+        <h3>Profile Photo</h3>
+        <img id="profilePreview" src="" alt="Profile preview" class="profile-photo hidden">
+        <p id="photoPlaceholder" class="placeholder">No photo uploaded yet.</p>
+        <div class="photo-actions">
+          <input id="photoUpload" type="file" accept="image/*">
+          <button id="deletePhotoBtn" class="btn-danger" type="button">Delete Photo</button>
+        </div>
+      </div>
+
+      <div class="logged-user-box">
+        <h3 id="profileDisplayName">Student Name</h3>
+      </div>
+
+      <div class="registration-box">
+        <h3>Personal Details</h3>
+        <ul id="registrationDetails" class="registration-list"></ul>
+      </div>
+
+      <div class="profile-extra-grid">
+        <article class="profile-extra-card">
+          <h3>About Me</h3>
+          <p>A motivated AMBIT student focused on learning, project building, and campus activities.</p>
+        </article>
+
+        <article class="profile-extra-card">
+          <h3>Academic Snapshot</h3>
+          <ul class="profile-mini-list">
+            <li>Current Year: 3rd Year</li>
+            <li>Semester: 6</li>
+            <li>Mentor: Faculty Advisor Assigned</li>
+          </ul>
+        </article>
+
+        <article class="profile-extra-card">
+          <h3>Skills & Interests</h3>
+          <div class="skill-tags">
+            <span>Communication</span>
+            <span>Teamwork</span>
+            <span>Problem Solving</span>
+            <span>Web Development</span>
+          </div>
+        </article>
+
+        <article class="profile-extra-card">
+          <h3>Quick Links</h3>
+          <ul class="profile-mini-list">
+            <li><a href="#">View Timetable</a></li>
+            <li><a href="#">Placement Updates</a></li>
+            <li><a href="#">Library Portal</a></li>
+          </ul>
+        </article>
+      </div>
+      <p id="profileMessage" class="message"></p>
+    </section>
+
+    <section class="panel dashboard-panel">
+      <section class="hero-banner">
+        <h2>Welcome to AMBIT College Portal</h2>
+        <p>One place for academics, events, student services, and career progress.</p>
+        <div class="hero-stats">
+          <span>NAAC Accredited Campus</span>
+          <span>120+ Faculty Members</span>
+          <span>35+ Student Clubs</span>
+          <span>Top Recruiters Every Year</span>
+        </div>
+      </section>
+
+      <h2>College Dashboard</h2>
+      <div class="cards">
+        <article class="dash-card">
+          <h3>Attendance</h3>
+          <p>Current attendance: <strong>88%</strong></p>
+          <p>Maintain at least 75% to stay eligible for exams.</p>
+        </article>
+        <article class="dash-card">
+          <h3>Assignments</h3>
+          <ul>
+            <li>Web Tech Lab Record - Due Friday</li>
+            <li>DBMS Mini Project - Due next week</li>
+            <li>Seminar PPT Submission - Pending</li>
+          </ul>
+        </article>
+        <article class="dash-card">
+          <h3>Notices</h3>
+          <ul>
+            <li>Internal exams start on 15th next month</li>
+            <li>Hackathon registrations are open</li>
+            <li>Library will remain open until 8 PM</li>
+          </ul>
+        </article>
+        <article class="dash-card">
+          <h3>Performance Snapshot</h3>
+          <p>Average CGPA: <strong>8.4</strong></p>
+          <p>Focus areas: DSA practice and project documentation.</p>
+        </article>
+        <article class="dash-card">
+          <h3>Department Highlights</h3>
+          <ul>
+            <li>CSE: AI and Full Stack Development workshops</li>
+            <li>ECE: Embedded systems and IoT lab sessions</li>
+            <li>MBA: Industry mentorship and case study events</li>
+          </ul>
+        </article>
+        <article class="dash-card">
+          <h3>Placement Cell</h3>
+          <p>Upcoming drive: Infosys campus recruitment this month.</p>
+          <p>Resume clinic and mock interviews every Wednesday.</p>
+        </article>
+        <article class="dash-card">
+          <h3>Campus Events</h3>
+          <ul>
+            <li>AMBIT Tech Fest - Registration open</li>
+            <li>Annual Sports Meet - Team selection this week</li>
+            <li>Cultural Night auditions on Saturday</li>
+          </ul>
+        </article>
+        <article class="dash-card">
+          <h3>Student Services</h3>
+          <ul>
+            <li>Scholarship help desk: Block B, Room 204</li>
+            <li>Counselling support available Monday to Friday</li>
+            <li>Transport updates published every morning</li>
+          </ul>
+        </article>
+        <article class="dash-card">
+          <h3>Clubs and Communities</h3>
+          <ul>
+            <li>Coding Club - Weekly coding contest</li>
+            <li>Robotics Club - Project build sessions</li>
+            <li>NSS and Social Outreach - Weekend activities</li>
+          </ul>
+        </article>
+      </div>
+
+      <h2 class="media-heading">Media Section</h2>
+      <p class="media-description">Play audio or video manually. Only one media plays at a time.</p>
+      <div class="media-grid">
+        <article class="dash-card media-card">
+          <div class="media-header">
+            <h3>AMBIT Official Audio Brief</h3>
+            <span class="media-tag">Audio</span>
+          </div>
+          <p class="media-description">A clean orientation track for new students covering campus values and student support services.</p>
+          <audio id="campusAudio" controls preload="metadata" controlsList="nodownload">
+            <source src="audio.mp4" type="audio/mpeg">
+            Your browser does not support the audio element.
+          </audio>
+        </article>
+
+        <article class="dash-card media-card">
+          <div class="media-header">
+            <h3>AMBIT Campus Introduction</h3>
+            <span class="media-tag">Video</span>
+          </div>
+          <p class="media-description">A professional campus walkthrough featuring academics, labs, clubs, and placement support.</p>
+          <video id="campusVideo" controls preload="metadata" controlsList="nodownload noplaybackrate" poster="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80">
+            <source src="video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </article>
+
+        <article class="dash-card media-card">
+          <div class="media-header">
+            <h3>AMBIT Editable Canvas</h3>
+            <span class="media-tag">Canvas</span>
+          </div>
+          <p class="media-description">Draw directly on the website using brush color and size controls.</p>
+          <div class="canvas-toolbar">
+            <label for="brushColor">Color</label>
+            <input id="brushColor" type="color" value="#1f4ec8">
+            <label for="brushSize">Size</label>
+            <input id="brushSize" type="range" min="1" max="24" value="4">
+            <button id="clearCanvasBtn" type="button" class="btn-secondary">Clear</button>
+            <button id="saveCanvasBtn" type="button" class="btn-primary">Save Image</button>
+          </div>
+          <canvas id="ambitCanvas" width="640" height="320" aria-label="AMBIT visual canvas"></canvas>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
