@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard — VTU Student Portal</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="inner">
+        <a href="dashboard.html" class="brand" aria-label="VTU Student Portal">
+          <span class="brand-mark">VTU</span>
+          <span>Student Portal</span>
+        </a>
+        <nav aria-label="Main navigation">
+          <ul class="nav-links">
+            <li><a href="dashboard.html" class="active">Dashboard</a></li>
+            <li><a href="profile.html">Profile</a></li>
+            <li><a href="#" id="nav-logout">Logout</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <h1 class="page-title" id="dash-welcome">Welcome to Your Dashboard</h1>
+      <p class="page-sub">Below is the information from your registration and a summary of college-related details.</p>
+
+      <section aria-labelledby="reg-heading">
+        <h2 id="reg-heading" class="page-title" style="font-size: 1.25rem; margin-bottom: 1rem">Your registration details</h2>
+        <div class="info-grid" id="user-info-grid"></div>
+      </section>
+
+      <section class="section-block" aria-labelledby="college-heading">
+        <h2 id="college-heading">College &amp; academics</h2>
+        <div class="college-grid">
+          <article class="college-card">
+            <h3>Affiliation</h3>
+            <p>Visvesvaraya Technological University (VTU), Belagavi — affiliated college programmes and examinations as per university regulations.</p>
+          </article>
+          <article class="college-card">
+            <h3>Academic calendar</h3>
+            <p>Semester schedules, internal assessment windows, and exam timetables are published on the official VTU portal. Check notices regularly.</p>
+          </article>
+          <article class="college-card">
+            <h3>Quick links</h3>
+            <ul>
+              <li>Course registration &amp; re-registration</li>
+              <li>Results &amp; grade cards</li>
+              <li>Library &amp; digital resources</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-block" aria-labelledby="campus-heading">
+        <h2 id="campus-heading">Campus &amp; student life</h2>
+        <div class="college-grid">
+          <article class="college-card">
+            <h3>Student clubs</h3>
+            <p>Technical societies, cultural teams, and sports — participate through your department or student council.</p>
+          </article>
+          <article class="college-card">
+            <h3>Placements &amp; training</h3>
+            <p>Campus drives, internship opportunities, and skill workshops are coordinated through the placement cell.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-block" aria-labelledby="media-heading">
+        <h2 id="media-heading">Audio &amp; video</h2>
+        <div class="media-grid">
+          <article class="media-card">
+            <h3>Campus announcement audio</h3>
+            <audio controls preload="metadata" class="media-player">
+              <source src="audio.mp4" type="audio/mpeg" />
+              Your browser does not support the audio element.
+            </audio>
+          </article>
+          <article class="media-card">
+            <h3>VTU campus introduction video</h3>
+            <video controls preload="metadata" class="media-player" width="100%">
+              <source src="video.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-block" aria-labelledby="canvas-heading">
+        <h2 id="canvas-heading">Editable canvas</h2>
+        <div class="canvas-card">
+          <p class="page-sub">Use the canvas below to draw notes, diagrams, or quick ideas directly on the dashboard.</p>
+          <div class="canvas-toolbar">
+            <label for="brush-color">Color</label>
+            <input type="color" id="brush-color" value="#0f3a5e" />
+            <label for="brush-size">Brush size</label>
+            <input type="range" id="brush-size" min="1" max="12" value="3" />
+            <span id="brush-size-value">3 px</span>
+            <button type="button" class="btn btn-outline" id="clear-canvas">Clear canvas</button>
+          </div>
+          <canvas id="drawing-canvas" width="900" height="360" aria-label="Editable drawing canvas"></canvas>
+        </div>
+      </section>
+
+      <p style="margin-top: 2rem">
+        <a class="btn btn-primary" href="profile.html">Edit profile</a>
+      </p>
+    </main>
+
+    <script src="js/auth.js"></script>
+    <script>
+      (function () {
+        const user = requireAuthRedirect();
+        if (!user) return;
+
+        document.getElementById("nav-logout").addEventListener("click", function (e) {
+          e.preventDefault();
+          logoutUser();
+          window.location.href = "login.html";
+        });
+
+        document.getElementById("dash-welcome").textContent = "Welcome, " + user.name;
+
+        const grid = document.getElementById("user-info-grid");
+        const fields = [
+          { label: "Full name", value: user.name },
+          { label: "Email", value: user.email },
+          { label: "Programme / Domain", value: user.domain },
+          { label: "City", value: user.city },
+          { label: "USN (if set)", value: user.usn || "—" },
+          { label: "Semester (if set)", value: user.semester || "—" },
+        ];
+
+        grid.innerHTML = fields
+          .map(function (f) {
+            return (
+              '<article class="info-card"><h3>' +
+              escapeHtml(f.label) +
+              "</h3><p>" +
+              escapeHtml(String(f.value)) +
+              "</p></article>"
+            );
+          })
+          .join("");
+
+        const canvas = document.getElementById("drawing-canvas");
+        const ctx = canvas.getContext("2d");
+        const colorInput = document.getElementById("brush-color");
+        const sizeInput = document.getElementById("brush-size");
+        const sizeValue = document.getElementById("brush-size-value");
+        const clearButton = document.getElementById("clear-canvas");
+        let isDrawing = false;
+
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        fillCanvasBackground();
+
+        sizeInput.addEventListener("input", function () {
+          sizeValue.textContent = sizeInput.value + " px";
+        });
+
+        clearButton.addEventListener("click", function () {
+          fillCanvasBackground();
+        });
+
+        canvas.addEventListener("mousedown", startDrawing);
+        canvas.addEventListener("mousemove", draw);
+        canvas.addEventListener("mouseup", stopDrawing);
+        canvas.addEventListener("mouseleave", stopDrawing);
+        canvas.addEventListener("touchstart", startDrawingTouch, { passive: false });
+        canvas.addEventListener("touchmove", drawTouch, { passive: false });
+        canvas.addEventListener("touchend", stopDrawing);
+
+        function startDrawing(event) {
+          isDrawing = true;
+          drawLine(event);
+        }
+
+        function draw(event) {
+          if (!isDrawing) return;
+          drawLine(event);
+        }
+
+        function stopDrawing() {
+          isDrawing = false;
+          ctx.beginPath();
+        }
+
+        function startDrawingTouch(event) {
+          event.preventDefault();
+          isDrawing = true;
+          drawLine(event.touches[0]);
+        }
+
+        function drawTouch(event) {
+          event.preventDefault();
+          if (!isDrawing) return;
+          drawLine(event.touches[0]);
+        }
+
+        function drawLine(event) {
+          const rect = canvas.getBoundingClientRect();
+          const scaleX = canvas.width / rect.width;
+          const scaleY = canvas.height / rect.height;
+          const x = (event.clientX - rect.left) * scaleX;
+          const y = (event.clientY - rect.top) * scaleY;
+
+          ctx.strokeStyle = colorInput.value;
+          ctx.lineWidth = Number(sizeInput.value);
+          ctx.lineTo(x, y);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+        }
+
+        function fillCanvasBackground() {
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.beginPath();
+        }
+
+        function escapeHtml(text) {
+          const div = document.createElement("div");
+          div.textContent = text;
+          return div.innerHTML;
+        }
+      })();
+    </script>
+  </body>
+</html>
