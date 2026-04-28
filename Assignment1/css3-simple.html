@@ -1,0 +1,1876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS3 Notes — VTU Module 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+/* =====================================================
+   GLOBAL RESET & VARIABLES
+   ===================================================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --page-bg    : #fafaf8;
+  --card-bg    : #ffffff;
+  --border     : #e5e3de;
+  --text-main  : #1f1d1a;
+  --text-sub   : #5c5a56;
+  --text-muted : #9a9590;
+  --accent     : #2563eb;
+  --accent-lt  : #eff4ff;
+  --green      : #16a34a;
+  --green-lt   : #f0fdf4;
+  --amber      : #d97706;
+  --amber-lt   : #fffbeb;
+  --rose       : #e11d48;
+  --rose-lt    : #fff1f3;
+  --teal       : #0891b2;
+  --teal-lt    : #f0fdff;
+  --purple     : #7c3aed;
+  --font-body  : 'Nunito', sans-serif;
+  --font-serif : 'Literata', serif;
+  --font-mono  : 'IBM Plex Mono', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--page-bg);
+  color: var(--text-main);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* =====================================================
+   HEADER
+   ===================================================== */
+.page-header {
+  background: #1f1d1a;
+  color: #fff;
+  padding: 32px 40px 24px;
+}
+
+.page-header .unit-tag {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #facc15;
+  margin-bottom: 8px;
+}
+
+.page-header h1 {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.page-header .subtitle {
+  font-size: 14px;
+  color: rgba(255,255,255,0.5);
+  font-weight: 400;
+}
+
+/* Table of contents strip */
+.toc-nav {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  height: 44px;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.toc-nav a {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-sub);
+  text-decoration: none;
+  padding: 5px 12px;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.toc-nav a:hover {
+  background: var(--accent-lt);
+  color: var(--accent);
+}
+
+/* =====================================================
+   MAIN CONTENT WRAPPER
+   ===================================================== */
+.content {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+/* =====================================================
+   SECTION STRUCTURE
+   ===================================================== */
+.section {
+  margin-bottom: 56px;
+}
+
+.section-title {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-main);
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-title .sec-num {
+  background: var(--text-main);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 5px;
+  flex-shrink: 0;
+}
+
+/* =====================================================
+   TEXT ELEMENTS
+   ===================================================== */
+p {
+  font-size: 14.5px;
+  color: var(--text-sub);
+  line-height: 1.75;
+  margin-bottom: 14px;
+}
+
+p:last-child { margin-bottom: 0; }
+
+strong { color: var(--text-main); font-weight: 700; }
+
+/* Inline code */
+code {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  background: #f0ede8;
+  color: var(--rose);
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid #e5e1da;
+}
+
+/* =====================================================
+   CARDS
+   ===================================================== */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px 22px;
+  margin-bottom: 16px;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Two column layout for cards */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* =====================================================
+   NOTE CALLOUTS
+   ===================================================== */
+.note {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-lt);
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+  font-size: 13.5px;
+  color: #1e40af;
+  margin: 14px 0;
+  line-height: 1.65;
+}
+
+.note.green   { border-color: var(--green); background: var(--green-lt); color: #15803d; }
+.note.amber   { border-color: var(--amber); background: var(--amber-lt); color: #92400e; }
+.note.rose    { border-color: var(--rose);  background: var(--rose-lt);  color: #9f1239; }
+
+/* =====================================================
+   CODE BLOCKS  (syntax-coloured, monospace, no JS)
+   ===================================================== */
+.code-block {
+  background: #1e2030;
+  border-radius: 8px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 12px 0;
+  position: relative;
+}
+
+.code-block pre {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.75;
+  color: #cdd6f4;
+  white-space: pre;
+}
+
+/* Syntax colours — pure CSS spans */
+.code-block .kw   { color: #cba6f7; }   /* keywords / tags */
+.code-block .sel  { color: #89dceb; }   /* selectors */
+.code-block .prop { color: #89b4fa; }   /* properties */
+.code-block .val  { color: #a6e3a1; }   /* values */
+.code-block .str  { color: #f9e2af; }   /* strings */
+.code-block .cm   { color: #585b70; font-style: italic; }  /* comments */
+.code-block .num  { color: #fab387; }   /* numbers */
+
+/* =====================================================
+   LIVE EDIT EXAMPLES  — pure CSS, no JS
+   All demos use :has(), :checked, and sibling selectors
+   ===================================================== */
+
+/* --- Wrapper that holds radio controls + preview --- */
+.live-example {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 16px 0;
+}
+
+.le-title {
+  background: #f5f3f0;
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.le-title::before {
+  content: '';
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #ef4444;
+  box-shadow: 12px 0 0 #f59e0b, 24px 0 0 #22c55e;
+  flex-shrink: 0;
+}
+
+/* Tabs (radio inputs = tab switcher — no JS) */
+.tab-set {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 16px 0;
+}
+
+.tab-set input[type="radio"] { display: none; }
+
+.tab-labels {
+  display: flex;
+  background: #f5f3f0;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab-label {
+  padding: 9px 18px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  border-right: 1px solid var(--border);
+  user-select: none;
+}
+
+.tab-label:last-of-type { border-right: none; }
+
+/* Radio checked → show corresponding panel */
+#tab1:checked ~ .tab-labels label[for="tab1"],
+#tab2:checked ~ .tab-labels label[for="tab2"],
+#tab3:checked ~ .tab-labels label[for="tab3"],
+#tab4:checked ~ .tab-labels label[for="tab4"],
+#tab5:checked ~ .tab-labels label[for="tab5"],
+#tab6:checked ~ .tab-labels label[for="tab6"] {
+  background: #fff;
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent);
+}
+
+.tab-panel { display: none; padding: 18px 20px; }
+
+#tab1:checked ~ .tab-labels ~ .tab-panel:nth-of-type(1),
+#tab2:checked ~ .tab-labels ~ .tab-panel:nth-of-type(2),
+#tab3:checked ~ .tab-labels ~ .tab-panel:nth-of-type(3),
+#tab4:checked ~ .tab-labels ~ .tab-panel:nth-of-type(4),
+#tab5:checked ~ .tab-labels ~ .tab-panel:nth-of-type(5),
+#tab6:checked ~ .tab-labels ~ .tab-panel:nth-of-type(6) {
+  display: block;
+}
+
+/* =====================================================
+   CSS EVOLUTION TIMELINE
+   ===================================================== */
+.timeline {
+  position: relative;
+  padding-left: 28px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--border);
+}
+
+.tl-item {
+  position: relative;
+  margin-bottom: 22px;
+  padding-left: 20px;
+}
+
+.tl-item::before {
+  content: '';
+  position: absolute;
+  left: -18px;
+  top: 8px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px var(--border);
+}
+
+.tl-year {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 2px;
+}
+
+.tl-event {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 4px;
+}
+
+.tl-desc {
+  font-size: 13.5px;
+  color: var(--text-sub);
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* =====================================================
+   ATTRIBUTE TABLE
+   ===================================================== */
+.attr-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 12px 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.attr-table th {
+  background: #f5f3f0;
+  padding: 8px 13px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.attr-table td {
+  padding: 8px 13px;
+  border-bottom: 1px solid #f0ede8;
+  vertical-align: top;
+}
+
+.attr-table tr:last-child td { border-bottom: none; }
+.attr-table tr:nth-child(even) td { background: #fafaf8; }
+.attr-table td:first-child { font-family: var(--font-mono); font-size: 12px; color: var(--accent); }
+
+/* =====================================================
+   BOX MODEL DIAGRAM  — pure CSS
+   ===================================================== */
+.box-diagram {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.bx-margin {
+  background: rgba(250,204,21,0.15);
+  border: 2px dashed #f59e0b;
+  padding: 16px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.bx-border {
+  background: rgba(239,68,68,0.12);
+  border: 4px solid rgba(239,68,68,0.5);
+  padding: 14px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bx-padding {
+  background: rgba(34,197,94,0.12);
+  border: 2px dashed #22c55e;
+  padding: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bx-content {
+  background: #2563eb;
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.bx-labels {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.bx-label {
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.bx-lm { background: rgba(250,204,21,0.2); color: #92400e; }
+.bx-lb { background: rgba(239,68,68,0.12); color: #9f1239; }
+.bx-lp { background: rgba(34,197,94,0.12); color: #15803d; }
+.bx-lc { background: rgba(37,99,235,0.12); color: #1d4ed8; }
+
+/* =====================================================
+   LIVE CSS CLASS DEMOS  — checkboxes + sibling CSS
+   No JavaScript used
+   ===================================================== */
+
+/* ---- Demo: Text Styling ---- */
+.demo-area {
+  padding: 18px;
+  background: #f9f8f6;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+/* Checkbox controls for text demo */
+.css-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.css-ctrl {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-sub);
+  user-select: none;
+  transition: border-color 0.15s;
+}
+
+.css-ctrl:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--accent-lt);
+  color: var(--accent);
+}
+
+.css-ctrl input { width: 14px; height: 14px; accent-color: var(--accent); }
+
+/* Text demo: checkbox changes the preview paragraph */
+#cb-bold:checked     ~ .text-preview { font-weight: 700; }
+#cb-italic:checked   ~ .text-preview { font-style: italic; }
+#cb-underline:checked ~ .text-preview { text-decoration: underline; }
+#cb-big:checked      ~ .text-preview { font-size: 22px; }
+#cb-color:checked    ~ .text-preview { color: var(--accent); }
+#cb-upper:checked    ~ .text-preview { text-transform: uppercase; letter-spacing: 0.1em; }
+
+.text-preview {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  color: var(--text-main);
+  padding: 14px 16px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  transition: all 0.25s;
+  margin-top: 10px;
+  line-height: 1.6;
+}
+
+/* ---- Demo: Box Model live ---- */
+#cb-padding:checked  ~ .box-preview { padding: 32px; }
+#cb-margin:checked   ~ .box-preview { margin: 20px; }
+#cb-border:checked   ~ .box-preview { border: 4px solid var(--accent); }
+#cb-radius:checked   ~ .box-preview { border-radius: 16px; }
+#cb-shadow:checked   ~ .box-preview { box-shadow: 0 8px 24px rgba(37,99,235,0.25); }
+#cb-bg:checked       ~ .box-preview { background: var(--accent-lt); }
+
+.box-preview {
+  background: #fff;
+  border: 2px dashed var(--border);
+  padding: 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--text-sub);
+  transition: all 0.3s;
+  margin-top: 10px;
+  text-align: center;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- Demo: Flexbox live ---- */
+#cb-flex-center:checked    ~ .flex-preview { justify-content: center; }
+#cb-flex-end:checked       ~ .flex-preview { justify-content: flex-end; }
+#cb-flex-between:checked   ~ .flex-preview { justify-content: space-between; }
+#cb-flex-col:checked       ~ .flex-preview { flex-direction: column; height: 160px; }
+#cb-flex-wrap:checked      ~ .flex-preview { flex-wrap: wrap; }
+#cb-align-center:checked   ~ .flex-preview { align-items: center; }
+
+.flex-preview {
+  display: flex;
+  gap: 8px;
+  padding: 14px;
+  background: #f0f7ff;
+  border: 1px dashed var(--accent);
+  border-radius: 8px;
+  min-height: 80px;
+  transition: all 0.3s;
+  margin-top: 10px;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+
+.fx-item {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ---- Demo: Grid live ---- */
+#cb-grid-2:checked   ~ .grid-preview { grid-template-columns: 1fr 1fr; }
+#cb-grid-3:checked   ~ .grid-preview { grid-template-columns: 1fr 1fr 1fr; }
+#cb-grid-auto:checked ~ .grid-preview { grid-template-columns: repeat(auto-fit, minmax(100px,1fr)); }
+#cb-grid-gap:checked  ~ .grid-preview { gap: 16px; }
+#cb-grid-dense:checked ~ .grid-preview { grid-auto-flow: dense; }
+
+.grid-preview {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  padding: 14px;
+  background: #f0fdf4;
+  border: 1px dashed var(--green);
+  border-radius: 8px;
+  min-height: 80px;
+  transition: all 0.3s;
+  margin-top: 10px;
+}
+
+.gr-item {
+  background: var(--green);
+  color: #fff;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* ---- Demo: Positioning ---- */
+.pos-stage {
+  position: relative;
+  background: #faf5ff;
+  border: 1px dashed var(--purple);
+  border-radius: 8px;
+  height: 140px;
+  margin-top: 10px;
+  overflow: hidden;
+  padding: 12px;
+}
+
+.pos-stage p {
+  font-size: 12px;
+  color: var(--purple);
+  margin-bottom: 8px;
+}
+
+.pos-box-a {
+  background: #7c3aed;
+  color: #fff;
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.pos-box-b {
+  background: #f59e0b;
+  color: #fff;
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-block;
+}
+
+/* Radio tabs for position demo */
+.pos-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.pos-tabs input { display: none; }
+.pos-tab-label {
+  padding: 5px 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-sub);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s;
+}
+.pos-tabs input:checked + .pos-tab-label {
+  background: var(--purple);
+  border-color: var(--purple);
+  color: #fff;
+}
+
+/* Position demo previews — one per radio */
+.pos-demo-panel { display: none; margin-top: 12px; }
+
+/* Show panel using sibling combinator */
+#pos-static:checked   ~ .pd-static,
+#pos-relative:checked ~ .pd-relative,
+#pos-absolute:checked ~ .pd-absolute,
+#pos-fixed:checked    ~ .pd-fixed,
+#pos-sticky:checked   ~ .pd-sticky {
+  display: block;
+}
+
+.pos-demo-panel .pos-stage { height: 120px; }
+.pos-demo-panel .pos-desc {
+  font-size: 13px;
+  color: var(--text-sub);
+  margin-top: 8px;
+  background: #f9f8f6;
+  padding: 9px 13px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+}
+
+/* Relative offset illustration */
+.pd-relative .pos-box-b {
+  position: relative;
+  top: 14px;
+  left: 20px;
+}
+
+/* Absolute illustration */
+.pd-absolute .pos-stage { position: relative; }
+.pd-absolute .pos-box-b {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+}
+
+/* ---- Demo: Media Query Simulation ---- */
+.mq-sim {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Each "device" is shown based on a radio */
+.mq-device-set input { display: none; }
+
+.mq-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.mq-btn-label {
+  padding: 6px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-sub);
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s;
+}
+
+.mq-device-set input:checked + .mq-btn-label {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: #fff;
+}
+
+/* All device frames hidden by default */
+.mq-frame { display: none; margin-top: 12px; }
+
+#mq-mobile:checked  ~ .mq-frame-mobile,
+#mq-tablet:checked  ~ .mq-frame-tablet,
+#mq-desktop:checked ~ .mq-frame-desktop { display: block; }
+
+/* Mobile frame */
+.mq-frame-mobile .mq-screen {
+  width: 260px;
+  margin: 0 auto;
+  background: #fff;
+  border: 2px solid #374151;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.mq-frame-tablet .mq-screen {
+  width: 520px;
+  margin: 0 auto;
+  background: #fff;
+  border: 2px solid #374151;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+}
+
+.mq-frame-desktop .mq-screen {
+  width: 100%;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Simulated mini-page inside each device */
+.mq-nav-bar {
+  background: #1e293b;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mq-logo { color: #facc15; font-weight: 700; font-size: 13px; }
+
+/* Mobile nav — just hamburger */
+.mq-frame-mobile .mq-nav-links { display: none; }
+.mq-frame-mobile .mq-hamburger { display: block; color: #fff; font-size: 16px; }
+
+/* Tablet nav — some links */
+.mq-frame-tablet .mq-nav-links { display: flex; gap: 12px; }
+.mq-frame-tablet .mq-nav-links span { color: rgba(255,255,255,0.8); font-size: 12px; }
+.mq-frame-tablet .mq-hamburger { display: none; }
+
+/* Desktop nav — full */
+.mq-frame-desktop .mq-nav-links { display: flex; gap: 16px; }
+.mq-frame-desktop .mq-nav-links span { color: rgba(255,255,255,0.8); font-size: 13px; cursor: pointer; }
+.mq-frame-desktop .mq-hamburger { display: none; }
+
+.mq-content { padding: 12px; }
+
+/* Mobile: single col */
+.mq-frame-mobile .mq-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+/* Tablet: 2 col */
+.mq-frame-tablet .mq-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+/* Desktop: 3 col */
+.mq-frame-desktop .mq-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.mq-card {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 11.5px;
+  color: #1e40af;
+  font-weight: 600;
+  text-align: center;
+}
+
+.mq-label {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: var(--teal-lt);
+  border: 1px solid rgba(8,145,178,0.2);
+  border-radius: 7px;
+  font-size: 13px;
+  color: var(--teal);
+  font-weight: 600;
+  text-align: center;
+}
+
+.mq-hamburger { display: none; }
+
+/* =====================================================
+   SPECIFICITY VISUALIZER  — pure CSS
+   ===================================================== */
+.spec-table {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.spec-row {
+  display: grid;
+  grid-template-columns: 160px 60px 1fr;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.spec-selector { font-family: var(--font-mono); font-size: 12px; color: var(--accent); }
+.spec-score    { font-family: var(--font-mono); font-size: 12px; font-weight: 700; }
+.spec-bar-wrap { background: #f0ede8; border-radius: 4px; height: 10px; overflow: hidden; }
+.spec-bar      { height: 100%; border-radius: 4px; background: var(--accent); }
+
+/* =====================================================
+   RESPONSIVE UNITS TABLE
+   ===================================================== */
+.units-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.unit-card {
+  background: #f9f8f6;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.unit-name {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.unit-desc { font-size: 12.5px; color: var(--text-sub); line-height: 1.55; margin: 0; }
+
+/* =====================================================
+   CHECKLIST
+   ===================================================== */
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.cl-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13.5px;
+  color: var(--text-sub);
+  padding: 8px 12px;
+  background: var(--green-lt);
+  border-radius: 7px;
+  border: 1px solid rgba(22,163,74,0.15);
+}
+
+.cl-row::before {
+  content: '✓';
+  color: var(--green);
+  font-weight: 800;
+  font-size: 13px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* =====================================================
+   FOOTER
+   ===================================================== */
+.page-footer {
+  background: #1f1d1a;
+  color: rgba(255,255,255,0.4);
+  text-align: center;
+  padding: 18px;
+  font-size: 12px;
+}
+
+.page-footer a { color: #facc15; text-decoration: none; }
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+@media (max-width: 700px) {
+  .page-header { padding: 24px 20px 18px; }
+  .page-header h1 { font-size: 22px; }
+  .toc-nav { padding: 0 16px; }
+  .content { padding: 28px 16px 60px; }
+  .two-col { grid-template-columns: 1fr; }
+  .units-grid { grid-template-columns: 1fr 1fr; }
+  .prop-grid  { grid-template-columns: 1fr; }
+  .bx-labels  { grid-template-columns: 1fr 1fr; }
+  .mq-frame-tablet .mq-screen { width: 100%; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     PAGE HEADER
+     ============================================================ -->
+<header class="page-header">
+  <div class="unit-tag">VTU MCA — Web Technologies · Module 2</div>
+  <h1>CSS3 &amp; Responsive Web Design</h1>
+  <p class="subtitle">Selectors · Box Model · Flexbox · Grid · Media Queries · Mobile-First</p>
+</header>
+
+<nav class="toc-nav">
+  <a href="#sec-evolution">Evolution</a>
+  <a href="#sec-basics">Basics</a>
+  <a href="#sec-selectors">Selectors</a>
+  <a href="#sec-box">Box Model</a>
+  <a href="#sec-position">Positioning</a>
+  <a href="#sec-flex">Flexbox</a>
+  <a href="#sec-grid">Grid</a>
+  <a href="#sec-mq">Media Queries</a>
+  <a href="#sec-rwd">RWD</a>
+  <a href="#sec-mobile">Mobile-First</a>
+</nav>
+
+<main class="content">
+
+<!-- ============================================================
+     §1  CSS EVOLUTION
+     ============================================================ -->
+<section class="section" id="sec-evolution">
+  <h2 class="section-title"><span class="sec-num">§1</span>Brief History of CSS</h2>
+
+  <p>CSS (Cascading Style Sheets) was proposed by <strong>Håkon Wium Lie</strong> in 1994 while he worked at CERN. Before CSS, web pages were styled using HTML attributes — mixing content with presentation, which was messy and hard to maintain.</p>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-year">1996 — CSS Level 1</div>
+      <div class="tl-event">The First Standard</div>
+      <p class="tl-desc">Published by W3C. Covered basic properties: fonts, colors, text alignment, margins, padding, borders. Supported by IE 3 and Netscape. Very limited — no positioning or layout tools.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1998 — CSS Level 2</div>
+      <div class="tl-event">Positioning &amp; Media Types</div>
+      <p class="tl-desc">Added absolute/relative/fixed positioning, z-index, media types (print, screen), pseudo-elements (::before, ::after), and the <code>display</code> property. Browser support was inconsistent — the "CSS wars" began.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">2004–2011 — CSS 2.1</div>
+      <div class="tl-event">Stability &amp; Bug Fixes</div>
+      <p class="tl-desc">CSS2 was revised to fix inconsistencies. The <strong>box model hack era</strong> — different browsers calculated width differently, requiring workarounds. IE6 had its own broken box model.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">2011–Present — CSS Level 3</div>
+      <div class="tl-event">Modular &amp; Powerful</div>
+      <p class="tl-desc">CSS3 is NOT one big document — it is split into <strong>independent modules</strong>, each developed separately: Selectors, Animations, Transforms, Flexbox, Grid, Custom Properties, etc. This allows browsers to implement features one at a time.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">2012 — Flexbox</div>
+      <div class="tl-event">Layout Revolution</div>
+      <p class="tl-desc">Flexible Box Layout solved the age-old problem of vertical centering and equal-height columns — things that previously required hacks with tables, floats, and negative margins.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">2017 — CSS Grid</div>
+      <div class="tl-event">True Two-Dimensional Layout</div>
+      <p class="tl-desc">CSS Grid gave developers a proper two-dimensional layout system, replacing float-based grid frameworks (Bootstrap, Foundation) with native browser capabilities.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">2017 — CSS Custom Properties</div>
+      <div class="tl-event">Variables in CSS</div>
+      <p class="tl-desc">CSS variables (<code>--color: #333</code>) arrived natively, removing the need for preprocessors like SASS/LESS for basic variable management. Live updates via JavaScript too.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">2023–Now — CSS Level 4+</div>
+      <div class="tl-event">Cascade Layers, :has(), Container Queries</div>
+      <p class="tl-desc">New features: <code>@layer</code> for cascade control, the <code>:has()</code> parent selector (the most-requested feature ever), and container queries (respond to element size, not viewport size).</p>
+    </div>
+  </div>
+
+  <div class="note green" style="margin-top:20px">
+    <strong>Key insight:</strong> CSS went from basic text formatting (CSS1) → layout tools (CSS2) → rich visual effects and proper layout systems (CSS3) → component-level responsive design (CSS4). Each version solved problems the previous one could not.
+  </div>
+</section>
+
+<!-- ============================================================
+     §2  CSS3 BASICS
+     ============================================================ -->
+<section class="section" id="sec-basics">
+  <h2 class="section-title"><span class="sec-num">§2</span>CSS3 Basics</h2>
+
+  <p>A CSS rule has two parts: a <strong>selector</strong> (what to target) and a <strong>declaration block</strong> (what to apply). Each declaration is a property–value pair.</p>
+
+  <div class="code-block">
+    <pre><span class="cm">/* Anatomy of a CSS rule */</span>
+<span class="sel">h1</span> {                        <span class="cm">/* selector */</span>
+  <span class="prop">color</span>:       <span class="val">#2563eb</span>;   <span class="cm">/* property: value */</span>
+  <span class="prop">font-size</span>:   <span class="val">2rem</span>;
+  <span class="prop">font-weight</span>: <span class="val">700</span>;
+}
+
+<span class="cm">/* Three ways to add CSS */</span>
+<span class="kw">&lt;link</span> rel=<span class="str">"stylesheet"</span> href=<span class="str">"style.css"</span><span class="kw">&gt;</span>   <span class="cm">/* external ✓ best */</span>
+<span class="kw">&lt;style&gt;</span> body { background: #fff; } <span class="kw">&lt;/style&gt;</span>    <span class="cm">/* internal */</span>
+<span class="kw">&lt;p</span> style=<span class="str">"color:red"</span><span class="kw">&gt;</span>...<span class="kw">&lt;/p&gt;</span>                  <span class="cm">/* inline (avoid) */</span>
+
+<span class="cm">/* CSS Custom Properties (Variables) */</span>
+<span class="sel">:root</span> {
+  <span class="prop">--brand-color</span>: <span class="val">#2563eb</span>;
+  <span class="prop">--gap</span>:         <span class="val">1rem</span>;
+}
+<span class="sel">button</span> { <span class="prop">background</span>: <span class="val">var(--brand-color)</span>; }</pre>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Specificity — Who Wins?</div>
+      <p>When two rules target the same element, the one with higher <strong>specificity</strong> wins.</p>
+      <div class="spec-table">
+        <div class="spec-row">
+          <span class="spec-selector">*</span>
+          <span class="spec-score">0</span>
+          <div class="spec-bar-wrap"><div class="spec-bar" style="width:1%;background:#aaa"></div></div>
+        </div>
+        <div class="spec-row">
+          <span class="spec-selector">p</span>
+          <span class="spec-score">1</span>
+          <div class="spec-bar-wrap"><div class="spec-bar" style="width:5%"></div></div>
+        </div>
+        <div class="spec-row">
+          <span class="spec-selector">.class</span>
+          <span class="spec-score">10</span>
+          <div class="spec-bar-wrap"><div class="spec-bar" style="width:30%;background:var(--green)"></div></div>
+        </div>
+        <div class="spec-row">
+          <span class="spec-selector">#id</span>
+          <span class="spec-score">100</span>
+          <div class="spec-bar-wrap"><div class="spec-bar" style="width:60%;background:var(--amber)"></div></div>
+        </div>
+        <div class="spec-row">
+          <span class="spec-selector">style=""</span>
+          <span class="spec-score">1000</span>
+          <div class="spec-bar-wrap"><div class="spec-bar" style="width:100%;background:var(--rose)"></div></div>
+        </div>
+      </div>
+      <div class="note amber" style="margin-top:10px"><code>!important</code> overrides everything. Use only as a last resort.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Cascade &amp; Inheritance</div>
+      <p><strong>Cascade</strong> means styles flow from multiple sources and the most specific wins.</p>
+      <table class="attr-table">
+        <tr><th>Source</th><th>Priority</th></tr>
+        <tr><td>Browser default</td><td>Lowest</td></tr>
+        <tr><td>User stylesheet</td><td>Low</td></tr>
+        <tr><td>Author CSS (your file)</td><td>Normal</td></tr>
+        <tr><td>Author !important</td><td>High</td></tr>
+        <tr><td>User !important</td><td>Highest</td></tr>
+      </table>
+      <p style="margin-top:10px"><strong>Inheritance:</strong> some properties (font, color, line-height) are automatically passed from parent to child. Others (margin, padding, border) are not inherited.</p>
+    </div>
+  </div>
+
+  <!-- Live: text styling -->
+  <div class="card">
+    <div class="card-title">✏️ Live Demo — Text &amp; Typography Styles</div>
+    <p>Tick a checkbox to add that CSS class to the paragraph below. No JavaScript — pure CSS <code>:checked</code> + sibling selector.</p>
+
+    <!-- The checkboxes MUST be siblings to .text-preview for the CSS to work -->
+    <input type="checkbox" id="cb-bold">
+    <input type="checkbox" id="cb-italic">
+    <input type="checkbox" id="cb-underline">
+    <input type="checkbox" id="cb-big">
+    <input type="checkbox" id="cb-color">
+    <input type="checkbox" id="cb-upper">
+
+    <div class="css-controls">
+      <label class="css-ctrl" for="cb-bold">     <input type="checkbox" id="cb-bold">     font-weight: bold</label>
+      <label class="css-ctrl" for="cb-italic">   <input type="checkbox" id="cb-italic">   font-style: italic</label>
+      <label class="css-ctrl" for="cb-underline"><input type="checkbox" id="cb-underline">text-decoration: underline</label>
+      <label class="css-ctrl" for="cb-big">      <input type="checkbox" id="cb-big">      font-size: 22px</label>
+      <label class="css-ctrl" for="cb-color">    <input type="checkbox" id="cb-color">    color: #2563eb</label>
+      <label class="css-ctrl" for="cb-upper">    <input type="checkbox" id="cb-upper">    text-transform: uppercase</label>
+    </div>
+
+    <p class="text-preview">The CSS rules you check above are applied to this paragraph in real time — no JavaScript at all. Each checkbox is linked via the <code>:checked</code> pseudo-class and a CSS sibling selector.</p>
+  </div>
+
+</section>
+
+<!-- ============================================================
+     §3  SELECTORS
+     ============================================================ -->
+<section class="section" id="sec-selectors">
+  <h2 class="section-title"><span class="sec-num">§3</span>Selectors</h2>
+
+  <p>A selector tells the browser <em>which elements</em> to style. CSS3 added many powerful new selectors.</p>
+
+  <!-- Tab switcher — pure radio CSS -->
+  <div class="tab-set">
+    <input type="radio" name="sel-tabs" id="tab1" checked>
+    <input type="radio" name="sel-tabs" id="tab2">
+    <input type="radio" name="sel-tabs" id="tab3">
+    <input type="radio" name="sel-tabs" id="tab4">
+
+    <div class="tab-labels">
+      <label class="tab-label" for="tab1">Basic</label>
+      <label class="tab-label" for="tab2">Attribute</label>
+      <label class="tab-label" for="tab3">Pseudo-class</label>
+      <label class="tab-label" for="tab4">Pseudo-element</label>
+    </div>
+
+    <!-- Panel 1: Basic selectors -->
+    <div class="tab-panel">
+      <table class="attr-table">
+        <tr><th>Selector</th><th>Targets</th><th>Example</th></tr>
+        <tr><td>*</td><td>Every element</td><td><code>* { box-sizing: border-box; }</code></td></tr>
+        <tr><td>p</td><td>All &lt;p&gt; elements</td><td><code>p { margin: 0; }</code></td></tr>
+        <tr><td>.class</td><td>Elements with that class</td><td><code>.card { padding: 1rem; }</code></td></tr>
+        <tr><td>#id</td><td>One specific element</td><td><code>#header { height: 60px; }</code></td></tr>
+        <tr><td>A B</td><td>B inside A (descendant)</td><td><code>nav a { color: white; }</code></td></tr>
+        <tr><td>A &gt; B</td><td>B that is direct child of A</td><td><code>ul &gt; li { list-style: none; }</code></td></tr>
+        <tr><td>A + B</td><td>B immediately after A</td><td><code>h1 + p { font-size: 1.2rem; }</code></td></tr>
+        <tr><td>A ~ B</td><td>All B siblings after A</td><td><code>h1 ~ p { color: gray; }</code></td></tr>
+        <tr><td>A, B</td><td>Both A and B</td><td><code>h1, h2, h3 { font-weight: 700; }</code></td></tr>
+      </table>
+    </div>
+
+    <!-- Panel 2: Attribute selectors -->
+    <div class="tab-panel">
+      <table class="attr-table">
+        <tr><th>Selector</th><th>Matches when</th></tr>
+        <tr><td>[type]</td><td>Element has the attribute</td></tr>
+        <tr><td>[type="email"]</td><td>Attribute equals exactly "email"</td></tr>
+        <tr><td>[href^="https"]</td><td>Attribute starts with "https"</td></tr>
+        <tr><td>[href$=".pdf"]</td><td>Attribute ends with ".pdf"</td></tr>
+        <tr><td>[class*="btn"]</td><td>Attribute contains "btn" anywhere</td></tr>
+      </table>
+      <div class="code-block" style="margin-top:12px">
+        <pre><span class="cm">/* Real-world examples */</span>
+<span class="sel">input[type="email"]</span>  { <span class="prop">border</span>: <span class="val">2px solid blue</span>; }
+<span class="sel">a[href^="https"]</span>     { <span class="prop">color</span>: <span class="val">green</span>; }
+<span class="sel">a[href$=".pdf"]::after</span> { <span class="prop">content</span>: <span class="str">" (PDF)"</span>; }
+<span class="sel">img[alt]</span>             { <span class="prop">border</span>: <span class="val">1px solid #ccc</span>; }</pre>
+      </div>
+    </div>
+
+    <!-- Panel 3: Pseudo-classes -->
+    <div class="tab-panel">
+      <div class="two-col">
+        <div>
+          <p><strong>User action</strong></p>
+          <table class="attr-table">
+            <tr><td>:hover</td><td>Mouse over element</td></tr>
+            <tr><td>:focus</td><td>Element is focused</td></tr>
+            <tr><td>:active</td><td>Element being clicked</td></tr>
+            <tr><td>:visited</td><td>Visited link</td></tr>
+            <tr><td>:checked</td><td>Checked checkbox/radio</td></tr>
+            <tr><td>:disabled</td><td>Disabled form element</td></tr>
+          </table>
+        </div>
+        <div>
+          <p><strong>Structural</strong></p>
+          <table class="attr-table">
+            <tr><td>:first-child</td><td>First sibling element</td></tr>
+            <tr><td>:last-child</td><td>Last sibling element</td></tr>
+            <tr><td>:nth-child(n)</td><td>nth element (2n = even rows)</td></tr>
+            <tr><td>:nth-child(odd)</td><td>Odd-numbered elements</td></tr>
+            <tr><td>:not(.class)</td><td>Elements NOT matching</td></tr>
+            <tr><td>:has(img)</td><td>Elements that contain img</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 4: Pseudo-elements -->
+    <div class="tab-panel">
+      <p>Pseudo-elements create <em>virtual nodes</em> you can style — they don't exist in the HTML.</p>
+      <table class="attr-table">
+        <tr><th>Pseudo-element</th><th>What it does</th></tr>
+        <tr><td>::before</td><td>Inserts content before an element's content (needs <code>content</code> property)</td></tr>
+        <tr><td>::after</td><td>Inserts content after an element's content</td></tr>
+        <tr><td>::placeholder</td><td>Styles the placeholder text in inputs</td></tr>
+        <tr><td>::selection</td><td>Styles text the user has highlighted</td></tr>
+        <tr><td>::first-line</td><td>Styles only the first line of a paragraph</td></tr>
+        <tr><td>::first-letter</td><td>Styles the first letter (drop-cap effect)</td></tr>
+      </table>
+      <div class="code-block" style="margin-top:12px">
+        <pre><span class="cm">/* Common ::before / ::after pattern */</span>
+<span class="sel">.required-field::after</span> {
+  <span class="prop">content</span>: <span class="str">" *"</span>;
+  <span class="prop">color</span>: <span class="val">red</span>;
+}
+
+<span class="sel">blockquote::before</span> {
+  <span class="prop">content</span>: <span class="str">"""</span>;
+  <span class="prop">font-size</span>: <span class="val">4rem</span>;
+  <span class="prop">color</span>: <span class="val">#ccc</span>;
+  <span class="prop">line-height</span>: <span class="val">0</span>;
+}</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     §4  BOX MODEL
+     ============================================================ -->
+<section class="section" id="sec-box">
+  <h2 class="section-title"><span class="sec-num">§4</span>The Box Model</h2>
+
+  <p>Every HTML element is a rectangular box. The box has four layers from inside out:</p>
+
+  <div class="box-diagram">
+    <div class="bx-margin">
+      <div style="position:absolute;top:4px;left:6px;font-size:10px;font-weight:700;color:#92400e">MARGIN</div>
+      <div class="bx-border">
+        <div style="position:absolute;top:4px;left:6px;font-size:10px;font-weight:700;color:#9f1239">BORDER</div>
+        <div class="bx-padding">
+          <div style="position:absolute;top:4px;left:6px;font-size:10px;font-weight:700;color:#15803d">PADDING</div>
+          <div class="bx-content">CONTENT</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bx-labels">
+    <div class="bx-label bx-lm">Margin<br><small>outside space</small></div>
+    <div class="bx-label bx-lb">Border<br><small>visible edge</small></div>
+    <div class="bx-label bx-lp">Padding<br><small>inner space</small></div>
+    <div class="bx-label bx-lc">Content<br><small>text / image</small></div>
+  </div>
+
+  <div class="code-block" style="margin-top:16px">
+    <pre><span class="cm">/* All four layers */</span>
+<span class="sel">.box</span> {
+  <span class="prop">width</span>:   <span class="val">200px</span>;    <span class="cm">/* content width */</span>
+  <span class="prop">height</span>:  <span class="val">100px</span>;
+
+  <span class="prop">padding</span>: <span class="val">20px</span>;     <span class="cm">/* inside space (all 4 sides) */</span>
+  <span class="prop">border</span>:  <span class="val">2px solid #333</span>;
+  <span class="prop">margin</span>:  <span class="val">30px</span>;     <span class="cm">/* outside space */</span>
+}
+
+<span class="cm">/* box-sizing: the most important CSS rule to add globally */</span>
+<span class="sel">*</span> { <span class="prop">box-sizing</span>: <span class="val">border-box</span>; }
+<span class="cm">/* border-box: width includes padding + border  ← recommended */</span>
+<span class="cm">/* content-box: width is content only (default) ← confusing   */</span>
+
+<span class="cm">/* Shorthand examples */</span>
+<span class="prop">margin</span>:  <span class="val">10px 20px</span>;         <span class="cm">/* top/bottom  left/right */</span>
+<span class="prop">padding</span>: <span class="val">10px 20px 15px 5px</span>; <span class="cm">/* top right bottom left */</span></pre>
+  </div>
+
+  <!-- Live: box model demo -->
+  <div class="card" style="margin-top:16px">
+    <div class="card-title">✏️ Live Demo — Box Model Properties</div>
+    <p>Check properties to see them applied to the box below. The transition shows each change smoothly.</p>
+
+    <input type="checkbox" id="cb-padding">
+    <input type="checkbox" id="cb-margin">
+    <input type="checkbox" id="cb-border">
+    <input type="checkbox" id="cb-radius">
+    <input type="checkbox" id="cb-shadow">
+    <input type="checkbox" id="cb-bg">
+
+    <div class="css-controls">
+      <label class="css-ctrl" for="cb-padding"><input type="checkbox" id="cb-padding"> padding: 32px</label>
+      <label class="css-ctrl" for="cb-margin"> <input type="checkbox" id="cb-margin">  margin: 20px</label>
+      <label class="css-ctrl" for="cb-border"> <input type="checkbox" id="cb-border">  border: 4px solid</label>
+      <label class="css-ctrl" for="cb-radius"> <input type="checkbox" id="cb-radius">  border-radius: 16px</label>
+      <label class="css-ctrl" for="cb-shadow"> <input type="checkbox" id="cb-shadow">  box-shadow</label>
+      <label class="css-ctrl" for="cb-bg">     <input type="checkbox" id="cb-bg">      background color</label>
+    </div>
+
+    <div class="box-preview">This is the content area of the box</div>
+  </div>
+</section>
+
+<!-- ============================================================
+     §5  POSITIONING
+     ============================================================ -->
+<section class="section" id="sec-position">
+  <h2 class="section-title"><span class="sec-num">§5</span>Positioning</h2>
+
+  <p>The <code>position</code> property controls how an element is placed on the page. The default is <code>static</code> — elements sit in the normal document flow.</p>
+
+  <table class="attr-table">
+    <tr><th>Value</th><th>Behaviour</th><th>top/left/right/bottom?</th></tr>
+    <tr><td>static</td><td>Normal flow — default for all elements</td><td>No effect</td></tr>
+    <tr><td>relative</td><td>Offset from its own normal position. Space still reserved.</td><td>Yes — offset from normal</td></tr>
+    <tr><td>absolute</td><td>Removed from flow. Positioned relative to nearest positioned ancestor.</td><td>Yes — relative to parent</td></tr>
+    <tr><td>fixed</td><td>Relative to the viewport. Stays on scroll.</td><td>Yes — relative to screen</td></tr>
+    <tr><td>sticky</td><td>Like relative until scroll threshold, then sticks like fixed.</td><td>Yes — threshold value</td></tr>
+  </table>
+
+  <!-- Position tabs — pure CSS radio switcher -->
+  <div class="pos-tabs">
+    <input type="radio" name="pos-demo" id="pos-static" checked>
+    <label class="pos-tab-label" for="pos-static">static</label>
+
+    <input type="radio" name="pos-demo" id="pos-relative">
+    <label class="pos-tab-label" for="pos-relative">relative</label>
+
+    <input type="radio" name="pos-demo" id="pos-absolute">
+    <label class="pos-tab-label" for="pos-absolute">absolute</label>
+
+    <input type="radio" name="pos-demo" id="pos-fixed">
+    <label class="pos-tab-label" for="pos-fixed">fixed</label>
+
+    <input type="radio" name="pos-demo" id="pos-sticky">
+    <label class="pos-tab-label" for="pos-sticky">sticky</label>
+  </div>
+
+  <!-- Static panel -->
+  <div class="pos-demo-panel pd-static">
+    <div class="pos-stage">
+      <p>Container (position: relative)</p>
+      <div class="pos-box-a">Box A</div>
+      <div class="pos-box-b">Box B (static)</div>
+    </div>
+    <div class="pos-desc">Box B sits in normal flow after Box A. The <code>top / left</code> properties have no effect here.</div>
+  </div>
+
+  <!-- Relative panel -->
+  <div class="pos-demo-panel pd-relative">
+    <div class="pos-stage">
+      <p>Container (position: relative)</p>
+      <div class="pos-box-a">Box A</div>
+      <div class="pos-box-b">Box B (relative)</div>
+    </div>
+    <div class="pos-desc">Box B is shifted <code>top: 14px; left: 20px</code> from where it would normally sit. The original space is still reserved.</div>
+  </div>
+
+  <!-- Absolute panel -->
+  <div class="pos-demo-panel pd-absolute">
+    <div class="pos-stage">
+      <p>Container (position: relative)</p>
+      <div class="pos-box-a">Box A</div>
+      <div class="pos-box-b">Box B (absolute)</div>
+    </div>
+    <div class="pos-desc">Box B is taken out of the flow and placed at <code>top: 8px; right: 12px</code> of the nearest <code>position: relative</code> parent (the stage).</div>
+  </div>
+
+  <!-- Fixed panel -->
+  <div class="pos-demo-panel pd-fixed">
+    <div class="note rose">Fixed positioning is relative to the <strong>browser viewport</strong> — the element stays in place when you scroll. Used for sticky navigation bars and floating action buttons. Cannot be shown inline here without covering the page.</div>
+    <div class="code-block"><pre><span class="sel">.navbar</span> {
+  <span class="prop">position</span>: <span class="val">fixed</span>;
+  <span class="prop">top</span>:       <span class="val">0</span>;
+  <span class="prop">left</span>:      <span class="val">0</span>;
+  <span class="prop">width</span>:     <span class="val">100%</span>;
+  <span class="prop">z-index</span>:   <span class="val">1000</span>;   <span class="cm">/* stays on top */</span>
+}</pre></div>
+  </div>
+
+  <!-- Sticky panel -->
+  <div class="pos-demo-panel pd-sticky">
+    <div class="note">Sticky acts like <code>relative</code> until the element reaches a scroll threshold (<code>top: 0</code>), then it behaves like <code>fixed</code>. Great for table headers and sidebar nav.</div>
+    <div class="code-block"><pre><span class="sel">.section-header</span> {
+  <span class="prop">position</span>: <span class="val">sticky</span>;
+  <span class="prop">top</span>:       <span class="val">0</span>;       <span class="cm">/* sticks when it reaches top of viewport */</span>
+  <span class="prop">background</span>: <span class="val">white</span>;  <span class="cm">/* needs bg or content shows through */</span>
+  <span class="prop">z-index</span>:   <span class="val">10</span>;
+}</pre></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     §6  FLEXBOX
+     ============================================================ -->
+<section class="section" id="sec-flex">
+  <h2 class="section-title"><span class="sec-num">§6</span>Flexbox</h2>
+
+  <p>Flexbox is a <strong>one-dimensional</strong> layout system — it lays items in a row or column. Set <code>display: flex</code> on a container and all direct children become flex items.</p>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Container Properties</div>
+      <div class="code-block">
+        <pre><span class="sel">.container</span> {
+  <span class="prop">display</span>:         <span class="val">flex</span>;
+  <span class="prop">flex-direction</span>:  <span class="val">row</span>;    <span class="cm">/* or column */</span>
+  <span class="prop">justify-content</span>: <span class="val">center</span>; <span class="cm">/* main axis */</span>
+  <span class="prop">align-items</span>:     <span class="val">center</span>; <span class="cm">/* cross axis */</span>
+  <span class="prop">flex-wrap</span>:       <span class="val">wrap</span>;
+  <span class="prop">gap</span>:             <span class="val">1rem</span>;
+}</pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Item Properties</div>
+      <div class="code-block">
+        <pre><span class="sel">.item</span> {
+  <span class="prop">flex</span>:       <span class="val">1</span>;      <span class="cm">/* grow and fill */</span>
+  <span class="prop">flex-grow</span>:  <span class="val">2</span>;      <span class="cm">/* grow 2× faster */</span>
+  <span class="prop">flex-shrink</span>:<span class="val">0</span>;      <span class="cm">/* do not shrink */</span>
+  <span class="prop">flex-basis</span>: <span class="val">200px</span>; <span class="cm">/* starting size */</span>
+  <span class="prop">align-self</span>: <span class="val">flex-end</span>;
+  <span class="prop">order</span>:      <span class="val">-1</span>;    <span class="cm">/* move to front */</span>
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Memory trick:</strong> <code>justify-content</code> aligns along the <em>main axis</em> (usually horizontal). <code>align-items</code> aligns along the <em>cross axis</em> (usually vertical). When <code>flex-direction: column</code>, they swap.
+  </div>
+
+  <!-- Live: flexbox demo -->
+  <div class="card" style="margin-top:16px">
+    <div class="card-title">✏️ Live Demo — Flexbox Controls</div>
+    <p>Check options to change how the flex container arranges its items. All done with CSS <code>:checked</code> sibling selectors.</p>
+
+    <input type="checkbox" id="cb-flex-center">
+    <input type="checkbox" id="cb-flex-end">
+    <input type="checkbox" id="cb-flex-between">
+    <input type="checkbox" id="cb-flex-col">
+    <input type="checkbox" id="cb-flex-wrap">
+    <input type="checkbox" id="cb-align-center">
+
+    <div class="css-controls">
+      <label class="css-ctrl" for="cb-flex-center">  <input type="checkbox" id="cb-flex-center">  justify: center</label>
+      <label class="css-ctrl" for="cb-flex-end">     <input type="checkbox" id="cb-flex-end">     justify: flex-end</label>
+      <label class="css-ctrl" for="cb-flex-between"> <input type="checkbox" id="cb-flex-between"> justify: space-between</label>
+      <label class="css-ctrl" for="cb-flex-col">     <input type="checkbox" id="cb-flex-col">     direction: column</label>
+      <label class="css-ctrl" for="cb-flex-wrap">    <input type="checkbox" id="cb-flex-wrap">    flex-wrap: wrap</label>
+      <label class="css-ctrl" for="cb-align-center"> <input type="checkbox" id="cb-align-center"> align-items: center</label>
+    </div>
+
+    <div class="flex-preview">
+      <div class="fx-item">A</div>
+      <div class="fx-item">B</div>
+      <div class="fx-item">C</div>
+      <div class="fx-item">D</div>
+      <div class="fx-item">E</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     §7  CSS GRID
+     ============================================================ -->
+<section class="section" id="sec-grid">
+  <h2 class="section-title"><span class="sec-num">§7</span>CSS Grid</h2>
+
+  <p>Grid is a <strong>two-dimensional</strong> layout system — it works with rows <em>and</em> columns at the same time. It is the best tool for building full page layouts.</p>
+
+  <div class="code-block">
+    <pre><span class="cm">/* Define the grid */</span>
+<span class="sel">.layout</span> {
+  <span class="prop">display</span>:               <span class="val">grid</span>;
+  <span class="prop">grid-template-columns</span>: <span class="val">1fr 3fr</span>;      <span class="cm">/* sidebar + main (25/75) */</span>
+  <span class="prop">grid-template-rows</span>:    <span class="val">60px auto 50px</span>;<span class="cm">/* header, content, footer */</span>
+  <span class="prop">gap</span>:                   <span class="val">1rem</span>;
+}
+
+<span class="cm">/* Named template areas — very readable */</span>
+<span class="sel">.page</span> {
+  <span class="prop">display</span>: <span class="val">grid</span>;
+  <span class="prop">grid-template-areas</span>:
+    <span class="str">"header  header"</span>
+    <span class="str">"sidebar main  "</span>
+    <span class="str">"footer  footer"</span>;
+  <span class="prop">grid-template-columns</span>: <span class="val">200px 1fr</span>;
+}
+
+<span class="sel">.header</span>  { <span class="prop">grid-area</span>: <span class="val">header</span>; }
+<span class="sel">.sidebar</span> { <span class="prop">grid-area</span>: <span class="val">sidebar</span>; }
+<span class="sel">.main</span>    { <span class="prop">grid-area</span>: <span class="val">main</span>; }
+<span class="sel">.footer</span>  { <span class="prop">grid-area</span>: <span class="val">footer</span>; }
+
+<span class="cm">/* Item spanning multiple columns */</span>
+<span class="sel">.wide-item</span> { <span class="prop">grid-column</span>: <span class="val">span 2</span>; }
+<span class="sel">.full-row</span>  { <span class="prop">grid-column</span>: <span class="val">1 / -1</span>; }
+
+<span class="cm">/* Responsive grid — no media query needed */</span>
+<span class="sel">.card-grid</span> {
+  <span class="prop">display</span>:               <span class="val">grid</span>;
+  <span class="prop">grid-template-columns</span>: <span class="val">repeat(auto-fit, minmax(220px, 1fr))</span>;
+  <span class="prop">gap</span>:                   <span class="val">1.5rem</span>;
+}
+<span class="cm">/* auto-fit creates as many columns as fit the container */</span>
+<span class="cm">/* minmax: each column is at least 220px, grows to fill */</span></pre>
+  </div>
+
+  <!-- Live: grid demo -->
+  <div class="card" style="margin-top:16px">
+    <div class="card-title">✏️ Live Demo — CSS Grid Controls</div>
+    <p>Check options to see how grid properties change the layout of the six items below.</p>
+
+    <input type="checkbox" id="cb-grid-2">
+    <input type="checkbox" id="cb-grid-3">
+    <input type="checkbox" id="cb-grid-auto">
+    <input type="checkbox" id="cb-grid-gap">
+    <input type="checkbox" id="cb-grid-dense">
+
+    <div class="css-controls">
+      <label class="css-ctrl" for="cb-grid-2">    <input type="checkbox" id="cb-grid-2">    2 columns</label>
+      <label class="css-ctrl" for="cb-grid-3">    <input type="checkbox" id="cb-grid-3">    3 columns</label>
+      <label class="css-ctrl" for="cb-grid-auto"> <input type="checkbox" id="cb-grid-auto"> auto-fit</label>
+      <label class="css-ctrl" for="cb-grid-gap">  <input type="checkbox" id="cb-grid-gap">  gap: 16px</label>
+      <label class="css-ctrl" for="cb-grid-dense"><input type="checkbox" id="cb-grid-dense">dense flow</label>
+    </div>
+
+    <div class="grid-preview">
+      <div class="gr-item">Item 1</div>
+      <div class="gr-item">Item 2</div>
+      <div class="gr-item">Item 3</div>
+      <div class="gr-item">Item 4</div>
+      <div class="gr-item">Item 5</div>
+      <div class="gr-item">Item 6</div>
+    </div>
+  </div>
+
+  <div class="note green" style="margin-top:16px">
+    <strong>Grid vs Flexbox:</strong> Use <strong>Grid</strong> when you control both rows and columns (page layout, card grids). Use <strong>Flexbox</strong> for a single row or column (nav bar, button group, form row). They work great together.
+  </div>
+</section>
+
+<!-- ============================================================
+     §8  MEDIA QUERIES
+     ============================================================ -->
+<section class="section" id="sec-mq">
+  <h2 class="section-title"><span class="sec-num">§8</span>Media Queries</h2>
+
+  <p>A media query applies CSS rules only when a specific condition is true — usually a viewport width range.</p>
+
+  <div class="code-block">
+    <pre><span class="cm">/* Basic syntax */</span>
+<span class="kw">@media</span> (<span class="prop">min-width</span>: <span class="val">768px</span>) {
+  <span class="cm">/* Rules applied only on 768px+ screens */</span>
+  <span class="sel">.sidebar</span> { <span class="prop">display</span>: <span class="val">block</span>; }
+}
+
+<span class="cm">/* Common breakpoints (mobile-first, min-width) */</span>
+<span class="cm">/* xs: base styles (below 480px) — no query needed */</span>
+<span class="kw">@media</span> (<span class="prop">min-width</span>: <span class="val">480px</span>)  { <span class="cm">/* sm: large phones */</span> }
+<span class="kw">@media</span> (<span class="prop">min-width</span>: <span class="val">768px</span>)  { <span class="cm">/* md: tablets */</span> }
+<span class="kw">@media</span> (<span class="prop">min-width</span>: <span class="val">1024px</span>) { <span class="cm">/* lg: desktops */</span> }
+<span class="kw">@media</span> (<span class="prop">min-width</span>: <span class="val">1280px</span>) { <span class="cm">/* xl: large screens */</span> }
+
+<span class="cm">/* Combining conditions */</span>
+<span class="kw">@media</span> (<span class="prop">min-width</span>: <span class="val">768px</span>) <span class="kw">and</span> (<span class="prop">max-width</span>: <span class="val">1023px</span>) { <span class="cm">/* tablets only */</span> }
+
+<span class="cm">/* Other media features */</span>
+<span class="kw">@media</span> (<span class="prop">orientation</span>: <span class="val">landscape</span>)         { <span class="cm">/* sideways */</span> }
+<span class="kw">@media</span> (<span class="prop">prefers-color-scheme</span>: <span class="val">dark</span>)     { <span class="cm">/* dark mode */</span> }
+<span class="kw">@media</span> (<span class="prop">prefers-reduced-motion</span>: <span class="val">reduce</span>) { <span class="cm">/* disable animations */</span> }
+<span class="kw">@media</span> (<span class="prop">hover</span>: <span class="val">none</span>)                    { <span class="cm">/* touch device, no hover */</span> }</pre>
+  </div>
+
+  <!-- Live: media query device simulator — pure CSS -->
+  <div class="card" style="margin-top:16px">
+    <div class="card-title">✏️ Live Demo — Device Layout Simulator</div>
+    <p>Select a device to see how the same content adapts its layout at different breakpoints.</p>
+
+    <div class="mq-device-set">
+      <input type="radio" name="mq-device" id="mq-mobile" checked>
+      <input type="radio" name="mq-device" id="mq-tablet">
+      <input type="radio" name="mq-device" id="mq-desktop">
+
+      <div class="mq-btns">
+        <label class="mq-btn-label" for="mq-mobile">📱 Mobile (&lt;480px)</label>
+        <label class="mq-btn-label" for="mq-tablet">📟 Tablet (768px)</label>
+        <label class="mq-btn-label" for="mq-desktop">🖥 Desktop (1024px+)</label>
+      </div>
+
+      <div class="mq-frame mq-frame-mobile">
+        <div class="mq-screen">
+          <div class="mq-nav-bar">
+            <div class="mq-logo">VTU</div>
+            <div class="mq-hamburger">☰</div>
+            <div class="mq-nav-links"><span>Home</span><span>Courses</span><span>Profile</span></div>
+          </div>
+          <div class="mq-content">
+            <div class="mq-cards">
+              <div class="mq-card">Card 1</div>
+              <div class="mq-card">Card 2</div>
+              <div class="mq-card">Card 3</div>
+            </div>
+          </div>
+        </div>
+        <div class="mq-label">1-column layout · hamburger nav · @media (max-width: 480px)</div>
+      </div>
+
+      <div class="mq-frame mq-frame-tablet">
+        <div class="mq-screen">
+          <div class="mq-nav-bar">
+            <div class="mq-logo">VTU</div>
+            <div class="mq-hamburger">☰</div>
+            <div class="mq-nav-links"><span>Home</span><span>Courses</span><span>Profile</span></div>
+          </div>
+          <div class="mq-content">
+            <div class="mq-cards">
+              <div class="mq-card">Card 1</div>
+              <div class="mq-card">Card 2</div>
+              <div class="mq-card">Card 3</div>
+            </div>
+          </div>
+        </div>
+        <div class="mq-label">2-column layout · partial nav · @media (min-width: 768px)</div>
+      </div>
+
+      <div class="mq-frame mq-frame-desktop">
+        <div class="mq-screen">
+          <div class="mq-nav-bar">
+            <div class="mq-logo">VTU</div>
+            <div class="mq-hamburger">☰</div>
+            <div class="mq-nav-links"><span>Home</span><span>Courses</span><span>Profile</span></div>
+          </div>
+          <div class="mq-content">
+            <div class="mq-cards">
+              <div class="mq-card">Card 1</div>
+              <div class="mq-card">Card 2</div>
+              <div class="mq-card">Card 3</div>
+            </div>
+          </div>
+        </div>
+        <div class="mq-label">3-column layout · full nav · @media (min-width: 1024px)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     §9  RWD PRINCIPLES
+     ============================================================ -->
+<section class="section" id="sec-rwd">
+  <h2 class="section-title"><span class="sec-num">§9</span>Responsive Web Design Principles</h2>
+
+  <p>Responsive Web Design (RWD) was coined by <strong>Ethan Marcotte</strong> in 2010. The goal is one website that works well on every device — phone, tablet, and desktop.</p>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title" style="color:var(--accent)">Pillar 1 — Fluid Grids</div>
+      <p>Use <strong>percentages</strong> (or <code>fr</code> units) instead of fixed pixels for column widths. Columns resize proportionally.</p>
+      <div class="code-block"><pre><span class="cm">/* Fixed — breaks on small screens */</span>
+<span class="sel">.sidebar</span> { <span class="prop">width</span>: <span class="val">300px</span>; }
+
+<span class="cm">/* Fluid — scales with the container */</span>
+<span class="sel">.sidebar</span> { <span class="prop">width</span>: <span class="val">30%</span>; }
+
+<span class="cm">/* Best — CSS Grid with fr units */</span>
+<span class="sel">.layout</span> {
+  <span class="prop">grid-template-columns</span>: <span class="val">1fr 3fr</span>;
+}</pre></div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:var(--green)">Pillar 2 — Flexible Images</div>
+      <p>Images should never overflow their container. One line of CSS is all you need as a baseline:</p>
+      <div class="code-block"><pre><span class="sel">img</span> {
+  <span class="prop">max-width</span>: <span class="val">100%</span>;   <span class="cm">/* never wider than container */</span>
+  <span class="prop">height</span>:    <span class="val">auto</span>;   <span class="cm">/* preserve aspect ratio */</span>
+}
+
+<span class="cm">/* Responsive video wrapper (16:9) */</span>
+<span class="sel">.video-wrap</span> {
+  <span class="prop">position</span>:       <span class="val">relative</span>;
+  <span class="prop">padding-bottom</span>: <span class="val">56.25%</span>;
+  <span class="prop">height</span>:         <span class="val">0</span>;
+}
+<span class="sel">.video-wrap iframe</span> {
+  <span class="prop">position</span>: <span class="val">absolute</span>;
+  <span class="prop">width</span>: <span class="val">100%</span>; <span class="prop">height</span>: <span class="val">100%</span>;
+}</pre></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--amber)">Pillar 3 — Media Queries</div>
+    <p>Apply different CSS rules at different viewport widths. Already covered in §8 above — they are the third pillar that ties fluid grids and flexible images together.</p>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="card-title">Responsive Units Cheat Sheet</div>
+    <div class="units-grid">
+      <div class="unit-card"><div class="unit-name">%</div><p class="unit-desc">Percentage of parent element's size</p></div>
+      <div class="unit-card"><div class="unit-name">rem</div><p class="unit-desc">Root font-size (usually 16px). Scales with user preferences.</p></div>
+      <div class="unit-card"><div class="unit-name">em</div><p class="unit-desc">Current element's font-size. Compounds through nesting.</p></div>
+      <div class="unit-card"><div class="unit-name">vw</div><p class="unit-desc">1% of viewport width. 100vw = full screen width.</p></div>
+      <div class="unit-card"><div class="unit-name">vh</div><p class="unit-desc">1% of viewport height. 100vh = full screen height.</p></div>
+      <div class="unit-card"><div class="unit-name">fr</div><p class="unit-desc">Fractional unit for Grid. 1fr = one share of free space.</p></div>
+      <div class="unit-card"><div class="unit-name">ch</div><p class="unit-desc">Width of "0" character. Good for line-length limits.</p></div>
+      <div class="unit-card"><div class="unit-name">clamp</div><p class="unit-desc"><code>clamp(min, ideal, max)</code> — fluid value with limits.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     §10  MOBILE-FIRST
+     ============================================================ -->
+<section class="section" id="sec-mobile">
+  <h2 class="section-title"><span class="sec-num">§10</span>Mobile-First Design</h2>
+
+  <p>Mobile-first means you write your <strong>base CSS for small screens first</strong>, then use <code>min-width</code> media queries to progressively enhance the layout for larger screens.</p>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Mobile-First (✓ Recommended)</div>
+      <div class="code-block"><pre><span class="cm">/* Base — mobile (no query) */</span>
+<span class="sel">.cards</span> {
+  <span class="prop">grid-template-columns</span>: <span class="val">1fr</span>;
+}
+<span class="sel">.sidebar</span> { <span class="prop">display</span>: <span class="val">none</span>; }
+
+<span class="cm">/* Tablet and up */</span>
+<span class="kw">@media</span> (<span class="prop">min-width</span>: <span class="val">768px</span>) {
+  <span class="sel">.cards</span> {
+    <span class="prop">grid-template-columns</span>: <span class="val">1fr 1fr</span>;
+  }
+  <span class="sel">.sidebar</span> { <span class="prop">display</span>: <span class="val">block</span>; }
+}
+
+<span class="cm">/* Desktop and up */</span>
+<span class="kw">@media</span> (<span class="prop">min-width</span>: <span class="val">1024px</span>) {
+  <span class="sel">.cards</span> {
+    <span class="prop">grid-template-columns</span>: <span class="val">repeat(3, 1fr)</span>;
+  }
+}</pre></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Desktop-First (✗ Avoid)</div>
+      <div class="code-block"><pre><span class="cm">/* Base — desktop (no query) */</span>
+<span class="sel">.cards</span> {
+  <span class="prop">grid-template-columns</span>: <span class="val">repeat(3, 1fr)</span>;
+}
+
+<span class="cm">/* Tablet — now restrict */</span>
+<span class="kw">@media</span> (<span class="prop">max-width</span>: <span class="val">1023px</span>) {
+  <span class="sel">.cards</span> {
+    <span class="prop">grid-template-columns</span>: <span class="val">1fr 1fr</span>;
+  }
+}
+
+<span class="cm">/* Mobile — restrict again */</span>
+<span class="kw">@media</span> (<span class="prop">max-width</span>: <span class="val">767px</span>) {
+  <span class="sel">.cards</span> {
+    <span class="prop">grid-template-columns</span>: <span class="val">1fr</span>;
+  }
+  <span class="sel">.sidebar</span> { <span class="prop">display</span>: <span class="val">none</span>; }
+}</pre></div>
+      <div class="note rose" style="margin-top:10px">Mobile devices download all desktop CSS then override it — wasteful. Google also uses mobile-first indexing for SEO.</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:0">
+    <div class="card-title">Mobile-First Checklist</div>
+    <div class="checklist">
+      <div class="cl-row">Include <code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code> on every page</div>
+      <div class="cl-row">Set <code>img { max-width: 100%; height: auto; }</code> globally</div>
+      <div class="cl-row">Use <code>* { box-sizing: border-box; }</code> globally</div>
+      <div class="cl-row">Write base styles for mobile first — single column, no sidebar</div>
+      <div class="cl-row">Use <code>min-width</code> in media queries only (not max-width)</div>
+      <div class="cl-row">Touch targets (buttons, links) must be at least 44×44px</div>
+      <div class="cl-row">Font size ≥ 16px on inputs — prevents iOS auto-zoom on focus</div>
+      <div class="cl-row">No horizontal scroll at any viewport width</div>
+      <div class="cl-row">Use flexible units (%, rem, fr, vw) instead of fixed px widths</div>
+      <div class="cl-row">Test on a real device, not just a resized browser window</div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="page-footer">
+  VTU MCA — Web Technologies · Module 2 · CSS3 &amp; Responsive Web Design &nbsp;|&nbsp;
+  <a href="landing.html">← Back to Dashboard</a>
+</footer>
+
+</body>
+</html>
