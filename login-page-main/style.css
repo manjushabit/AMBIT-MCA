@@ -392,6 +392,55 @@ input:focus {
   gap: 1rem;
 }
 
+.dashboard-media {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.media-card {
+  padding: 1rem;
+}
+
+.media-card h3 {
+  margin: 0;
+  font-size: 0.98rem;
+  color: var(--text-soft);
+}
+
+.media-subtle {
+  margin: 0.35rem 0 0.85rem;
+  color: var(--text-soft);
+  font-size: 0.88rem;
+}
+
+.media-player {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.canvas-card {
+  grid-column: 1 / -1;
+  padding: 1rem;
+}
+
+.dashboard-canvas {
+  width: 100%;
+  height: 260px; /* JS will resize drawing buffer based on this size */
+  display: block;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.canvas-hint {
+  margin: 0.65rem 0 0;
+  color: var(--text-soft);
+  font-size: 0.86rem;
+}
+
 .stat-card {
   padding: 1rem;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
@@ -476,6 +525,14 @@ input:focus {
     min-height: auto;
   }
 
+  .dashboard-media {
+    grid-template-columns: 1fr;
+  }
+
+  .canvas-card {
+    grid-column: auto;
+  }
+
   .sidebar-nav {
     grid-template-columns: repeat(4, minmax(120px, 1fr));
   }
@@ -520,3 +577,4 @@ input:focus {
     grid-template-columns: 1fr;
   }
 }
+
