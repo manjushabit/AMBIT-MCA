@@ -1,0 +1,26 @@
+[
+  {
+    "id": "MCA1001",
+    "name": "Aarav Sharma",
+    "email": "aarav@example.com",
+    "course": "MCA 1st Year"
+  },
+  {
+    "id": "MCA101",
+    "name": "Leelavati Chungadi",
+    "email": "leelavatichungadi@gmail.com",
+    "course": "MCA 1st Year"
+  },
+  {
+    "id": "MCA102",
+    "name": "Pradnya Munjole",
+    "email": "pradnya@gmail.com",
+    "course": "MCA 1st Year"
+  },
+  {
+    "id": "MCA103",
+    "name": "Vishal Chougale",
+    "email": "vishal@gmail.com",
+    "course": "MCA 1st Year"
+  }
+]
