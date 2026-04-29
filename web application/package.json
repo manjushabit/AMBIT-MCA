@@ -1,0 +1,9 @@
+{
+  "name": "mca-college-portal",
+  "version": "1.0.0",
+  "description": "MCA college website with login and student management",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
