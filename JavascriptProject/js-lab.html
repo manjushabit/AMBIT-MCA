@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JS Lab — JavaScript Fundamentals</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Epilogue:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg        : #0e0f14;
+  --surface   : #14161e;
+  --surf2     : #1c1f2b;
+  --surf3     : #252936;
+  --border    : #2e3245;
+  --ink       : #e8eaf4;
+  --ink2      : #8b90b0;
+  --muted     : #4a5070;
+  --yellow    : #f5d547;
+  --yellow-lt : rgba(245,213,71,.1);
+  --green     : #4ade80;
+  --green-lt  : rgba(74,222,128,.1);
+  --blue      : #60a5fa;
+  --blue-lt   : rgba(96,165,250,.1);
+  --orange    : #fb923c;
+  --orange-lt : rgba(251,146,60,.1);
+  --pink      : #f472b6;
+  --pink-lt   : rgba(244,114,182,.1);
+  --red       : #f87171;
+  --red-lt    : rgba(248,113,113,.1);
+  --font-head : 'Syne', sans-serif;
+  --font-body : 'Epilogue', sans-serif;
+  --font-code : 'Fira Code', monospace;
+  --r         : 10px;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  line-height: 1.65;
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+.lab-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.lab-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-mark {
+  width: 32px;
+  height: 32px;
+  background: var(--yellow);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-code);
+  font-size: 14px;
+  font-weight: 600;
+  color: #0e0f14;
+  flex-shrink: 0;
+}
+
+.logo-text {
+  font-family: var(--font-head);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.logo-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-tag {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+/* ── Layout ───────────────────────────────────────────────── */
+.lab-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: calc(100vh - 60px);
+}
+
+/* ── Sidebar ──────────────────────────────────────────────── */
+.sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 20px 0;
+  position: sticky;
+  top: 60px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+
+.sidebar-section {
+  padding: 0 16px;
+  margin-bottom: 6px;
+}
+
+.sidebar-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 10px 8px 6px;
+  display: block;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink2);
+  text-decoration: none;
+  transition: all .15s;
+  margin-bottom: 2px;
+}
+
+.sidebar-link:hover {
+  background: var(--surf2);
+  color: var(--ink);
+}
+
+.sidebar-link.active {
+  background: var(--yellow-lt);
+  color: var(--yellow);
+}
+
+.sidebar-link .num {
+  font-family: var(--font-code);
+  font-size: 10px;
+  color: var(--muted);
+  min-width: 18px;
+}
+
+/* ── Main content ─────────────────────────────────────────── */
+.lab-main {
+  padding: 36px 40px 80px;
+  max-width: 900px;
+}
+
+/* ── Hero banner ──────────────────────────────────────────── */
+.lab-hero {
+  margin-bottom: 48px;
+}
+
+.hero-kicker {
+  font-family: var(--font-code);
+  font-size: 12px;
+  color: var(--yellow);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero-kicker::before {
+  content: '';
+  width: 20px;
+  height: 2px;
+  background: var(--yellow);
+  border-radius: 2px;
+}
+
+.hero-h1 {
+  font-family: var(--font-head);
+  font-size: clamp(28px, 4vw, 46px);
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1.1;
+  margin-bottom: 14px;
+}
+
+.hero-h1 em {
+  color: var(--yellow);
+  font-style: normal;
+}
+
+.hero-desc {
+  font-size: 15px;
+  color: var(--ink2);
+  line-height: 1.75;
+  max-width: 560px;
+  margin-bottom: 22px;
+}
+
+/* Module cards grid */
+.module-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.module-card {
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 16px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform .18s, border-color .18s, box-shadow .18s;
+  display: block;
+}
+
+.module-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--yellow);
+  box-shadow: 0 6px 24px rgba(245,213,71,.1);
+}
+
+.mc-icon { font-size: 22px; margin-bottom: 10px; }
+.mc-num  { font-family: var(--font-code); font-size: 10px; color: var(--muted); margin-bottom: 4px; }
+.mc-title { font-family: var(--font-head); font-size: 13px; font-weight: 700; color: var(--ink); line-height: 1.3; }
+
+/* ── Section headers ──────────────────────────────────────── */
+.section-head {
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.sec-badge {
+  font-family: var(--font-code);
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 500;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.badge-y  { background: var(--yellow-lt); color: var(--yellow); border: 1px solid rgba(245,213,71,.2); }
+.badge-g  { background: var(--green-lt);  color: var(--green);  border: 1px solid rgba(74,222,128,.2); }
+.badge-b  { background: var(--blue-lt);   color: var(--blue);   border: 1px solid rgba(96,165,250,.2); }
+.badge-o  { background: var(--orange-lt); color: var(--orange); border: 1px solid rgba(251,146,60,.2); }
+.badge-p  { background: var(--pink-lt);   color: var(--pink);   border: 1px solid rgba(244,114,182,.2); }
+
+.sh-text {}
+.sh-tag {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+
+.sh-title {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 5px;
+}
+
+.sh-desc {
+  font-size: 14px;
+  color: var(--ink2);
+  line-height: 1.65;
+}
+
+/* ── Topic section ────────────────────────────────────────── */
+.topic-section {
+  margin-bottom: 64px;
+  scroll-margin-top: 80px;
+}
+
+/* ── Note ─────────────────────────────────────────────────── */
+.note {
+  border-left: 3px solid;
+  padding: 11px 15px;
+  border-radius: 0 8px 8px 0;
+  font-size: 13.5px;
+  line-height: 1.65;
+  margin: 14px 0;
+}
+
+.note-y { border-color: var(--yellow); background: var(--yellow-lt); color: #d4b800; }
+.note-g { border-color: var(--green);  background: var(--green-lt);  color: #22c55e; }
+.note-b { border-color: var(--blue);   background: var(--blue-lt);   color: var(--blue); }
+.note-r { border-color: var(--red);    background: var(--red-lt);    color: var(--red); }
+
+.note strong { font-weight: 700; }
+code {
+  font-family: var(--font-code);
+  font-size: 12.5px;
+  background: var(--surf3);
+  color: var(--yellow);
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+/* ── Info table ───────────────────────────────────────────── */
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 12px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+
+.info-table th {
+  background: var(--surf3);
+  padding: 9px 13px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.info-table td {
+  padding: 9px 13px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.info-table tr:last-child td { border-bottom: none; }
+.info-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+.info-table td:first-child { font-family: var(--font-code); font-size: 12px; color: var(--yellow); }
+.info-table td:nth-child(2) { color: var(--blue); }
+.info-table td:last-child   { color: var(--ink2); }
+
+/* ── READ-ONLY code display ───────────────────────────────── */
+.code-display {
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin: 12px 0;
+}
+
+.code-display-bar {
+  background: var(--surf3);
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--muted);
+  font-family: var(--font-code);
+}
+
+.cdb-dot { width: 8px; height: 8px; border-radius: 50%; }
+.dot-r { background: #ef4444; }
+.dot-y { background: #f59e0b; }
+.dot-g { background: #22c55e; }
+
+.code-display pre {
+  font-family: var(--font-code);
+  font-size: 13px;
+  line-height: 1.75;
+  padding: 16px 18px;
+  overflow-x: auto;
+  color: var(--ink);
+  white-space: pre;
+}
+
+/* Syntax colours */
+.kw   { color: #c792ea; }  /* keywords */
+.fn   { color: #82aaff; }  /* function names */
+.str  { color: #c3e88d; }  /* strings */
+.num  { color: #f78c6c; }  /* numbers */
+.cm   { color: #546e7a; font-style: italic; }  /* comments */
+.op   { color: #89ddff; }  /* operators */
+.bool { color: #ff5874; }  /* booleans */
+.var  { color: var(--yellow); }  /* variables */
+.prop { color: #b2ccd6; }  /* properties */
+
+/* ── EDITABLE SANDBOX ─────────────────────────────────────── */
+.sandbox {
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin: 16px 0;
+  transition: border-color .2s;
+}
+
+.sandbox:focus-within {
+  border-color: var(--yellow);
+  box-shadow: 0 0 0 3px rgba(245,213,71,.08);
+}
+
+.sandbox-bar {
+  background: var(--surf3);
+  padding: 9px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+
+.sandbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-family: var(--font-code);
+  color: var(--ink2);
+}
+
+.sandbox-label .edit-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--yellow);
+  animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: .3; }
+}
+
+.run-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 14px;
+  background: var(--yellow);
+  color: #0e0f14;
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-code);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+}
+
+.run-btn:hover { background: #e8c93a; transform: translateY(-1px); }
+.run-btn:active { transform: scale(.97); }
+
+.sandbox-editor {
+  font-family: var(--font-code);
+  font-size: 13px;
+  line-height: 1.75;
+  padding: 16px 18px;
+  background: var(--surf2);
+  color: var(--ink);
+  border: none;
+  outline: none;
+  width: 100%;
+  resize: vertical;
+  min-height: 120px;
+  caret-color: var(--yellow);
+  tab-size: 2;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+.sandbox-output {
+  border-top: 1px solid var(--border);
+  min-height: 42px;
+  padding: 12px 16px;
+  font-family: var(--font-code);
+  font-size: 13px;
+  background: #0a0b0f;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.output-prompt {
+  color: var(--green);
+  flex-shrink: 0;
+  margin-top: 1px;
+  font-weight: 600;
+}
+
+.output-text {
+  color: var(--green);
+  line-height: 1.6;
+  word-break: break-all;
+  flex: 1;
+}
+
+.output-text.empty { color: var(--muted); font-style: italic; }
+.output-text.error { color: var(--red); }
+
+/* ── Two column layout ────────────────────────────────────── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 12px 0; }
+
+/* ── Page separator ───────────────────────────────────────── */
+.topic-divider {
+  height: 1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+  margin: 52px 0 0;
+}
+
+/* ── Footer ───────────────────────────────────────────────── */
+.lab-footer {
+  text-align: center;
+  padding: 20px;
+  color: var(--muted);
+  font-size: 12px;
+  border-top: 1px solid var(--border);
+}
+
+/* ── Scrollbar ────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+@media (max-width: 840px) {
+  .lab-layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .lab-main { padding: 24px 18px 60px; }
+  .module-cards { grid-template-columns: 1fr 1fr; }
+  .two-col { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ─────────────────────────────────────────────── -->
+<header class="lab-header">
+  <div class="lab-logo">
+    <div class="logo-mark">JS</div>
+    <div>
+      <div class="logo-text">JS Lab</div>
+      <div class="logo-sub">VTU MCA — Module 4</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="header-tag">JavaScript Basics</span>
+    <span class="header-tag">DOM</span>
+  </div>
+</header>
+
+<!-- ── BODY ───────────────────────────────────────────────── -->
+<div class="lab-layout">
+
+  <!-- ── SIDEBAR ────────────────────────────────────────────── -->
+  <nav class="sidebar">
+    <div class="sidebar-section">
+      <span class="sidebar-label">JavaScript Basics</span>
+      <a href="#sec-intro"      class="sidebar-link active"><span class="num">01</span>Introduction</a>
+      <a href="#sec-variables"  class="sidebar-link"><span class="num">02</span>Variables</a>
+      <a href="#sec-datatypes"  class="sidebar-link"><span class="num">03</span>Data Types</a>
+      <a href="#sec-operators"  class="sidebar-link"><span class="num">04</span>Operators</a>
+      <a href="#sec-control"    class="sidebar-link"><span class="num">05</span>Control Flow</a>
+      <a href="#sec-loops"      class="sidebar-link"><span class="num">06</span>Loops</a>
+      <a href="#sec-functions"  class="sidebar-link"><span class="num">07</span>Functions</a>
+      <a href="#sec-scope"      class="sidebar-link"><span class="num">08</span>Scope</a>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Practice</span>
+      <a href="#sec-exercises"  class="sidebar-link"><span class="num">✦</span>Exercises</a>
+    </div>
+  </nav>
+
+  <!-- ── MAIN ───────────────────────────────────────────────── -->
+  <main class="lab-main">
+
+    <!-- HERO -->
+    <div class="lab-hero">
+      <div class="hero-kicker">// VTU MCA — Web Technologies</div>
+      <h1 class="hero-h1">JavaScript<br><em>Fundamentals</em></h1>
+      <p class="hero-desc">An interactive lab for learning JavaScript basics. Each topic has an editable code sandbox — change the code and press <strong style="color:var(--yellow)">▶ Run</strong> to see results instantly.</p>
+      <div class="module-cards">
+        <a href="#sec-variables" class="module-card">
+          <div class="mc-icon">📦</div>
+          <div class="mc-num">01–03</div>
+          <div class="mc-title">Variables &amp; Types</div>
+        </a>
+        <a href="#sec-operators" class="module-card">
+          <div class="mc-icon">⚙️</div>
+          <div class="mc-num">04</div>
+          <div class="mc-title">Operators</div>
+        </a>
+        <a href="#sec-control" class="module-card">
+          <div class="mc-icon">🔀</div>
+          <div class="mc-num">05–06</div>
+          <div class="mc-title">Control &amp; Loops</div>
+        </a>
+        <a href="#sec-functions" class="module-card">
+          <div class="mc-icon">🔧</div>
+          <div class="mc-num">07–08</div>
+          <div class="mc-title">Functions &amp; Scope</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- §1  INTRODUCTION                                        -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="topic-section" id="sec-intro">
+      <div class="section-head">
+        <span class="sec-badge badge-y">§1</span>
+        <div class="sh-text">
+          <div class="sh-tag">JavaScript Basics</div>
+          <div class="sh-title">Introduction to JavaScript</div>
+          <div class="sh-desc">JavaScript is the programming language of the web. It runs in the browser, makes pages interactive, and can also run on the server (Node.js).</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div>
+          <p style="font-size:14px;color:var(--ink2);margin-bottom:10px">JavaScript can:</p>
+          <table class="info-table">
+            <tr><th>Capability</th><th>Example</th></tr>
+            <tr><td>Change HTML</td><td style="color:var(--ink2)">Update text, hide/show elements</td></tr>
+            <tr><td>Change CSS</td><td style="color:var(--ink2)">Add/remove classes dynamically</td></tr>
+            <tr><td>Handle events</td><td style="color:var(--ink2)">Click, keypress, form submit</td></tr>
+            <tr><td>Fetch data</td><td style="color:var(--ink2)">Call APIs, update without reload</td></tr>
+            <tr><td>Store data</td><td style="color:var(--ink2)">localStorage, sessionStorage</td></tr>
+          </table>
+        </div>
+        <div>
+          <p style="font-size:14px;color:var(--ink2);margin-bottom:10px">Where JavaScript runs:</p>
+          <table class="info-table">
+            <tr><th>Environment</th><th>How</th></tr>
+            <tr><td>Browser</td><td style="color:var(--ink2)"><code>&lt;script&gt;</code> tag in HTML</td></tr>
+            <tr><td>External file</td><td style="color:var(--ink2)"><code>src="app.js"</code> attribute</td></tr>
+            <tr><td>Console</td><td style="color:var(--ink2)">F12 → Console tab</td></tr>
+            <tr><td>Node.js</td><td style="color:var(--ink2)">Server-side JavaScript runtime</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="code-display">
+        <div class="code-display-bar">
+          <span class="cdb-dot dot-r"></span><span class="cdb-dot dot-y"></span><span class="cdb-dot dot-g"></span>
+          <span style="margin-left:4px">intro.js — three ways to add JS to a page</span>
+        </div>
+        <pre><span class="cm">// 1. Inline — inside a &lt;script&gt; tag in HTML</span>
+<span class="kw">alert</span>(<span class="str">"Hello World!"</span>);
+
+<span class="cm">// 2. External file — best practice</span>
+<span class="cm">// &lt;script src="app.js"&gt;&lt;/script&gt;</span>
+
+<span class="cm">// 3. Output to the browser console</span>
+console.<span class="fn">log</span>(<span class="str">"VTU MCA JavaScript Lab"</span>);
+
+<span class="cm">// 4. Write to the HTML page</span>
+document.<span class="prop">write</span>(<span class="str">"This writes to the page"</span>);</pre>
+      </div>
+
+      <div class="note note-y">
+        <strong>Good to know:</strong> In this lab, the sandbox uses <code>console.log()</code> to show output in the green output panel below each editor. This is exactly the same as the browser's DevTools console.
+      </div>
+
+      <!-- First sandbox -->
+      <div class="sandbox" id="sb-intro">
+        <div class="sandbox-bar">
+          <div class="sandbox-label">
+            <span class="edit-dot"></span>
+            intro.js — edit and run
+          </div>
+          <button class="run-btn" onclick="runSandbox('sb-intro')">▶ Run</button>
+        </div>
+        <textarea class="sandbox-editor" id="sb-intro-code" rows="5" spellcheck="false">// Your first JavaScript program
+console.log("Hello, VTU MCA!");
+console.log("JavaScript is the language of the web.");
+console.log(2024);
+console.log(true);</textarea>
+        <div class="sandbox-output">
+          <span class="output-prompt">›</span>
+          <span class="output-text empty" id="sb-intro-out">Press ▶ Run to execute the code above</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="topic-divider"></div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- §2  VARIABLES                                           -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="topic-section" id="sec-variables">
+      <div class="section-head">
+        <span class="sec-badge badge-g">§2</span>
+        <div class="sh-text">
+          <div class="sh-tag">JavaScript Basics</div>
+          <div class="sh-title">Variables</div>
+          <div class="sh-desc">Variables are named containers that store values. JavaScript has three ways to declare them: <code>var</code>, <code>let</code>, and <code>const</code>.</div>
+        </div>
+      </div>
+
+      <table class="info-table">
+        <tr>
+          <th>Keyword</th>
+          <th>Scope</th>
+          <th>Reassignable?</th>
+          <th>Hoisted?</th>
+          <th>Use when</th>
+        </tr>
+        <tr>
+          <td>var</td>
+          <td style="color:var(--orange)">Function</td>
+          <td style="color:var(--green)">Yes</td>
+          <td style="color:var(--green)">Yes (as undefined)</td>
+          <td style="color:var(--ink2)">Old code only — avoid in new code</td>
+        </tr>
+        <tr>
+          <td>let</td>
+          <td style="color:var(--blue)">Block { }</td>
+          <td style="color:var(--green)">Yes</td>
+          <td style="color:var(--red)">No (TDZ error)</td>
+          <td style="color:var(--ink2)">Values that will change (loops, counters)</td>
+        </tr>
+        <tr>
+          <td>const</td>
+          <td style="color:var(--blue)">Block { }</td>
+          <td style="color:var(--red)">No</td>
+          <td style="color:var(--red)">No (TDZ error)</td>
+          <td style="color:var(--ink2)">Values that won't change — use by default</td>
+        </tr>
+      </table>
+
+      <div class="note note-g">
+        <strong>Best practice:</strong> Default to <code>const</code>. Switch to <code>let</code> only when you need to reassign. Never use <code>var</code> in modern code.
+      </div>
+
+      <div class="sandbox" id="sb-vars">
+        <div class="sandbox-bar">
+          <div class="sandbox-label"><span class="edit-dot"></span>variables.js</div>
+          <button class="run-btn" onclick="runSandbox('sb-vars')">▶ Run</button>
+        </div>
+        <textarea class="sandbox-editor" id="sb-vars-code" rows="20" spellcheck="false">// ── const — value never changes ──
+const studentName = "Arjun Sharma";
+const rollNumber  = "4MCA001";   // Try: change the number
+const pi          = 3.14159;
+
+console.log("Student:", studentName);
+console.log("Roll No:", rollNumber);
+
+// ── let — value can change ──
+let score = 85;
+console.log("Initial score:", score);
+score = 92;   // reassign
+console.log("Updated score:", score);
+
+// ── var — old style, avoid ──
+var city = "Bengaluru";
+console.log("City:", city);
+
+// ── Multiple assignment ──
+let x = 10, y = 20, z = 30;
+console.log("x + y + z =", x + y + z);
+
+// ── Template literals (backtick strings) ──
+const message = `Hello ${studentName}, your score is ${score}`;
+console.log(message);</textarea>
+        <div class="sandbox-output">
+          <span class="output-prompt">›</span>
+          <span class="output-text empty" id="sb-vars-out">Press ▶ Run</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="topic-divider"></div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- §3  DATA TYPES                                          -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="topic-section" id="sec-datatypes">
+      <div class="section-head">
+        <span class="sec-badge badge-b">§3</span>
+        <div class="sh-text">
+          <div class="sh-tag">JavaScript Basics</div>
+          <div class="sh-title">Data Types</div>
+          <div class="sh-desc">JavaScript is dynamically typed — variables can hold any type and types are checked at runtime. There are 7 primitive types and 1 object type.</div>
+        </div>
+      </div>
+
+      <table class="info-table">
+        <tr><th>Type</th><th>Example</th><th>Notes</th></tr>
+        <tr><td>string</td>    <td>"hello" / 'world' / `template`</td><td style="color:var(--ink2)">Text. Use backticks for interpolation.</td></tr>
+        <tr><td>number</td>    <td>42 / 3.14 / -7 / NaN / Infinity</td><td style="color:var(--ink2)">One type for all numbers (int + float).</td></tr>
+        <tr><td>boolean</td>   <td>true / false</td><td style="color:var(--ink2)">Result of comparisons. Used in conditions.</td></tr>
+        <tr><td>undefined</td> <td>let x; → x is undefined</td><td style="color:var(--ink2)">Declared but not assigned a value.</td></tr>
+        <tr><td>null</td>      <td>let x = null;</td><td style="color:var(--ink2)">Intentional absence of value.</td></tr>
+        <tr><td>symbol</td>    <td>Symbol("id")</td><td style="color:var(--ink2)">Unique identifiers. Rarely used directly.</td></tr>
+        <tr><td>bigint</td>    <td>9007199254740991n</td><td style="color:var(--ink2)">Integers larger than Number.MAX_SAFE_INTEGER.</td></tr>
+        <tr><td>object</td>    <td>{ } / [ ] / new Date()</td><td style="color:var(--ink2)">Collections of values. Arrays and functions are objects.</td></tr>
+      </table>
+
+      <div class="sandbox" id="sb-types">
+        <div class="sandbox-bar">
+          <div class="sandbox-label"><span class="edit-dot"></span>datatypes.js — edit values, check typeof output</div>
+          <button class="run-btn" onclick="runSandbox('sb-types')">▶ Run</button>
+        </div>
+        <textarea class="sandbox-editor" id="sb-types-code" rows="28" spellcheck="false">// ── The typeof operator tells you the type ──
+const name    = "Priya";          // string
+const age     = 22;               // number
+const gpa     = 8.75;             // number (same type)
+const isActive = true;            // boolean
+let   address;                    // undefined — not assigned
+const empty   = null;             // null
+const student = { name: "Ravi", course: "MCA" }; // object
+const grades  = [90, 85, 78, 92]; // array (also object)
+
+console.log(typeof name,     "→", name);
+console.log(typeof age,      "→", age);
+console.log(typeof isActive, "→", isActive);
+console.log(typeof address,  "→", address);
+console.log(typeof empty,    "→", empty);  // Note: typeof null = "object" (JS quirk!)
+console.log(typeof student,  "→", student.name);
+console.log(typeof grades,   "→", grades);
+
+// ── Type coercion (automatic type conversion) ──
+console.log("--- Type coercion ---");
+console.log("5" + 3);    // "53"  — string wins
+console.log("5" - 3);    // 2     — arithmetic forces number
+console.log(true + 1);   // 2     — true becomes 1
+console.log(false + 1);  // 1     — false becomes 0
+
+// ── Explicit conversion ──
+console.log("--- Conversion ---");
+console.log(Number("42"));     // 42
+console.log(String(100));      // "100"
+console.log(Boolean(0));       // false
+console.log(Boolean("hello")); // true</textarea>
+        <div class="sandbox-output">
+          <span class="output-prompt">›</span>
+          <span class="output-text empty" id="sb-types-out">Press ▶ Run</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="topic-divider"></div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- §4  OPERATORS                                           -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="topic-section" id="sec-operators">
+      <div class="section-head">
+        <span class="sec-badge badge-o">§4</span>
+        <div class="sh-text">
+          <div class="sh-tag">JavaScript Basics</div>
+          <div class="sh-title">Operators</div>
+          <div class="sh-desc">Operators perform actions on values. JavaScript has arithmetic, assignment, comparison, logical, and string operators.</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <table class="info-table">
+          <tr><th>Arithmetic</th><th>Example</th><th>Result</th></tr>
+          <tr><td>+</td><td>10 + 3</td><td style="color:var(--green)">13</td></tr>
+          <tr><td>-</td><td>10 - 3</td><td style="color:var(--green)">7</td></tr>
+          <tr><td>*</td><td>10 * 3</td><td style="color:var(--green)">30</td></tr>
+          <tr><td>/</td><td>10 / 3</td><td style="color:var(--green)">3.333…</td></tr>
+          <tr><td>%</td><td>10 % 3</td><td style="color:var(--green)">1 (remainder)</td></tr>
+          <tr><td>**</td><td>2 ** 8</td><td style="color:var(--green)">256 (power)</td></tr>
+          <tr><td>++</td><td>x++</td><td style="color:var(--green)">increment by 1</td></tr>
+          <tr><td>--</td><td>x--</td><td style="color:var(--green)">decrement by 1</td></tr>
+        </table>
+        <table class="info-table">
+          <tr><th>Comparison</th><th>Meaning</th><th>Example → Result</th></tr>
+          <tr><td>==</td> <td style="color:var(--orange)">equal (loose, coerces)</td><td>"5" == 5 → true</td></tr>
+          <tr><td>===</td><td style="color:var(--green)">equal (strict, no coerce)</td><td>"5" === 5 → false</td></tr>
+          <tr><td>!=</td> <td style="color:var(--ink2)">not equal (loose)</td><td>"5" != 5 → false</td></tr>
+          <tr><td>!==</td><td style="color:var(--ink2)">not equal (strict)</td><td>"5" !== 5 → true</td></tr>
+          <tr><td>&gt;</td><td style="color:var(--ink2)">greater than</td><td>10 &gt; 5 → true</td></tr>
+          <tr><td>&lt;</td><td style="color:var(--ink2)">less than</td><td>3 &lt; 7 → true</td></tr>
+          <tr><td>&gt;=</td><td style="color:var(--ink2)">greater or equal</td><td>5 >= 5 → true</td></tr>
+          <tr><td>&lt;=</td><td style="color:var(--ink2)">less or equal</td><td>4 &lt;= 3 → false</td></tr>
+        </table>
+      </div>
+
+      <div class="sandbox" id="sb-ops">
+        <div class="sandbox-bar">
+          <div class="sandbox-label"><span class="edit-dot"></span>operators.js — try changing the values</div>
+          <button class="run-btn" onclick="runSandbox('sb-ops')">▶ Run</button>
+        </div>
+        <textarea class="sandbox-editor" id="sb-ops-code" rows="30" spellcheck="false">// ── Arithmetic ──────────────────────────────
+let a = 15, b = 4;
+console.log("a =", a, "  b =", b);
+console.log("a + b =", a + b);
+console.log("a - b =", a - b);
+console.log("a * b =", a * b);
+console.log("a / b =", a / b);
+console.log("a % b =", a % b, "  ← remainder");
+console.log("a ** b =", a ** b, "  ← 15 to the power of 4");
+
+// ── Assignment shortcuts ─────────────────────
+let x = 10;
+x += 5;  console.log("x += 5 →", x);
+x -= 3;  console.log("x -= 3 →", x);
+x *= 2;  console.log("x *= 2 →", x);
+
+// ── Comparison (== vs ===) ───────────────────
+console.log("--- == vs === ---");
+console.log("'5' == 5  →", "5" == 5);    // true  (loose)
+console.log("'5' === 5 →", "5" === 5);   // false (strict)
+console.log("Always use === in your code!");
+
+// ── Logical operators ────────────────────────
+const age = 20;
+const hasID = true;
+console.log("--- Logical ---");
+console.log("age>=18 AND hasID:", age >= 18 && hasID);
+console.log("age<18  OR  hasID:", age < 18  || hasID);
+console.log("NOT hasID:        ", !hasID);
+
+// ── Ternary operator ─────────────────────────
+const grade = age >= 18 ? "Adult" : "Minor";
+console.log("Grade:", grade);</textarea>
+        <div class="sandbox-output">
+          <span class="output-prompt">›</span>
+          <span class="output-text empty" id="sb-ops-out">Press ▶ Run</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="topic-divider"></div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- §5  CONTROL FLOW                                        -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="topic-section" id="sec-control">
+      <div class="section-head">
+        <span class="sec-badge badge-p">§5</span>
+        <div class="sh-text">
+          <div class="sh-tag">Control Structures</div>
+          <div class="sh-title">if / else / switch</div>
+          <div class="sh-desc">Control structures decide which code runs based on conditions. They are the decision-making backbone of every program.</div>
+        </div>
+      </div>
+
+      <div class="code-display">
+        <div class="code-display-bar">
+          <span class="cdb-dot dot-r"></span><span class="cdb-dot dot-y"></span><span class="cdb-dot dot-g"></span>
+          <span>if-else syntax reference</span>
+        </div>
+        <pre><span class="cm">// if — runs if condition is truthy</span>
+<span class="kw">if</span> (condition) {
+  <span class="cm">// code runs when condition is true</span>
+}
+
+<span class="cm">// if-else</span>
+<span class="kw">if</span> (score >= 90) {
+  console.<span class="fn">log</span>(<span class="str">"Grade A"</span>);
+} <span class="kw">else if</span> (score >= 75) {
+  console.<span class="fn">log</span>(<span class="str">"Grade B"</span>);
+} <span class="kw">else if</span> (score >= 60) {
+  console.<span class="fn">log</span>(<span class="str">"Grade C"</span>);
+} <span class="kw">else</span> {
+  console.<span class="fn">log</span>(<span class="str">"Fail"</span>);
+}
+
+<span class="cm">// switch — checks one value against many cases</span>
+<span class="kw">switch</span> (day) {
+  <span class="kw">case</span> <span class="str">"Monday"</span>:  console.<span class="fn">log</span>(<span class="str">"Week starts"</span>); <span class="kw">break</span>;
+  <span class="kw">case</span> <span class="str">"Friday"</span>:  console.<span class="fn">log</span>(<span class="str">"Weekend soon"</span>); <span class="kw">break</span>;
+  <span class="kw">default</span>:       console.<span class="fn">log</span>(<span class="str">"Regular day"</span>);
+}</pre>
+      </div>
+
+      <div class="sandbox" id="sb-if">
+        <div class="sandbox-bar">
+          <div class="sandbox-label"><span class="edit-dot"></span>control-flow.js — change the score and day values</div>
+          <button class="run-btn" onclick="runSandbox('sb-if')">▶ Run</button>
+        </div>
+        <textarea class="sandbox-editor" id="sb-if-code" rows="32" spellcheck="false">// ── if / else if / else ─────────────────────
+const score = 78;   // ← try changing this
+
+if (score >= 90) {
+  console.log("Grade: A — Distinction");
+} else if (score >= 75) {
+  console.log("Grade: B — First Class");
+} else if (score >= 60) {
+  console.log("Grade: C — Second Class");
+} else if (score >= 40) {
+  console.log("Grade: D — Pass");
+} else {
+  console.log("Grade: F — Fail");
+}
+
+// ── Truthy and Falsy ────────────────────────
+const username = "Arjun";    // ← try: "" or 0 or null
+if (username) {
+  console.log("Welcome,", username);
+} else {
+  console.log("Please enter your name");
+}
+
+// ── switch statement ─────────────────────────
+const day = "Wednesday";   // ← try other day names
+
+switch (day) {
+  case "Monday":
+    console.log("Start of the week — 5 days to go");
+    break;
+  case "Friday":
+    console.log("Last day — weekend soon!");
+    break;
+  case "Saturday":
+  case "Sunday":
+    console.log("Weekend — no classes!");
+    break;
+  default:
+    console.log(day, "— a regular weekday");
+}</textarea>
+        <div class="sandbox-output">
+          <span class="output-prompt">›</span>
+          <span class="output-text empty" id="sb-if-out">Press ▶ Run</span>
+        </div>
+      </div>
+
+      <div class="note note-b">
+        <strong>Falsy values in JavaScript:</strong> <code>false</code>, <code>0</code>, <code>""</code> (empty string), <code>null</code>, <code>undefined</code>, and <code>NaN</code> are all falsy. Everything else is truthy.
+      </div>
+    </section>
+
+    <div class="topic-divider"></div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- §6  LOOPS                                               -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="topic-section" id="sec-loops">
+      <div class="section-head">
+        <span class="sec-badge badge-y">§6</span>
+        <div class="sh-text">
+          <div class="sh-tag">Control Structures</div>
+          <div class="sh-title">Loops</div>
+          <div class="sh-desc">Loops repeat a block of code. JavaScript has <code>for</code>, <code>while</code>, <code>do...while</code>, <code>for...of</code>, and <code>for...in</code> loops.</div>
+        </div>
+      </div>
+
+      <table class="info-table">
+        <tr><th>Loop</th><th>Use when</th><th>Key feature</th></tr>
+        <tr><td>for</td>         <td style="color:var(--ink2)">You know the number of iterations</td>     <td style="color:var(--ink2)">Counter with init, condition, increment</td></tr>
+        <tr><td>while</td>       <td style="color:var(--ink2)">Loop until a condition becomes false</td>   <td style="color:var(--ink2)">Checks condition BEFORE each iteration</td></tr>
+        <tr><td>do...while</td>  <td style="color:var(--ink2)">Run at least once, then check condition</td><td style="color:var(--ink2)">Checks condition AFTER each iteration</td></tr>
+        <tr><td>for...of</td>    <td style="color:var(--ink2)">Iterate over array elements (values)</td>   <td style="color:var(--ink2)">Clean syntax, no index needed</td></tr>
+        <tr><td>for...in</td>    <td style="color:var(--ink2)">Iterate over object keys (properties)</td>  <td style="color:var(--ink2)">Returns the key name, not value</td></tr>
+      </table>
+
+      <div class="sandbox" id="sb-loops">
+        <div class="sandbox-bar">
+          <div class="sandbox-label"><span class="edit-dot"></span>loops.js — change the limits and arrays</div>
+          <button class="run-btn" onclick="runSandbox('sb-loops')">▶ Run</button>
+        </div>
+        <textarea class="sandbox-editor" id="sb-loops-code" rows="38" spellcheck="false">// ── for loop ─────────────────────────────────
+console.log("--- for loop ---");
+for (let i = 1; i <= 5; i++) {
+  console.log("Iteration", i);
+}
+
+// ── while loop ───────────────────────────────
+console.log("--- while loop ---");
+let count = 10;
+while (count > 0) {
+  console.log("Countdown:", count);
+  count -= 3;   // subtract 3 each time
+}
+
+// ── do...while ───────────────────────────────
+console.log("--- do...while ---");
+let attempt = 1;
+do {
+  console.log("Attempt", attempt);
+  attempt++;
+} while (attempt <= 3);
+
+// ── for...of — loop through array values ─────
+console.log("--- for...of ---");
+const courses = ["HTML5", "CSS3", "JavaScript", "Bootstrap"];
+for (const course of courses) {
+  console.log("Course:", course);
+}
+
+// ── for...in — loop through object keys ──────
+console.log("--- for...in ---");
+const student = { name: "Priya", roll: "4MCA002", gpa: 8.9 };
+for (const key in student) {
+  console.log(key, ":", student[key]);
+}
+
+// ── break and continue ───────────────────────
+console.log("--- break & continue ---");
+for (let n = 1; n <= 10; n++) {
+  if (n === 4) continue;   // skip 4
+  if (n === 7) break;      // stop at 7
+  console.log(n);
+}</textarea>
+        <div class="sandbox-output">
+          <span class="output-prompt">›</span>
+          <span class="output-text empty" id="sb-loops-out">Press ▶ Run</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="topic-divider"></div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- §7  FUNCTIONS                                           -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="topic-section" id="sec-functions">
+      <div class="section-head">
+        <span class="sec-badge badge-g">§7</span>
+        <div class="sh-text">
+          <div class="sh-tag">Functions</div>
+          <div class="sh-title">Functions</div>
+          <div class="sh-desc">A function is a reusable block of code that does a specific job. You define it once and call it whenever you need it.</div>
+        </div>
+      </div>
+
+      <div class="code-display">
+        <div class="code-display-bar">
+          <span class="cdb-dot dot-r"></span><span class="cdb-dot dot-y"></span><span class="cdb-dot dot-g"></span>
+          <span>four ways to write a function</span>
+        </div>
+        <pre><span class="cm">// 1. Function Declaration — hoisted, named</span>
+<span class="kw">function</span> <span class="fn">greet</span>(name) {
+  <span class="kw">return</span> <span class="str">`Hello, ${name}!`</span>;
+}
+
+<span class="cm">// 2. Function Expression — not hoisted</span>
+<span class="kw">const</span> <span class="var">add</span> = <span class="kw">function</span>(a, b) {
+  <span class="kw">return</span> a + b;
+};
+
+<span class="cm">// 3. Arrow Function — concise, no own 'this'</span>
+<span class="kw">const</span> <span class="var">multiply</span> = (a, b) <span class="op">=></span> a * b;
+
+<span class="cm">// 4. Arrow with body (when multiple lines needed)</span>
+<span class="kw">const</span> <span class="var">describe</span> = (name, score) <span class="op">=></span> {
+  <span class="kw">const</span> <span class="var">grade</span> = score >= <span class="num">75</span> ? <span class="str">"Pass"</span> : <span class="str">"Fail"</span>;
+  <span class="kw">return</span> <span class="str">`${name}: ${grade}`</span>;
+};</pre>
+      </div>
+
+      <div class="sandbox" id="sb-fn">
+        <div class="sandbox-bar">
+          <div class="sandbox-label"><span class="edit-dot"></span>functions.js — define and call your own functions</div>
+          <button class="run-btn" onclick="runSandbox('sb-fn')">▶ Run</button>
+        </div>
+        <textarea class="sandbox-editor" id="sb-fn-code" rows="40" spellcheck="false">// ── Function declaration ─────────────────────
+function greet(name) {
+  return "Hello, " + name + "!";
+}
+console.log(greet("Arjun"));
+console.log(greet("Priya"));   // reuse with different arg
+
+// ── Default parameters ───────────────────────
+function introduce(name, course = "MCA") {
+  return name + " is studying " + course;
+}
+console.log(introduce("Ravi"));          // uses default
+console.log(introduce("Anjali", "BCA")); // overrides default
+
+// ── Return values ────────────────────────────
+function calculateArea(length, width) {
+  return length * width;
+}
+const area = calculateArea(12, 8);
+console.log("Area:", area, "sq units");
+
+// ── Arrow function ───────────────────────────
+const square = (n) => n * n;
+console.log("5 squared:", square(5));
+console.log("9 squared:", square(9));
+
+// ── Function calling another function ────────
+function getGrade(score) {
+  if (score >= 90) return "A";
+  if (score >= 75) return "B";
+  if (score >= 60) return "C";
+  return "F";
+}
+
+function printReport(name, score) {
+  const grade = getGrade(score);   // calls getGrade
+  console.log(name + " → Score: " + score + " | Grade: " + grade);
+}
+
+printReport("Arjun",  88);
+printReport("Priya",  95);
+printReport("Ravi",   62);
+printReport("Anjali", 45);</textarea>
+        <div class="sandbox-output">
+          <span class="output-prompt">›</span>
+          <span class="output-text empty" id="sb-fn-out">Press ▶ Run</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="topic-divider"></div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- §8  SCOPE                                               -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="topic-section" id="sec-scope">
+      <div class="section-head">
+        <span class="sec-badge badge-b">§8</span>
+        <div class="sh-text">
+          <div class="sh-tag">Functions</div>
+          <div class="sh-title">Scope</div>
+          <div class="sh-desc">Scope controls where a variable can be accessed. JavaScript has global scope, function scope, and block scope.</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div>
+          <table class="info-table">
+            <tr><th>Scope type</th><th>Accessible where</th></tr>
+            <tr><td>Global</td>   <td style="color:var(--ink2)">Anywhere in the script</td></tr>
+            <tr><td>Function</td> <td style="color:var(--ink2)">Only inside the function</td></tr>
+            <tr><td>Block</td>    <td style="color:var(--ink2)">Only inside { } (let/const only)</td></tr>
+          </table>
+        </div>
+        <div class="note note-r" style="margin:0;height:fit-content">
+          <strong>var leaks out of blocks!</strong> That's why we prefer <code>let</code> and <code>const</code>. They respect the <code>{ }</code> boundary.
+        </div>
+      </div>
+
+      <div class="sandbox" id="sb-scope">
+        <div class="sandbox-bar">
+          <div class="sandbox-label"><span class="edit-dot"></span>scope.js — uncomment lines to see scope errors</div>
+          <button class="run-btn" onclick="runSandbox('sb-scope')">▶ Run</button>
+        </div>
+        <textarea class="sandbox-editor" id="sb-scope-code" rows="36" spellcheck="false">// ── Global scope ────────────────────────────
+const globalUniversity = "VTU";   // accessible everywhere
+
+function showUniversity() {
+  console.log("Inside function:", globalUniversity); // works
+}
+showUniversity();
+
+// ── Function scope ───────────────────────────
+function calculateCGPA() {
+  const localGPA = 8.7;   // only exists inside this function
+  console.log("GPA inside function:", localGPA);
+}
+calculateCGPA();
+// console.log(localGPA);  // ← UNCOMMENT to see: ReferenceError
+
+// ── Block scope with let ─────────────────────
+if (true) {
+  let blockVar   = "I am block-scoped (let)";
+  var functionVar = "I leak out (var)!";
+  console.log("Inside block:", blockVar);
+}
+// console.log(blockVar);    // ← UNCOMMENT: ReferenceError
+console.log("Outside block:", functionVar); // var leaks!
+
+// ── Closures — a function that remembers its scope ──
+function makeCounter() {
+  let count = 0;       // private to makeCounter
+  return function() {  // inner function remembers 'count'
+    count++;
+    return count;
+  };
+}
+
+const counter = makeCounter();
+console.log("Counter:", counter()); // 1
+console.log("Counter:", counter()); // 2
+console.log("Counter:", counter()); // 3  — count persists!</textarea>
+        <div class="sandbox-output">
+          <span class="output-prompt">›</span>
+          <span class="output-text empty" id="sb-scope-out">Press ▶ Run</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="topic-divider"></div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- EXERCISES                                               -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="topic-section" id="sec-exercises">
+      <div class="section-head">
+        <span class="sec-badge badge-y">✦</span>
+        <div class="sh-text">
+          <div class="sh-tag">Practice</div>
+          <div class="sh-title">Exercises — Write Your Own Code</div>
+          <div class="sh-desc">Three blank sandboxes with a challenge. Try to solve each one yourself — then check your answer.</div>
+        </div>
+      </div>
+
+      <!-- Exercise 1 -->
+      <div style="margin-bottom:8px">
+        <div style="font-size:13px;font-weight:700;color:var(--yellow);margin-bottom:4px">Exercise 1 — FizzBuzz</div>
+        <div style="font-size:13.5px;color:var(--ink2);margin-bottom:10px">Print numbers 1 to 20. For multiples of 3 print "Fizz", multiples of 5 print "Buzz", multiples of both print "FizzBuzz".</div>
+      </div>
+      <div class="sandbox" id="sb-ex1">
+        <div class="sandbox-bar">
+          <div class="sandbox-label"><span class="edit-dot"></span>exercise-1.js</div>
+          <button class="run-btn" onclick="runSandbox('sb-ex1')">▶ Run</button>
+        </div>
+        <textarea class="sandbox-editor" id="sb-ex1-code" rows="12" spellcheck="false">// Write your FizzBuzz solution here
+// Hint: use a for loop and the % (remainder) operator
+
+for (let i = 1; i <= 20; i++) {
+  // Your code here
+  console.log(i); // replace this line
+}</textarea>
+        <div class="sandbox-output">
+          <span class="output-prompt">›</span>
+          <span class="output-text empty" id="sb-ex1-out">Press ▶ Run</span>
+        </div>
+      </div>
+
+      <!-- Exercise 2 -->
+      <div style="margin-bottom:8px;margin-top:20px">
+        <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:4px">Exercise 2 — Grade Calculator</div>
+        <div style="font-size:13.5px;color:var(--ink2);margin-bottom:10px">Write a function <code>getGrade(score)</code> that returns the letter grade. Test it with at least 5 different scores.</div>
+      </div>
+      <div class="sandbox" id="sb-ex2">
+        <div class="sandbox-bar">
+          <div class="sandbox-label"><span class="edit-dot"></span>exercise-2.js</div>
+          <button class="run-btn" onclick="runSandbox('sb-ex2')">▶ Run</button>
+        </div>
+        <textarea class="sandbox-editor" id="sb-ex2-code" rows="14" spellcheck="false">// Write your grade calculator function here
+// A: 90-100,  B: 75-89,  C: 60-74,  D: 40-59,  F: below 40
+
+function getGrade(score) {
+  // Your code here
+  return "?";
+}
+
+// Test it with these scores:
+console.log(getGrade(95));  // should print A
+console.log(getGrade(82));  // should print B
+console.log(getGrade(67));  // should print C
+console.log(getGrade(50));  // should print D
+console.log(getGrade(30));  // should print F</textarea>
+        <div class="sandbox-output">
+          <span class="output-prompt">›</span>
+          <span class="output-text empty" id="sb-ex2-out">Press ▶ Run</span>
+        </div>
+      </div>
+
+      <!-- Exercise 3 -->
+      <div style="margin-bottom:8px;margin-top:20px">
+        <div style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:4px">Exercise 3 — Free Sandbox</div>
+        <div style="font-size:13.5px;color:var(--ink2);margin-bottom:10px">Open playground. Write anything — experiment with variables, loops, functions. This is your scratchpad.</div>
+      </div>
+      <div class="sandbox" id="sb-free">
+        <div class="sandbox-bar">
+          <div class="sandbox-label"><span class="edit-dot"></span>playground.js — write anything here</div>
+          <button class="run-btn" onclick="runSandbox('sb-free')">▶ Run</button>
+        </div>
+        <textarea class="sandbox-editor" id="sb-free-code" rows="14" spellcheck="false">// Your scratchpad — write any JavaScript here
+// All topics are available: variables, loops, functions, etc.
+
+const myName = "Your Name";
+const myGrade = "MCA";
+
+console.log("Hello, I am " + myName);
+console.log("I study " + myGrade);
+
+// Add your own code below ↓</textarea>
+        <div class="sandbox-output">
+          <span class="output-prompt">›</span>
+          <span class="output-text empty" id="sb-free-out">Press ▶ Run</span>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+</div><!-- /lab-layout -->
+
+<footer class="lab-footer">
+  VTU MCA — Web Technologies · Module 4 · JavaScript Fundamentals &amp; DOM Manipulation
+</footer>
+
+<script src="js-lab.js"></script>
+</body>
+</html>

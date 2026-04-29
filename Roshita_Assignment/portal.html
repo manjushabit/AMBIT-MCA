@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VTU Student Portal - Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <h1>VTU Student Portal</h1>
+      <ul class="nav-links">
+        <li><a href="portal.html" class="active">Dashboard</a></li>
+        <li><a href="index.html">Sign Up</a></li>
+        <li><a href="login.html">Login</a></li>
+        <li><button id="logoutBtn" class="link-button">Logout</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero-banner">
+      <div>
+        <h2>Welcome to VTU Student Dashboard</h2>
+        <p>Manage your academic profile, media resources, and student activities in one place.</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Student Details</h2>
+      <p class="subtitle">Your registered information is displayed below.</p>
+      <div id="studentInfo" class="info-grid"></div>
+    </section>
+
+    <section class="card">
+      <h2>Profile Section</h2>
+      <p class="subtitle">View and update your profile information.</p>
+      <div class="profile-wrap">
+        <img id="profilePreview" class="profile-image" src="" alt="Profile picture">
+        <div>
+          <h3 id="profileName">Student Name</h3>
+          <button id="enableEditBtn" type="button" class="secondary-button">Edit Profile</button>
+        </div>
+      </div>
+
+      <form id="profileForm" class="form-grid">
+        <label for="editName">Edit Name</label>
+        <input type="text" id="editName" placeholder="Update your name" disabled>
+
+        <label for="editEmail">Edit Email</label>
+        <input type="email" id="editEmail" placeholder="Update your email" disabled>
+
+        <label for="editDomain">Edit Domain</label>
+        <select id="editDomain" disabled>
+          <option value="MCA">MCA</option>
+          <option value="Computer Science">Computer Science</option>
+          <option value="Information Science">Information Science</option>
+          <option value="Electronics">Electronics</option>
+          <option value="Mechanical">Mechanical</option>
+          <option value="Civil">Civil</option>
+        </select>
+
+        <label for="editCity">Edit City</label>
+        <input type="text" id="editCity" placeholder="Update your city" disabled>
+
+        <label for="profilePic">Profile Picture</label>
+        <input type="file" id="profilePic" accept="image/*">
+        <small>Choose image to preview instantly, then save profile.</small>
+
+        <button type="submit" id="saveProfileBtn" disabled>Save Profile</button>
+      </form>
+      <p id="profileMessage" class="message"></p>
+    </section>
+
+    <section class="card">
+      <h2>College Information</h2>
+      <div class="college-sections">
+        <article>
+          <h3>Announcements</h3>
+          <p>Semester exams begin from next month. Keep checking VTU circulars regularly.</p>
+        </article>
+        <article>
+          <h3>Attendance</h3>
+          <p>Maintain a minimum 75% attendance to be eligible for final examinations.</p>
+        </article>
+        <article>
+          <h3>Placement Cell</h3>
+          <p>Placement training sessions are scheduled every Friday in the seminar hall.</p>
+        </article>
+        <article>
+          <h3>Library</h3>
+          <p>Digital library access is available with your registered student email account.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Learning Media</h2>
+      <p class="subtitle">Watch and listen to college-related guidance resources.</p>
+      <div class="media-grid">
+        <article>
+          <h3>Orientation Video</h3>
+          <video controls width="100%">
+            <source src="video.mp4" type="video/mp4">
+            Your browser does not support video playback.
+          </video>
+        </article>
+        <article>
+          <h3>Campus Audio Bulletin</h3>
+          <audio controls>
+            <source src="audio.mp4" type="audio/mpeg">
+            Your browser does not support audio playback.
+          </audio>
+        </article>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Student Canvas Editor</h2>
+      <p class="subtitle">Use this canvas to sketch ideas, schedules, or notes.</p>
+      <div class="canvas-tools">
+        <label for="brushColor">Brush Color</label>
+        <input type="color" id="brushColor" value="#003f88">
+        <label for="brushSize">Brush Size</label>
+        <input type="range" id="brushSize" min="1" max="12" value="3">
+        <button id="clearCanvasBtn" type="button" class="secondary-button">Clear Canvas</button>
+      </div>
+      <canvas id="studentCanvas" width="860" height="280"></canvas>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
