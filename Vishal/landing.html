@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | EduPortal</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="navbar">
+        <div class="nav-title">EduPortal Dashboard</div>
+        <button class="logout-btn" id="logoutBtn">Logout</button>
+      </header>
+
+      <main class="dashboard">
+        <section class="card welcome-card">
+          <div class="welcome-grid">
+            <div>
+              <p class="eyebrow">Overview</p>
+              <h2 id="welcomeMessage">Welcome!</h2>
+              <p class="subtitle">Track your profile and selected courses in one place.</p>
+            </div>
+            <div class="stats">
+              <div class="stat-box">
+                <p>Total Courses</p>
+                <h4 id="courseCount">0</h4>
+              </div>
+              <div class="stat-box">
+                <p>Profile Status</p>
+                <h4>Active</h4>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card profile-card">
+          <h3>User Profile</h3>
+          <ul class="list">
+            <li><strong>Username:</strong> <span id="profileUsername">-</span></li>
+            <li><strong>Email:</strong> <span id="profileEmail">-</span></li>
+            <li><strong>Mobile:</strong> <span id="profileMobile">-</span></li>
+            <li><strong>Place:</strong> <span id="profilePlace">-</span></li>
+          </ul>
+        </section>
+
+        <section class="card courses-card">
+          <h3>Your Courses</h3>
+          <div id="coursesContainer"></div>
+        </section>
+      </main>
+    </div>
+    <script src="./app.js"></script>
+  </body>
+</html>
