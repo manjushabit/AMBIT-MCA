@@ -69,6 +69,40 @@
           <span class="stat-meta">5 require attention</span>
         </article>
       </section>
+
+      <section class="dashboard-media" aria-label="Audio, video, and canvas">
+        <article class="media-card glass-card animate-fade-up delay-1">
+          <h3>Audio</h3>
+          <p class="media-subtle">Play an audio clip directly on the dashboard.</p>
+          <audio id="dashboardAudio" controls preload="metadata" class="media-player">
+            <source src="https://www.w3schools.com/html/horse.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+          </audio>
+        </article>
+
+        <article class="media-card glass-card animate-fade-up delay-2">
+          <h3>Video</h3>
+          <p class="media-subtle">Watch a sample video after login.</p>
+          <video
+            id="dashboardVideo"
+            controls
+            preload="metadata"
+            class="media-player"
+            poster=""
+            aria-label="Dashboard video player"
+          >
+            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+            Your browser does not support the video element.
+          </video>
+        </article>
+
+        <article class="canvas-card glass-card animate-fade-up delay-3">
+          <h3>Canvas</h3>
+          <p class="media-subtle">A live canvas drawing with your username.</p>
+          <canvas id="dashboardCanvas" class="dashboard-canvas" width="900" height="260" aria-label="Dashboard drawing canvas"></canvas>
+          <p class="canvas-hint">Tip: Resize the window to see the canvas redraw.</p>
+        </article>
+      </section>
     </div>
   </div>
 
