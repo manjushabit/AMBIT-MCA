@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | EduPortal</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="auth-page">
+      <div class="auth-layout">
+        <section class="auth-showcase">
+          <p class="eyebrow">EduPortal Platform</p>
+          <h2>Learn smarter with a focused dashboard experience.</h2>
+          <p>
+            Track courses, profile progress, and keep everything organized in one modern workspace.
+          </p>
+          <div class="showcase-points">
+            <span>Secure Login</span>
+            <span>Responsive Design</span>
+            <span>Clean Workflow</span>
+          </div>
+        </section>
+
+        <section class="auth-card">
+          <h1 class="brand">Welcome Back</h1>
+          <p class="subtitle">Login to continue your learning dashboard.</p>
+          <p class="notice" id="loginNotice"></p>
+          <form id="loginForm" novalidate>
+            <div class="form-grid">
+              <div class="form-row">
+                <label for="loginEmail">Email ID</label>
+                <input id="loginEmail" name="email" type="email" placeholder="john@example.com" />
+                <small class="error" id="loginEmailError"></small>
+              </div>
+              <div class="form-row">
+                <label for="loginPassword">Password</label>
+                <input id="loginPassword" name="password" type="password" placeholder="Enter password" />
+                <small class="error" id="loginPasswordError"></small>
+              </div>
+              <button class="btn-primary" type="submit">Login</button>
+            </div>
+          </form>
+          <p class="switch-link">Don't have an account? <a href="./register.html">Register</a></p>
+        </section>
+      </div>
+    </main>
+    <script src="./app.js"></script>
+  </body>
+</html>

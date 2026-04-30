@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register | EduPortal</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="auth-page">
+      <div class="auth-layout">
+        <section class="auth-showcase">
+          <p class="eyebrow">Start Your Journey</p>
+          <h2>Build your account and access a beautiful learning dashboard.</h2>
+          <p>
+            Register once and manage profile details, courses, and progress from one place.
+          </p>
+          <div class="showcase-points">
+            <span>Fast Signup</span>
+            <span>Smart Course View</span>
+            <span>Professional UI</span>
+          </div>
+        </section>
+
+        <section class="auth-card">
+          <h1 class="brand">Create Account</h1>
+          <p class="subtitle">Join EduPortal to manage your learning journey.</p>
+          <p class="notice" id="registerNotice"></p>
+          <form id="registerForm" novalidate>
+            <div class="form-grid">
+              <div class="form-row">
+                <label for="username">Username</label>
+                <input id="username" name="username" type="text" placeholder="John Doe" />
+                <small class="error" id="usernameError"></small>
+              </div>
+              <div class="form-row">
+                <label for="email">Email ID</label>
+                <input id="email" name="email" type="email" placeholder="john@example.com" />
+                <small class="error" id="emailError"></small>
+              </div>
+              <div class="form-row">
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" placeholder="Minimum 8 characters" />
+                <small class="error" id="passwordError"></small>
+              </div>
+              <div class="form-row">
+                <label for="mobile">Mobile Number</label>
+                <input id="mobile" name="mobile" type="tel" inputmode="numeric" placeholder="10-digit number" />
+                <small class="error" id="mobileError"></small>
+              </div>
+              <div class="form-row">
+                <label for="place">Place</label>
+                <input id="place" name="place" type="text" placeholder="City / Location" />
+                <small class="error" id="placeError"></small>
+              </div>
+              <div class="form-row">
+                <label for="courses">Courses</label>
+                <select id="courses" name="courses" multiple size="4">
+                  <option value="Frontend Development">Frontend Development</option>
+                  <option value="Backend Development">Backend Development</option>
+                  <option value="UI/UX Design">UI/UX Design</option>
+                  <option value="Data Science">Data Science</option>
+                  <option value="Cloud Fundamentals">Cloud Fundamentals</option>
+                </select>
+                <small class="error" id="coursesError"></small>
+              </div>
+              <button class="btn-primary" type="submit">Register</button>
+            </div>
+          </form>
+          <p class="switch-link">Already have an account? <a href="./login.html">Login</a></p>
+        </section>
+      </div>
+    </main>
+    <script src="./app.js"></script>
+  </body>
+</html>
