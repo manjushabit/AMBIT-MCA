@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JS Assignment — VTU MCA</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Mulish:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ── Reset ────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+/* ── Tokens ───────────────────────────────────────────────── */
+:root {
+  --bg       : #faf9f6;
+  --surface  : #ffffff;
+  --surf2    : #f5f3ef;
+  --border   : #e8e4dc;
+  --border2  : #d4cfc5;
+  --ink      : #1a1714;
+  --ink2     : #4a4640;
+  --muted    : #8a8480;
+  --accent   : #1d4ed8;
+  --acc-lt   : #eff6ff;
+  --acc-bdr  : #bfdbfe;
+  --green    : #15803d;
+  --green-lt : #f0fdf4;
+  --green-bdr: #bbf7d0;
+  --amber    : #b45309;
+  --amber-lt : #fffbeb;
+  --amber-bdr: #fde68a;
+  --red      : #b91c1c;
+  --red-lt   : #fff1f2;
+  --red-bdr  : #fecdd3;
+  --mono     : 'JetBrains Mono', monospace;
+  --serif    : 'DM Serif Display', serif;
+  --body     : 'Mulish', sans-serif;
+  --r        : 10px;
+  --r-lg     : 14px;
+}
+
+body {
+  font-family: var(--body);
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+/* ── Top banner ────────────────────────────────────────────── */
+.top-banner {
+  background: var(--ink);
+  color: #fff;
+  padding: 0 32px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+
+.banner-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.banner-logo {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  background: #f5d547;
+  color: var(--ink);
+  padding: 3px 10px;
+  border-radius: 5px;
+}
+
+.banner-title {
+  font-size: 13px;
+  color: rgba(255,255,255,.6);
+  font-weight: 500;
+}
+
+.banner-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.timer-display {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: #f5d547;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.timer-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4ade80;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+.score-pill {
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 20px;
+  padding: 4px 12px;
+  color: rgba(255,255,255,.8);
+}
+
+/* ── Layout ────────────────────────────────────────────────── */
+.main-wrap {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 36px 24px 80px;
+}
+
+/* ── Page header ───────────────────────────────────────────── */
+.page-head {
+  margin-bottom: 28px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--border);
+}
+
+.page-head h1 {
+  font-family: var(--serif);
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+
+.page-head h1 em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.page-head .meta-line {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 500;
+  letter-spacing: .04em;
+}
+
+/* ── Student info card ─────────────────────────────────────── */
+.student-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 20px 22px;
+  margin-bottom: 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.student-card h2 {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.field-group label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--ink2);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.field-group input {
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  background: var(--surf2);
+  font-family: var(--body);
+  font-size: 14px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color .18s, background .18s;
+}
+
+.field-group input:focus {
+  border-color: var(--accent);
+  background: var(--acc-lt);
+  box-shadow: 0 0 0 3px rgba(29,78,216,.08);
+}
+
+.info-banner {
+  grid-column: 1 / -1;
+  background: var(--acc-lt);
+  border: 1px solid var(--acc-bdr);
+  border-radius: var(--r);
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #1e40af;
+  line-height: 1.6;
+}
+
+/* ── Section headers ───────────────────────────────────────── */
+.sec-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 32px 0 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sec-badge {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 4px 11px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.badge-a   { background: var(--surf2); color: var(--muted); border: 1px solid var(--border2); }
+.badge-b   { background: var(--acc-lt); color: var(--accent); border: 1px solid var(--acc-bdr); }
+.badge-c   { background: var(--green-lt); color: var(--green); border: 1px solid var(--green-bdr); }
+
+.sec-title {
+  font-family: var(--serif);
+  font-size: 19px;
+  font-weight: 400;
+  color: var(--ink);
+}
+
+.sec-marks {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+/* ── Question card ─────────────────────────────────────────── */
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 20px 22px;
+  margin-bottom: 12px;
+  transition: border-color .2s;
+}
+
+.q-card.answered { border-color: var(--green-bdr); }
+.q-card.skipped  { border-color: var(--amber-bdr); }
+
+.q-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.q-num {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: 5px;
+  flex-shrink: 0;
+}
+
+.q-mark {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.q-text {
+  font-size: 14.5px;
+  color: var(--ink);
+  line-height: 1.65;
+  margin-bottom: 12px;
+}
+
+.q-text code {
+  font-family: var(--mono);
+  font-size: 13px;
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  padding: 1px 6px;
+  border-radius: 4px;
+  color: var(--ink);
+}
+
+.q-hint {
+  font-size: 12.5px;
+  color: var(--muted);
+  font-style: italic;
+  margin-bottom: 12px;
+}
+
+/* MCQ Options */
+.mcq-options {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.mcq-opt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 13px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  cursor: pointer;
+  font-size: 13.5px;
+  color: var(--ink2);
+  transition: all .15s;
+  background: var(--surf2);
+  user-select: none;
+}
+
+.mcq-opt:hover:not(.locked) {
+  border-color: var(--accent);
+  background: var(--acc-lt);
+  color: var(--accent);
+}
+
+.mcq-opt input[type="radio"] {
+  accent-color: var(--accent);
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.mcq-opt.selected-correct {
+  border-color: var(--green);
+  background: var(--green-lt);
+  color: var(--green);
+  font-weight: 600;
+}
+
+.mcq-opt.selected-wrong {
+  border-color: var(--red);
+  background: var(--red-lt);
+  color: var(--red);
+}
+
+.mcq-opt .opt-letter {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--muted);
+  min-width: 16px;
+}
+
+/* Short answer input */
+.short-input {
+  width: 100%;
+  padding: 10px 13px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  background: var(--surf2);
+  font-family: var(--body);
+  font-size: 14px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color .18s, background .18s;
+}
+
+.short-input:focus {
+  border-color: var(--accent);
+  background: var(--surface);
+  box-shadow: 0 0 0 3px rgba(29,78,216,.08);
+}
+
+.short-input.correct { border-color: var(--green); background: var(--green-lt); }
+.short-input.wrong   { border-color: var(--red);   background: var(--red-lt);   }
+
+/* Check button */
+.check-btn {
+  margin-top: 9px;
+  padding: 7px 18px;
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  border-radius: var(--r);
+  font-family: var(--body);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s, transform .12s;
+}
+
+.check-btn:hover  { background: #2d2a26; }
+.check-btn:active { transform: scale(.97); }
+.check-btn:disabled { opacity: .45; cursor: default; }
+
+/* Feedback line */
+.feedback {
+  display: none;
+  align-items: center;
+  gap: 7px;
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 12px;
+  border-radius: var(--r);
+}
+
+.feedback.correct { display: flex; background: var(--green-lt); color: var(--green); border: 1px solid var(--green-bdr); }
+.feedback.wrong   { display: flex; background: var(--red-lt);   color: var(--red);   border: 1px solid var(--red-bdr);  }
+.feedback.partial { display: flex; background: var(--amber-lt); color: var(--amber); border: 1px solid var(--amber-bdr);}
+
+/* ── Code sandbox ──────────────────────────────────────────── */
+.sandbox-wrap {
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  transition: border-color .2s;
+}
+
+.sandbox-wrap:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(29,78,216,.08);
+}
+
+.sandbox-bar {
+  background: var(--surf2);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sb-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.sb-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #f5d547;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.sandbox-btns {
+  display: flex;
+  gap: 7px;
+}
+
+.run-btn, .clear-btn {
+  padding: 5px 14px;
+  border-radius: 6px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all .15s;
+}
+
+.run-btn {
+  background: #f5d547;
+  color: var(--ink);
+}
+
+.run-btn:hover  { background: #e8c93a; transform: translateY(-1px); }
+.run-btn:active { transform: scale(.97); }
+
+.clear-btn {
+  background: var(--surf2);
+  border: 1px solid var(--border2);
+  color: var(--muted);
+}
+
+.clear-btn:hover { background: var(--red-lt); border-color: var(--red-bdr); color: var(--red); }
+
+.code-editor {
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.75;
+  padding: 14px 16px;
+  background: #0f1117;
+  color: #c9d1d9;
+  border: none;
+  outline: none;
+  width: 100%;
+  resize: vertical;
+  min-height: 160px;
+  caret-color: #f5d547;
+  tab-size: 2;
+}
+
+.code-output {
+  background: #070a10;
+  border-top: 1px solid #1e2330;
+  padding: 10px 14px;
+  min-height: 44px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+
+.out-prompt { color: #4ade80; font-weight: 600; display: inline; margin-right: 6px; }
+.out-text   { color: #4ade80; white-space: pre-wrap; word-break: break-all; }
+.out-error  { color: #f87171; }
+.out-empty  { color: #374151; font-style: italic; }
+
+/* Code check feedback */
+.code-feedback {
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: var(--r);
+  font-size: 13.5px;
+  font-weight: 600;
+  display: none;
+}
+
+.code-feedback.show { display: block; }
+.code-feedback.good { background: var(--green-lt); color: var(--green); border: 1px solid var(--green-bdr); }
+.code-feedback.part { background: var(--amber-lt); color: var(--amber); border: 1px solid var(--amber-bdr); }
+.code-feedback.none { background: var(--red-lt);   color: var(--red);   border: 1px solid var(--red-bdr); }
+
+/* ── Submit section ────────────────────────────────────────── */
+.submit-section {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 24px 26px;
+  margin-top: 32px;
+  text-align: center;
+}
+
+.submit-section h3 {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.submit-section p {
+  font-size: 13.5px;
+  color: var(--muted);
+  margin-bottom: 18px;
+}
+
+.submit-btn {
+  padding: 13px 40px;
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  border-radius: var(--r);
+  font-family: var(--body);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .2s;
+  letter-spacing: .02em;
+}
+
+.submit-btn:hover {
+  background: #2d2a26;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(26,23,20,.22);
+}
+
+/* ── Result / submission summary ───────────────────────────── */
+.result-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(26,23,20,.55);
+  backdrop-filter: blur(6px);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.result-overlay.open { display: flex; }
+
+.result-modal {
+  background: var(--surface);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 580px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 64px rgba(26,23,20,.3);
+  animation: popIn .3s ease;
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(20px) scale(.96); }
+  to   { opacity: 1; transform: none; }
+}
+
+.modal-head {
+  padding: 28px 30px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-head .sub {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.modal-head h2 {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.modal-head .stu-name {
+  font-size: 14px;
+  color: var(--ink2);
+  font-weight: 500;
+}
+
+.score-big {
+  padding: 20px 30px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.score-tile {
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 14px 12px;
+  text-align: center;
+}
+
+.st-n {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.st-l {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--muted);
+}
+
+.col-total  .st-n { color: var(--accent); }
+.col-a      .st-n { color: var(--ink);    }
+.col-b      .st-n { color: var(--ink);    }
+.col-c      .st-n { color: var(--green);  }
+
+.answer-review {
+  padding: 20px 30px;
+}
+
+.review-section {
+  margin-bottom: 16px;
+}
+
+.rev-sec-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.rev-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  padding: 6px 0;
+  border-bottom: 1px solid #f0ede8;
+}
+
+.rev-row:last-child { border: none; }
+
+.rev-q {
+  font-weight: 700;
+  color: var(--muted);
+  min-width: 28px;
+  flex-shrink: 0;
+}
+
+.rev-ans { color: var(--ink2); flex: 1; }
+
+.rev-mark {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.mark-got  { color: var(--green); }
+.mark-lost { color: var(--red);   }
+.mark-part { color: var(--amber); }
+
+.modal-foot {
+  padding: 18px 30px 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btn-print {
+  padding: 10px 22px;
+  background: var(--surf2);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  font-family: var(--body);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink2);
+  cursor: pointer;
+  transition: all .15s;
+}
+
+.btn-print:hover { background: var(--acc-lt); border-color: var(--acc-bdr); color: var(--accent); }
+
+.btn-close-modal {
+  padding: 10px 22px;
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  border-radius: var(--r);
+  font-family: var(--body);
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .15s;
+}
+
+.btn-close-modal:hover { background: #2d2a26; }
+
+/* ── Progress bar ──────────────────────────────────────────── */
+.progress-bar {
+  height: 3px;
+  background: var(--border);
+  position: fixed;
+  top: 52px;
+  left: 0;
+  right: 0;
+  z-index: 199;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width .4s ease;
+  width: 0%;
+}
+
+/* ── Print styles ──────────────────────────────────────────── */
+@media print {
+  .top-banner, .progress-bar, .submit-section { display: none !important; }
+  .result-overlay { display: block !important; position: static !important; background: none !important; }
+  .result-modal { box-shadow: none !important; border: 1px solid #ccc !important; max-height: none !important; }
+}
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .student-card    { grid-template-columns: 1fr; }
+  .score-big       { grid-template-columns: 1fr 1fr; }
+  .main-wrap       { padding: 20px 14px 60px; }
+  .top-banner      { padding: 0 16px; }
+  .banner-title    { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── STICKY TOP BANNER ─────────────────────────────────────── -->
+<div class="top-banner">
+  <div class="banner-left">
+    <span class="banner-logo">JS</span>
+    <span class="banner-title">VTU MCA — JavaScript Basics Assignment</span>
+  </div>
+  <div class="banner-right">
+    <div class="timer-display">
+      <span class="timer-dot"></span>
+      <span id="timer-disp">30:00</span>
+    </div>
+    <div class="score-pill" id="live-score">Score: 0 / 20</div>
+  </div>
+</div>
+
+<!-- Progress bar -->
+<div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+
+<main class="main-wrap">
+
+  <!-- ── Page heading ──────────────────────────────────────── -->
+  <div class="page-head">
+    <h1>JavaScript Basics<br><em>In-Class Assignment</em></h1>
+    <div class="meta-line">Module 4 &nbsp;·&nbsp; 30 Minutes &nbsp;·&nbsp; 20 Marks &nbsp;·&nbsp; Attempt All Questions</div>
+  </div>
+
+  <!-- ── Student info ───────────────────────────────────────── -->
+  <div class="student-card">
+    <h2>Student Details — Fill before starting</h2>
+    <div class="field-group">
+      <label for="stu-name">Full Name</label>
+      <input type="text" id="stu-name" placeholder="e.g. Arjun Sharma" oninput="updateProgress()">
+    </div>
+    <div class="field-group">
+      <label for="stu-roll">Roll Number</label>
+      <input type="text" id="stu-roll" placeholder="e.g. 4MCA001">
+    </div>
+    <div class="field-group">
+      <label for="stu-email">Email</label>
+      <input type="email" id="stu-email" placeholder="student@vtu.ac.in">
+    </div>
+    <div class="field-group">
+      <label for="stu-date">Date</label>
+      <input type="date" id="stu-date">
+    </div>
+    <div class="info-banner">
+      <strong>How this works:</strong> MCQ — select and click Check. Short Answer — type and click Check. Coding — write code in the editor, press ▶ Run to test it, then Check Marks. Submit at the end to see your full report.
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════
+       SECTION A — MCQ
+       ════════════════════════════════════════════════════════ -->
+  <div class="sec-header">
+    <span class="sec-badge badge-a">Section A</span>
+    <span class="sec-title">Multiple Choice</span>
+    <span class="sec-marks">5 × 1 = 5 marks</span>
+  </div>
+
+  <!-- Q1 -->
+  <div class="q-card" id="qc-1">
+    <div class="q-top">
+      <span class="q-num">Q1</span>
+      <span class="q-mark">1 mark</span>
+    </div>
+    <div class="q-text">Which keyword declares a variable that <strong>cannot be reassigned</strong> after creation?</div>
+    <div class="mcq-options" id="mcq-1">
+      <label class="mcq-opt"><input type="radio" name="q1" value="a"><span class="opt-letter">a)</span> var</label>
+      <label class="mcq-opt"><input type="radio" name="q1" value="b"><span class="opt-letter">b)</span> let</label>
+      <label class="mcq-opt"><input type="radio" name="q1" value="c"><span class="opt-letter">c)</span> const</label>
+      <label class="mcq-opt"><input type="radio" name="q1" value="d"><span class="opt-letter">d)</span> static</label>
+    </div>
+    <button class="check-btn" data-qnum="1" onclick="checkMCQ(1,'c','The correct answer is c) const. const declares a read-only binding — the variable cannot be reassigned.')">Check</button>
+    <div class="feedback" id="fb-1"></div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="q-card" id="qc-2">
+    <div class="q-top"><span class="q-num">Q2</span><span class="q-mark">1 mark</span></div>
+    <div class="q-text">What does <code>typeof null</code> return in JavaScript?</div>
+    <div class="q-hint">Hint: This is a famous quirk in JavaScript — the answer may surprise you.</div>
+    <div class="mcq-options" id="mcq-2">
+      <label class="mcq-opt"><input type="radio" name="q2" value="a"><span class="opt-letter">a)</span> "null"</label>
+      <label class="mcq-opt"><input type="radio" name="q2" value="b"><span class="opt-letter">b)</span> "undefined"</label>
+      <label class="mcq-opt"><input type="radio" name="q2" value="c"><span class="opt-letter">c)</span> "object"</label>
+      <label class="mcq-opt"><input type="radio" name="q2" value="d"><span class="opt-letter">d)</span> "number"</label>
+    </div>
+    <button class="check-btn" data-qnum="2" onclick="checkMCQ(2,'c','typeof null returns object — a famous JS bug kept for backward compatibility.')">Check</button>
+    <div class="feedback" id="fb-2"></div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="q-card" id="qc-3">
+    <div class="q-top"><span class="q-num">Q3</span><span class="q-mark">1 mark</span></div>
+    <div class="q-text">What is the output of &nbsp;<code>"5" + 3</code>&nbsp; in JavaScript?</div>
+    <div class="q-hint">Hint: What happens when + has a string on one side?</div>
+    <div class="mcq-options" id="mcq-3">
+      <label class="mcq-opt"><input type="radio" name="q3" value="a"><span class="opt-letter">a)</span> 8</label>
+      <label class="mcq-opt"><input type="radio" name="q3" value="b"><span class="opt-letter">b)</span> "53"</label>
+      <label class="mcq-opt"><input type="radio" name="q3" value="c"><span class="opt-letter">c)</span> TypeError</label>
+      <label class="mcq-opt"><input type="radio" name="q3" value="d"><span class="opt-letter">d)</span> NaN</label>
+    </div>
+    <button class="check-btn" data-qnum="3" onclick="checkMCQ(3,'b','Correct! String + number = string. So the + operator concatenates instead of adding.')">Check</button>
+    <div class="feedback" id="fb-3"></div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="q-card" id="qc-4">
+    <div class="q-top"><span class="q-num">Q4</span><span class="q-mark">1 mark</span></div>
+    <div class="q-text">Which loop always executes its body <strong>at least once</strong>, even if the condition is initially false?</div>
+    <div class="mcq-options" id="mcq-4">
+      <label class="mcq-opt"><input type="radio" name="q4" value="a"><span class="opt-letter">a)</span> for</label>
+      <label class="mcq-opt"><input type="radio" name="q4" value="b"><span class="opt-letter">b)</span> while</label>
+      <label class="mcq-opt"><input type="radio" name="q4" value="c"><span class="opt-letter">c)</span> do...while</label>
+      <label class="mcq-opt"><input type="radio" name="q4" value="d"><span class="opt-letter">d)</span> for...of</label>
+    </div>
+    <button class="check-btn" data-qnum="4" onclick="checkMCQ(4,'c','Correct! do...while checks the condition AFTER executing the body, so it always runs at least once.')">Check</button>
+    <div class="feedback" id="fb-4"></div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="q-card" id="qc-5">
+    <div class="q-top"><span class="q-num">Q5</span><span class="q-mark">1 mark</span></div>
+    <div class="q-text">What additional check does <code>===</code> perform that <code>==</code> does <strong>not</strong>?</div>
+    <div class="mcq-options" id="mcq-5">
+      <label class="mcq-opt"><input type="radio" name="q5" value="a"><span class="opt-letter">a)</span> Checks value only</label>
+      <label class="mcq-opt"><input type="radio" name="q5" value="b"><span class="opt-letter">b)</span> Checks both value and data type</label>
+      <label class="mcq-opt"><input type="radio" name="q5" value="c"><span class="opt-letter">c)</span> Checks data type only</label>
+      <label class="mcq-opt"><input type="radio" name="q5" value="d"><span class="opt-letter">d)</span> Checks object reference in memory</label>
+    </div>
+    <button class="check-btn" data-qnum="5" onclick="checkMCQ(5,'b','Correct! === checks both value AND type. So the string 5 does not equal the number 5 with ===.')">Check</button>
+    <div class="feedback" id="fb-5"></div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════
+       SECTION B — Short Answer
+       ════════════════════════════════════════════════════════ -->
+  <div class="sec-header">
+    <span class="sec-badge badge-b">Section B</span>
+    <span class="sec-title">Short Answer</span>
+    <span class="sec-marks">5 × 1 = 5 marks</span>
+  </div>
+
+  <!-- Q6 -->
+  <div class="q-card" id="qc-6">
+    <div class="q-top"><span class="q-num">Q6</span><span class="q-mark">1 mark</span></div>
+    <div class="q-text">Write one line of JavaScript that declares a variable called <code>city</code> with the value <code>"Bengaluru"</code> using the most appropriate modern keyword.</div>
+    <input type="text" class="short-input" id="sa-6" placeholder="Type your answer here…">
+    <button class="check-btn" data-qnum="6" onclick="checkQ6()">Check</button>
+    <div class="feedback" id="fb-6"></div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="q-card" id="qc-7">
+    <div class="q-top"><span class="q-num">Q7</span><span class="q-mark">1 mark</span></div>
+    <div class="q-text">Name <strong>any two</strong> falsy values in JavaScript (write them separated by a comma).</div>
+    <div class="q-hint">Hint: There are exactly 6 falsy values — false, 0, "", null, undefined, NaN.</div>
+    <input type="text" class="short-input" id="sa-7" placeholder="e.g. false, 0">
+    <button class="check-btn" data-qnum="7" onclick="checkFalsy(7)">Check</button>
+    <div class="feedback" id="fb-7"></div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="q-card" id="qc-8">
+    <div class="q-top"><span class="q-num">Q8</span><span class="q-mark">1 mark</span></div>
+    <div class="q-text">What keyword is used inside a function to send a value back to the caller?</div>
+    <input type="text" class="short-input" id="sa-8" placeholder="Type the keyword…">
+    <button class="check-btn" data-qnum="8" onclick="checkShort(8, v => v.trim().toLowerCase() === 'return', 'return', 'The return keyword exits the function and optionally returns a value.')">Check</button>
+    <div class="feedback" id="fb-8"></div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="q-card" id="qc-9">
+    <div class="q-top"><span class="q-num">Q9</span><span class="q-mark">1 mark</span></div>
+    <div class="q-text">Given <code>const name = "Arjun"</code> — write a template literal that produces: <code>Hello, Arjun!</code></div>
+    <div class="q-hint">Hint: Template literals use backticks (`) and ${} for variable interpolation.</div>
+    <input type="text" class="short-input" id="sa-9" placeholder="Type your template literal…">
+    <button class="check-btn" data-qnum="9" onclick="checkShort(9, v => v.includes('`') && v.includes('${') && (v.includes('name') || v.includes('Arjun')), '`Hello, ${name}!`', 'Template literals use backticks and ${variable} for interpolation.')">Check</button>
+    <div class="feedback" id="fb-9"></div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="q-card" id="qc-10">
+    <div class="q-top"><span class="q-num">Q10</span><span class="q-mark">1 mark</span></div>
+    <div class="q-text">In one sentence, what is the key difference between <code>var</code> and <code>let</code> regarding scope?</div>
+    <input type="text" class="short-input" id="sa-10" placeholder="Type your answer…">
+    <button class="check-btn" data-qnum="10" onclick="checkShort(10, v => v.toLowerCase().includes('function') || v.toLowerCase().includes('block'), 'var is function-scoped; let is block-scoped (respects {} boundaries).', 'var leaks out of blocks like if/for; let is confined to the enclosing {} block.')">Check</button>
+    <div class="feedback" id="fb-10"></div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════
+       SECTION C — Coding
+       ════════════════════════════════════════════════════════ -->
+  <div class="sec-header">
+    <span class="sec-badge badge-c">Section C</span>
+    <span class="sec-title">Coding Questions</span>
+    <span class="sec-marks">2 × 5 = 10 marks</span>
+  </div>
+
+  <!-- Q11 -->
+  <div class="q-card" id="qc-11">
+    <div class="q-top"><span class="q-num">Q11</span><span class="q-mark">5 marks</span></div>
+    <div class="q-text">
+      Write a function called <code>gradeReport(name, score)</code> that does all of the following:<br><br>
+      &nbsp;&nbsp;<strong>(1 mark)</strong>&nbsp; Prints the student name and score in the format: <code>name: score/100</code><br>
+      &nbsp;&nbsp;<strong>(2 marks)</strong>&nbsp; Prints the letter grade — A ≥ 90, B ≥ 75, C ≥ 60, D ≥ 40, F below 40<br>
+      &nbsp;&nbsp;<strong>(1 mark)</strong>&nbsp; Prints <code>Pass</code> or <code>Fail</code> (pass mark is 40)<br>
+      &nbsp;&nbsp;<strong>(1 mark)</strong>&nbsp; Calls the function twice: <code>gradeReport("Priya", 83)</code> and <code>gradeReport("Ravi", 38)</code>
+    </div>
+    <div class="q-hint">Hint: Use if / else if for the grade. Template literals make the output clean.</div>
+    <div class="sandbox-wrap">
+      <div class="sandbox-bar">
+        <div class="sb-label"><span class="sb-dot"></span>q11.js — write and run your code</div>
+        <div class="sandbox-btns">
+          <button class="clear-btn" onclick="clearCode('e11')">Clear</button>
+          <button class="run-btn"   onclick="runCode('e11','o11')">▶ Run</button>
+        </div>
+      </div>
+      <textarea class="code-editor" id="e11" rows="14" spellcheck="false">// Write your gradeReport function here
+
+
+</textarea>
+      <div class="code-output" id="o11">
+        <span class="out-empty">Output will appear here after you click ▶ Run</span>
+      </div>
+    </div>
+    <div style="margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <button class="check-btn" onclick="checkCode11()">Check Marks</button>
+      <span style="font-size:12.5px;color:var(--muted)">Run your code first, then check marks</span>
+    </div>
+    <div class="code-feedback" id="cf-11"></div>
+  </div>
+
+  <!-- Q12 -->
+  <div class="q-card" id="qc-12">
+    <div class="q-top"><span class="q-num">Q12</span><span class="q-mark">5 marks</span></div>
+    <div class="q-text">
+      Write a JavaScript program that:<br><br>
+      &nbsp;&nbsp;<strong>(2 marks)</strong>&nbsp; Creates an array called <code>students</code> with 5 student name strings<br>
+      &nbsp;&nbsp;<strong>(2 marks)</strong>&nbsp; Uses a <code>for...of</code> loop to print each name with its position number:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Example: <code>1. Arjun</code> &nbsp; <code>2. Priya</code> &nbsp; <code>3. Ravi</code> …<br>
+      &nbsp;&nbsp;<strong>(1 mark)</strong>&nbsp; After the loop, prints: <code>Total students: 5</code> using <code>.length</code>
+    </div>
+    <div class="q-hint">Hint: You need a separate counter variable alongside the for...of loop to track position.</div>
+    <div class="sandbox-wrap">
+      <div class="sandbox-bar">
+        <div class="sb-label"><span class="sb-dot"></span>q12.js — write and run your code</div>
+        <div class="sandbox-btns">
+          <button class="clear-btn" onclick="clearCode('e12')">Clear</button>
+          <button class="run-btn"   onclick="runCode('e12','o12')">▶ Run</button>
+        </div>
+      </div>
+      <textarea class="code-editor" id="e12" rows="14" spellcheck="false">// Write your array and for...of loop here
+
+
+</textarea>
+      <div class="code-output" id="o12">
+        <span class="out-empty">Output will appear here after you click ▶ Run</span>
+      </div>
+    </div>
+    <div style="margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <button class="check-btn" onclick="checkCode12()">Check Marks</button>
+      <span style="font-size:12.5px;color:var(--muted)">Run your code first, then check marks</span>
+    </div>
+    <div class="code-feedback" id="cf-12"></div>
+  </div>
+
+  <!-- ── Submit ─────────────────────────────────────────────── -->
+  <div class="submit-section">
+    <h3>Ready to submit?</h3>
+    <p>Make sure you have attempted all questions and clicked <strong>Check</strong> / <strong>Check Marks</strong> for each one. Your final score report will appear immediately.</p>
+    <button class="submit-btn" onclick="submitAssignment()">Submit Assignment →</button>
+  </div>
+
+</main>
+
+<!-- ── Result Modal ─────────────────────────────────────────── -->
+<div class="result-overlay" id="result-overlay">
+  <div class="result-modal">
+    <div class="modal-head">
+      <div class="sub">VTU MCA — JavaScript Basics · Assignment Result</div>
+      <h2>Submission Report</h2>
+      <div class="stu-name" id="modal-stu-name">—</div>
+    </div>
+    <div class="score-big">
+      <div class="score-tile col-total">
+        <div class="st-n" id="res-total">—</div>
+        <div class="st-l">Total / 20</div>
+      </div>
+      <div class="score-tile col-a">
+        <div class="st-n" id="res-a">—</div>
+        <div class="st-l">Section A / 5</div>
+      </div>
+      <div class="score-tile col-b">
+        <div class="st-n" id="res-b">—</div>
+        <div class="st-l">Section B / 5</div>
+      </div>
+      <div class="score-tile col-c">
+        <div class="st-n" id="res-c">—</div>
+        <div class="st-l">Section C / 10</div>
+      </div>
+    </div>
+    <div class="answer-review" id="answer-review"></div>
+    <div class="modal-foot">
+      <button class="btn-print" onclick="window.print()">🖨 Print Report</button>
+      <button class="btn-close-modal" onclick="document.getElementById('result-overlay').classList.remove('open')">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Score state ─────────────────────────────────────────────── */
+const scores = {};
+const answers = {};
+let totalQ = 12;
+
+/* ── Timer ───────────────────────────────────────────────────── */
+let secs = 30 * 60;
+const timerEl = document.getElementById('timer-disp');
+const timerInterval = setInterval(() => {
+  secs--;
+  if (secs <= 0) { clearInterval(timerInterval); timerEl.textContent = 'TIME UP'; return; }
+  const m = Math.floor(secs / 60);
+  const s = secs % 60;
+  timerEl.textContent = m + ':' + String(s).padStart(2,'0');
+  if (secs <= 300) timerEl.style.color = '#f87171';
+  else if (secs <= 600) timerEl.style.color = '#fb923c';
+}, 1000);
+
+/* Set today's date */
+document.getElementById('stu-date').value = new Date().toISOString().split('T')[0];
+
+/* ── Progress tracker ────────────────────────────────────────── */
+function updateProgress() {
+  const done = Object.keys(scores).length;
+  document.getElementById('prog-fill').style.width = Math.round(done / totalQ * 100) + '%';
+  const total = Object.values(scores).reduce((a,b) => a+b, 0);
+  document.getElementById('live-score').textContent = 'Score: ' + total + ' / 20';
+}
+
+/* ── MCQ checker ─────────────────────────────────────────────── */
+function checkMCQ(qNum, correctVal, explanation) {
+  const sel = document.querySelector(`input[name="q${qNum}"]:checked`);
+  const fb  = document.getElementById('fb-' + qNum);
+  const card = document.getElementById('qc-' + qNum);
+  if (!sel) { fb.className = 'feedback wrong'; fb.textContent = '⚠ Please select an answer first.'; return; }
+
+  const opts = document.querySelectorAll(`#mcq-${qNum} .mcq-opt`);
+  opts.forEach(o => {
+    o.classList.remove('selected-correct','selected-wrong');
+    o.classList.add('locked');
+    o.style.pointerEvents = 'none';
+  });
+  document.querySelectorAll(`input[name="q${qNum}"]`).forEach(r => r.disabled = true);
+  const btn1 = document.querySelector(`button[data-qnum="${qNum}"]`); if(btn1) btn1.disabled = true;
+
+  const chosen = sel.closest('.mcq-opt');
+  if (sel.value === correctVal) {
+    chosen.classList.add('selected-correct');
+    fb.className = 'feedback correct';
+    fb.textContent = '✓ Correct! ' + explanation;
+    scores['q' + qNum] = 1;
+    answers['Q' + qNum] = { ans: sel.parentElement.textContent.trim(), marks: 1, max: 1 };
+    card.classList.add('answered');
+  } else {
+    chosen.classList.add('selected-wrong');
+    fb.className = 'feedback wrong';
+    fb.textContent = '✗ Incorrect. ' + explanation;
+    scores['q' + qNum] = 0;
+    answers['Q' + qNum] = { ans: sel.parentElement.textContent.trim(), marks: 0, max: 1 };
+    card.classList.add('skipped');
+  }
+  updateProgress();
+}
+
+/* ── Short answer checker ────────────────────────────────────── */
+function checkShort(qNum, testFn, modelAns, explain) {
+  const input = document.getElementById('sa-' + qNum);
+  const fb    = document.getElementById('fb-' + qNum);
+  const card  = document.getElementById('qc-' + qNum);
+  const val   = input.value;
+  if (!val.trim()) { fb.className='feedback wrong'; fb.textContent='⚠ Please write your answer first.'; return; }
+
+  input.disabled = true;
+  const btn2 = document.querySelector(`button[data-qnum="${qNum}"]`); if(btn2) btn2.disabled = true;
+
+  if (testFn(val)) {
+    input.classList.add('correct');
+    fb.className = 'feedback correct';
+    fb.textContent = '✓ Correct! ' + explain;
+    scores['q' + qNum] = 1;
+    answers['Q' + qNum] = { ans: val, marks: 1, max: 1 };
+    card.classList.add('answered');
+  } else {
+    input.classList.add('wrong');
+    fb.className = 'feedback wrong';
+    fb.textContent = '✗ Not quite. Model answer: ' + modelAns + '. ' + explain;
+    scores['q' + qNum] = 0;
+    answers['Q' + qNum] = { ans: val, marks: 0, max: 1 };
+    card.classList.add('skipped');
+  }
+  updateProgress();
+}
+
+/* ── Q6 named checker (avoids quote-escaping in onclick) ────── */
+function checkQ6() {
+  const input = document.getElementById('sa-6');
+  const fb    = document.getElementById('fb-6');
+  const card  = document.getElementById('qc-6');
+  const val   = input.value;
+  if (!val.trim()) { fb.className='feedback wrong'; fb.textContent='⚠ Please write your answer first.'; return; }
+  input.disabled = true;
+  const btn = document.querySelector('button[data-qnum="6"]');
+  if (btn) btn.disabled = true;
+  const ok = val.includes('const') && val.includes('city') && val.includes('Bengaluru');
+  if (ok) {
+    input.classList.add('correct');
+    fb.className = 'feedback correct';
+    fb.textContent = '✓ Correct! const city = "Bengaluru"; — const is preferred because the value does not change.';
+    scores['q6'] = 1;
+    answers['Q6'] = { ans: val, marks: 1, max: 1 };
+    card.classList.add('answered');
+  } else {
+    input.classList.add('wrong');
+    fb.className = 'feedback wrong';
+    fb.textContent = '✗ Not quite. Expected: const city = "Bengaluru"; — use const for values that will not change.';
+    scores['q6'] = 0;
+    answers['Q6'] = { ans: val, marks: 0, max: 1 };
+    card.classList.add('skipped');
+  }
+  updateProgress();
+}
+
+/* ── Falsy question special checker ─────────────────────────── */
+function checkFalsy(qNum) {
+  const input = document.getElementById('sa-7');
+  const fb    = document.getElementById('fb-7');
+  const card  = document.getElementById('qc-7');
+  const val   = input.value.toLowerCase();
+  if (!val.trim()) { fb.className='feedback wrong'; fb.textContent='⚠ Please write your answer first.'; return; }
+
+  const valid = ['false','0','""',"''",'null','undefined','nan','""',"''"];
+  const found = valid.filter(f => val.includes(f));
+  input.disabled = true;
+  const btn3 = document.querySelector(`button[data-qnum="7"]`); if(btn3) btn3.disabled = true;
+
+  if (found.length >= 2) {
+    input.classList.add('correct');
+    fb.className = 'feedback correct';
+    fb.textContent = '✓ Correct! Any two of: false, 0, "", null, undefined, NaN are valid.';
+    scores['q7'] = 1;
+    answers['Q7'] = { ans: val, marks: 1, max: 1 };
+    card.classList.add('answered');
+  } else {
+    input.classList.add('wrong');
+    fb.className = 'feedback wrong';
+    fb.textContent = '✗ You need to name at least 2 falsy values. The 6 are: false, 0, "", null, undefined, NaN.';
+    scores['q7'] = 0;
+    answers['Q7'] = { ans: val, marks: 0, max: 1 };
+    card.classList.add('skipped');
+  }
+  updateProgress();
+}
+
+/* ── Code runner ─────────────────────────────────────────────── */
+function runCode(editorId, outputId) {
+  const code  = document.getElementById(editorId).value;
+  const outEl = document.getElementById(outputId);
+  const lines = [];
+  const fake = (...a) => lines.push(
+    a.map(x => x === null ? 'null' : x === undefined ? 'undefined' :
+      typeof x === 'object' ? JSON.stringify(x) : String(x)).join(' ')
+  );
+  try {
+    new Function('console', code)({ log: fake, warn: fake, error: fake, info: fake });
+    if (lines.length === 0) {
+      outEl.innerHTML = '<span class="out-empty">(no output — add console.log() calls)</span>';
+    } else {
+      outEl.innerHTML = '<span class="out-prompt">›</span><span class="out-text">' +
+        lines.join('\n') + '</span>';
+    }
+  } catch(e) {
+    outEl.innerHTML = '<span class="out-error">⚠ Error: ' + e.message + '</span>';
+  }
+}
+
+function clearCode(editorId) {
+  document.getElementById(editorId).value = '';
+}
+
+/* ── Q11 gradeReport checker ─────────────────────────────────── */
+function checkCode11() {
+  const code = document.getElementById('e11').value;
+  const out  = document.getElementById('o11').textContent.toLowerCase();
+  const fb   = document.getElementById('cf-11');
+  const card = document.getElementById('qc-11');
+  let pts = 0; const breakdown = [];
+
+  if (out.includes('priya') && (out.includes('83') || out.includes('83/100'))) {
+    pts++; breakdown.push('✓ Printed name and score for Priya (+1)');
+  } else { breakdown.push('✗ Missing: name and score in output'); }
+
+  const hasGradeB = out.includes('b') && (out.includes('priya') || out.includes('first'));
+  const hasGradeF = out.includes('f') && (out.includes('ravi'));
+  if (hasGradeB || out.match(/grade.*b/)) { pts++; breakdown.push('✓ Correct grade for Priya - B (+1)'); }
+  else { breakdown.push('✗ Missing or wrong grade for Priya (expected B)'); }
+  if (hasGradeF || out.includes('fail')) { pts++; breakdown.push('✓ Grade/Fail detected for Ravi (+1)'); }
+  else { breakdown.push('✗ Missing grade or fail result for Ravi'); }
+
+  if (out.includes('pass')) { pts++; breakdown.push('✓ Pass/Fail output present (+1)'); }
+  else { breakdown.push('✗ Missing Pass/Fail output'); }
+
+  if (out.includes('ravi') && (out.includes('38') || out.includes('38/100'))) {
+    pts++; breakdown.push('✓ Function called twice with correct arguments (+1)');
+  } else { breakdown.push('✗ Missing second function call with Ravi, 38'); }
+
+  scores['q11'] = pts;
+  answers['Q11'] = { ans: '[code answer]', marks: pts, max: 5 };
+  fb.className   = 'code-feedback show ' + (pts >= 4 ? 'good' : pts >= 2 ? 'part' : 'none');
+  fb.innerHTML   = `<strong>${pts}/5 marks</strong><br>${breakdown.join('<br>')}`;
+  if (pts === 5) card.classList.add('answered');
+  else card.classList.add('skipped');
+  updateProgress();
+}
+
+/* ── Q12 array + loop checker ────────────────────────────────── */
+function checkCode12() {
+  const out  = document.getElementById('o12').textContent;
+  const code = document.getElementById('e12').value;
+  const fb   = document.getElementById('cf-12');
+  const card = document.getElementById('qc-12');
+  let pts = 0; const breakdown = [];
+
+  if (code.includes('[') && code.includes(']') && (code.includes('const students') || code.includes('let students'))) {
+    pts += 2; breakdown.push('✓ Array named students created (+2)');
+  } else if (code.includes('[') && code.includes(']')) {
+    pts++; breakdown.push('~ Array found but may not be named students (+1)');
+  } else { breakdown.push('✗ No array found in code'); }
+
+  if (code.includes('for') && code.includes('of')) {
+    const hasNum = /[1-5][\.\)]\s*\w+/.test(out);
+    if (hasNum) { pts += 2; breakdown.push('✓ for...of loop with position numbers in output (+2)'); }
+    else { pts++; breakdown.push('~ for...of loop found but position numbers missing (+1)'); }
+  } else { breakdown.push('✗ for...of loop not used'); }
+
+  if (out.toLowerCase().includes('total') || out.includes('5')) {
+    pts++; breakdown.push('✓ Total/count printed after loop (+1)');
+  } else { breakdown.push('✗ Missing total count after loop'); }
+
+  scores['q12'] = pts;
+  answers['Q12'] = { ans: '[code answer]', marks: pts, max: 5 };
+  fb.className = 'code-feedback show ' + (pts >= 4 ? 'good' : pts >= 2 ? 'part' : 'none');
+  fb.innerHTML = `<strong>${pts}/5 marks</strong><br>${breakdown.join('<br>')}`;
+  if (pts === 5) card.classList.add('answered');
+  else card.classList.add('skipped');
+  updateProgress();
+}
+
+/* ── Keyboard shortcut: Ctrl+Enter to run ────────────────────── */
+document.querySelectorAll('.code-editor').forEach(ta => {
+  ta.addEventListener('keydown', e => {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const s = ta.selectionStart;
+      ta.value = ta.value.substring(0,s) + '  ' + ta.value.substring(ta.selectionEnd);
+      ta.selectionStart = ta.selectionEnd = s + 2;
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      const id = ta.id; const outId = 'o' + id.substring(1);
+      e.preventDefault(); runCode(id, outId);
+    }
+  });
+});
+
+/* ── Submit ──────────────────────────────────────────────────── */
+function submitAssignment() {
+  /* Collect student info */
+  const name  = document.getElementById('stu-name').value.trim() || 'Student';
+  const roll  = document.getElementById('stu-roll').value.trim() || '—';
+  const email = document.getElementById('stu-email').value.trim() || '—';
+  const date  = document.getElementById('stu-date').value || '—';
+
+  /* Totals */
+  const secA = (scores.q1||0)+(scores.q2||0)+(scores.q3||0)+(scores.q4||0)+(scores.q5||0);
+  const secB = (scores.q6||0)+(scores.q7||0)+(scores.q8||0)+(scores.q9||0)+(scores.q10||0);
+  const secC = (scores.q11||0)+(scores.q12||0);
+  const total = secA + secB + secC;
+
+  /* Populate modal */
+  document.getElementById('modal-stu-name').textContent =
+    `${name} · ${roll} · ${email} · ${date}`;
+  document.getElementById('res-total').textContent = total;
+  document.getElementById('res-a').textContent = secA;
+  document.getElementById('res-b').textContent = secB;
+  document.getElementById('res-c').textContent = secC;
+
+  /* Build answer review */
+  const revEl = document.getElementById('answer-review');
+  const qLabels = {
+    Q1:'const vs var', Q2:'typeof null', Q3:'"5"+3 output',
+    Q4:'do...while', Q5:'=== vs ==',
+    Q6:'Declare city variable', Q7:'Two falsy values',
+    Q8:'Return keyword', Q9:'Template literal', Q10:'var vs let scope',
+    Q11:'gradeReport() function', Q12:'Array + for...of loop'
+  };
+
+  let html = '<div class="review-section"><div class="rev-sec-title">Section A — Multiple Choice</div>';
+  for (let i=1; i<=5; i++) {
+    const a = answers['Q'+i];
+    const m = scores['q'+i] ?? '—';
+    const cls = m === 1 ? 'mark-got' : m === 0 ? 'mark-lost' : '';
+    html += `<div class="rev-row">
+      <span class="rev-q">Q${i}</span>
+      <span class="rev-ans">${qLabels['Q'+i]}: ${a ? a.ans : 'Not attempted'}</span>
+      <span class="rev-mark ${cls}">${m}/${a?.max||1}</span>
+    </div>`;
+  }
+  html += '</div><div class="review-section"><div class="rev-sec-title">Section B — Short Answer</div>';
+  for (let i=6; i<=10; i++) {
+    const a = answers['Q'+i];
+    const m = scores['q'+i] ?? '—';
+    const cls = m === 1 ? 'mark-got' : m === 0 ? 'mark-lost' : '';
+    html += `<div class="rev-row">
+      <span class="rev-q">Q${i}</span>
+      <span class="rev-ans">${qLabels['Q'+i]}: ${a ? a.ans : 'Not attempted'}</span>
+      <span class="rev-mark ${cls}">${m}/${a?.max||1}</span>
+    </div>`;
+  }
+  html += '</div><div class="review-section"><div class="rev-sec-title">Section C — Coding</div>';
+  for (let i=11; i<=12; i++) {
+    const a = answers['Q'+i];
+    const m = scores['q'+i] ?? '—';
+    const cls = m >= 4 ? 'mark-got' : m >= 2 ? 'mark-part' : 'mark-lost';
+    html += `<div class="rev-row">
+      <span class="rev-q">Q${i}</span>
+      <span class="rev-ans">${qLabels['Q'+i]}</span>
+      <span class="rev-mark ${cls}">${m ?? '—'}/${a?.max||5}</span>
+    </div>`;
+  }
+  html += '</div>';
+  revEl.innerHTML = html;
+
+  document.getElementById('result-overlay').classList.add('open');
+}
+</script>
+</body>
+</html>
