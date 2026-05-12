@@ -1,0 +1,1923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DOM Notes — VTU MCA Module 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   BASE & TOKENS
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --page   : #f7f6f2;
+  --white  : #ffffff;
+  --surf   : #ffffff;
+  --surf2  : #f2f0ec;
+  --border : #e4e0d8;
+  --border2: #cdc9c0;
+  --ink    : #1a1814;
+  --ink2   : #4a4640;
+  --muted  : #8a8680;
+  --blue   : #1c4ed8;
+  --blue-lt: #eff6ff;
+  --blue-bd: #bfdbfe;
+  --green  : #15803d;
+  --grn-lt : #f0fdf4;
+  --grn-bd : #bbf7d0;
+  --amber  : #b45309;
+  --amb-lt : #fffbeb;
+  --amb-bd : #fde68a;
+  --rose   : #be123c;
+  --rose-lt: #fff1f2;
+  --rose-bd: #fecdd3;
+  --teal   : #0f766e;
+  --teal-lt: #f0fdfa;
+  --teal-bd: #99f6e4;
+  --mono   : 'Fira Code', monospace;
+  --serif  : 'Playfair Display', serif;
+  --body   : 'Source Sans 3', sans-serif;
+  --r      : 8px;
+  --r-lg   : 12px;
+}
+
+body {
+  font-family: var(--body);
+  background: var(--page);
+  color: var(--ink);
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+/* ============================================================
+   STICKY HEADER
+   ============================================================ */
+.site-header {
+  background: var(--ink);
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  height: 54px;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-chip {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  background: #f5d547;
+  color: var(--ink);
+  padding: 3px 9px;
+  border-radius: 5px;
+  letter-spacing: .02em;
+}
+
+.brand-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: rgba(255,255,255,.8);
+  letter-spacing: .01em;
+}
+
+.header-nav {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+}
+
+.hn-link {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: rgba(255,255,255,.55);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: var(--r);
+  transition: all .15s;
+  white-space: nowrap;
+}
+
+.hn-link:hover {
+  background: rgba(255,255,255,.1);
+  color: #fff;
+}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.page-wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 44px 24px 80px;
+}
+
+/* ============================================================
+   PAGE HERO
+   ============================================================ */
+.page-hero {
+  margin-bottom: 48px;
+  padding-bottom: 32px;
+  border-bottom: 2px solid var(--border);
+}
+
+.hero-kicker {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--blue);
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero-kicker::before {
+  content: '';
+  width: 24px;
+  height: 2px;
+  background: var(--blue);
+  border-radius: 2px;
+}
+
+.page-hero h1 {
+  font-family: var(--serif);
+  font-size: clamp(30px, 4vw, 48px);
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.12;
+  margin-bottom: 12px;
+}
+
+.page-hero h1 em {
+  font-style: italic;
+  color: var(--blue);
+}
+
+.page-hero p {
+  font-size: 15.5px;
+  color: var(--ink2);
+  line-height: 1.75;
+  max-width: 620px;
+  margin-bottom: 20px;
+}
+
+/* Quick jump cards */
+.jump-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.jump-card {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 14px 16px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color .18s, transform .18s, box-shadow .18s;
+  display: block;
+}
+
+.jump-card:hover {
+  border-color: var(--blue);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(28,78,216,.1);
+}
+
+.jc-icon { font-size: 20px; margin-bottom: 7px; }
+.jc-num  { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-bottom: 3px; }
+.jc-title{ font-size: 13px; font-weight: 700; color: var(--ink); line-height: 1.3; }
+
+/* ============================================================
+   TOPIC SECTIONS
+   ============================================================ */
+.topic {
+  margin-bottom: 72px;
+  scroll-margin-top: 70px;
+}
+
+.topic-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.topic-num {
+  font-family: var(--mono);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--border2);
+  line-height: 1;
+  min-width: 42px;
+  margin-top: 4px;
+}
+
+.topic-meta {}
+
+.topic-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.topic-title {
+  font-family: var(--serif);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.topic-intro {
+  font-size: 14.5px;
+  color: var(--ink2);
+  line-height: 1.7;
+}
+
+/* ============================================================
+   TWO-COLUMN LAYOUT
+   ============================================================ */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 14px 0;
+}
+
+/* ============================================================
+   NOTE CARDS
+   ============================================================ */
+.note-card {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 18px 20px;
+  margin-bottom: 14px;
+}
+
+.card-heading {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.card-body {
+  font-size: 14px;
+  color: var(--ink2);
+  line-height: 1.7;
+}
+
+/* ============================================================
+   CODE BLOCKS (read-only)
+   ============================================================ */
+.code-block {
+  background: #0f1117;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin: 14px 0;
+}
+
+.cb-bar {
+  background: #1a1d26;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border-bottom: 1px solid #2a2d38;
+}
+
+.cb-dot { width: 8px; height: 8px; border-radius: 50%; }
+.cbd-r  { background: #ef4444; }
+.cbd-y  { background: #f59e0b; }
+.cbd-g  { background: #22c55e; }
+.cb-filename { font-family: var(--mono); font-size: 11px; color: #5a6080; margin-left: 4px; }
+
+.code-block pre {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.8;
+  padding: 16px 18px;
+  overflow-x: auto;
+  color: #c9d1d9;
+  white-space: pre;
+}
+
+/* Syntax colours */
+.kw   { color: #ff79c6; }
+.fn   { color: #82aaff; }
+.str  { color: #c3e88d; }
+.num  { color: #f78c6c; }
+.cm   { color: #546e7a; font-style: italic; }
+.prop { color: #b2ccd6; }
+.op   { color: #89ddff; }
+.bool { color: #ff5874; }
+.tag  { color: #f07178; }
+.attr { color: #ffcb6b; }
+
+/* ============================================================
+   INLINE CODE
+   ============================================================ */
+code {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  color: var(--blue);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+/* ============================================================
+   NOTE / CALLOUT BOXES
+   ============================================================ */
+.callout {
+  border-left: 3px solid;
+  border-radius: 0 var(--r) var(--r) 0;
+  padding: 11px 16px;
+  font-size: 13.5px;
+  line-height: 1.65;
+  margin: 14px 0;
+}
+
+.callout strong { font-weight: 700; }
+
+.callout.blue   { border-color: var(--blue);  background: var(--blue-lt); color: #1e3a8a; }
+.callout.green  { border-color: var(--green); background: var(--grn-lt);  color: #14532d; }
+.callout.amber  { border-color: var(--amber); background: var(--amb-lt);  color: #78350f; }
+.callout.rose   { border-color: var(--rose);  background: var(--rose-lt); color: #881337; }
+.callout.teal   { border-color: var(--teal);  background: var(--teal-lt); color: #134e4a; }
+
+/* ============================================================
+   REFERENCE TABLE
+   ============================================================ */
+.ref-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 12px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+
+.ref-table th {
+  background: var(--surf2);
+  padding: 8px 13px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.ref-table td {
+  padding: 9px 13px;
+  border-bottom: 1px solid #f0ede8;
+  vertical-align: top;
+  line-height: 1.55;
+}
+
+.ref-table tr:last-child td { border-bottom: none; }
+.ref-table tr:nth-child(even) td { background: #fafaf8; }
+.ref-table td:first-child { font-family: var(--mono); font-size: 12px; color: var(--blue); white-space: nowrap; }
+.ref-table td:last-child  { color: var(--ink2); }
+
+/* ============================================================
+   DOM TREE DIAGRAM
+   ============================================================ */
+.dom-tree {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 18px 20px;
+  line-height: 2;
+  margin: 14px 0;
+}
+
+.dt-root  { color: var(--blue); font-weight: 600; }
+.dt-el    { color: var(--green); font-weight: 600; }
+.dt-attr  { color: var(--amber); }
+.dt-text  { color: var(--rose); font-style: italic; }
+.dt-conn  { color: var(--border2); }
+
+/* ============================================================
+   LAB SECTIONS
+   ============================================================ */
+.lab-section {
+  background: var(--surf);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+.lab-header {
+  background: var(--ink);
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.lab-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.lab-badge {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #f5d547;
+  color: var(--ink);
+}
+
+.lab-hint {
+  font-size: 11.5px;
+  color: rgba(255,255,255,.45);
+  font-style: italic;
+}
+
+/* Editor area */
+.lab-editor-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--border);
+}
+
+.editor-pane {
+  border-right: 1px solid var(--border);
+}
+
+.editor-pane:last-child { border-right: none; }
+
+.pane-label {
+  background: #f5f3f0;
+  border-bottom: 1px solid var(--border);
+  padding: 7px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pane-label .pl-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+}
+
+.dot-green  { background: #22c55e; }
+.dot-blue   { background: #60a5fa; }
+.dot-yellow { background: #f5d547; animation: blink 2s infinite; }
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+textarea.code-area {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.75;
+  padding: 14px 16px;
+  background: #0f1117;
+  color: #c9d1d9;
+  border: none;
+  outline: none;
+  width: 100%;
+  resize: vertical;
+  min-height: 160px;
+  caret-color: #f5d547;
+  tab-size: 2;
+}
+
+.run-bar {
+  background: #1a1d26;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #2a2d38;
+}
+
+.run-hint { font-size: 11px; color: #546e7a; font-family: var(--mono); }
+
+.run-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 16px;
+  background: #f5d547;
+  color: var(--ink);
+  border: none;
+  border-radius: 6px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+}
+
+.run-btn:hover  { background: #e8c93a; transform: translateY(-1px); }
+.run-btn:active { transform: scale(.97); }
+
+/* Preview pane */
+.preview-pane {
+  padding: 18px;
+  min-height: 200px;
+  background: #fff;
+  font-family: var(--body);
+  font-size: 14px;
+  overflow: auto;
+}
+
+/* ============================================================
+   LAB 1 — DOM EXPLORER
+   ============================================================ */
+.dom-explorer {
+  padding: 18px;
+}
+
+.de-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 12px; }
+
+#dom-target {
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+#dom-target h2    { color: var(--blue); margin-bottom: 6px; }
+#dom-target p     { color: var(--ink2); margin-bottom: 8px; font-size: 14px; }
+#dom-target .highlight { background: #fef9c3; padding: 1px 4px; border-radius: 3px; }
+#dom-target ul    { margin-left: 20px; color: var(--ink2); font-size: 14px; }
+#dom-target ul li { margin-bottom: 4px; }
+
+.dom-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 12px;
+}
+
+.dom-btn {
+  padding: 6px 14px;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  background: var(--surf2);
+  font-family: var(--body);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink2);
+  cursor: pointer;
+  transition: all .15s;
+}
+
+.dom-btn:hover { background: var(--blue-lt); border-color: var(--blue-bd); color: var(--blue); }
+
+.dom-output {
+  background: #0f1117;
+  border-radius: var(--r);
+  padding: 10px 14px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: #4ade80;
+  min-height: 36px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+/* ============================================================
+   LAB 2 — EVENT PLAYGROUND
+   ============================================================ */
+.event-playground {
+  padding: 18px;
+}
+
+.ep-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.ep-card {
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 14px;
+}
+
+.ep-card-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.ep-box {
+  width: 100%;
+  height: 70px;
+  border: 2px dashed var(--border2);
+  border-radius: var(--r);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .2s;
+  user-select: none;
+}
+
+.ep-box:hover { border-color: var(--blue); background: var(--blue-lt); color: var(--blue); }
+
+.ep-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  font-family: var(--body);
+  font-size: 14px;
+  color: var(--ink);
+  background: #fff;
+  outline: none;
+  transition: border-color .18s;
+  margin-bottom: 7px;
+}
+
+.ep-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-lt); }
+
+.ep-log {
+  background: #0f1117;
+  border-radius: var(--r);
+  padding: 10px 14px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: #4ade80;
+  min-height: 80px;
+  max-height: 150px;
+  overflow-y: auto;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.log-ts    { color: #546e7a; }
+.log-event { color: #f5d547; font-weight: 600; }
+.log-data  { color: #c3e88d; }
+
+/* ============================================================
+   LAB 3 — CREATE & MODIFY DOM
+   ============================================================ */
+.create-lab {
+  padding: 18px;
+}
+
+.create-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 14px;
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+}
+
+.ctrl-group {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.ctrl-label { font-size: 12px; font-weight: 700; color: var(--ink2); }
+
+.ctrl-input {
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  font-family: var(--body);
+  font-size: 13px;
+  color: var(--ink);
+  background: #fff;
+  outline: none;
+  width: 140px;
+  transition: border-color .18s;
+}
+
+.ctrl-input:focus { border-color: var(--blue); }
+
+.ctrl-select {
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  font-family: var(--body);
+  font-size: 13px;
+  color: var(--ink);
+  background: #fff;
+  outline: none;
+  cursor: pointer;
+}
+
+.ctrl-btn {
+  padding: 7px 16px;
+  border-radius: var(--r);
+  border: none;
+  font-family: var(--body);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .15s;
+}
+
+.ctrl-btn.primary { background: var(--blue); color: #fff; }
+.ctrl-btn.primary:hover { background: #1741b5; }
+.ctrl-btn.danger  { background: var(--rose-lt); color: var(--rose); border: 1px solid var(--rose-bd); }
+.ctrl-btn.danger:hover { background: var(--rose); color: #fff; }
+
+#element-canvas {
+  background: var(--surf2);
+  border: 1px dashed var(--border2);
+  border-radius: var(--r);
+  padding: 16px;
+  min-height: 120px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-start;
+  align-content: flex-start;
+}
+
+.canvas-empty {
+  font-size: 13px;
+  color: var(--muted);
+  font-style: italic;
+  text-align: center;
+  width: 100%;
+  padding: 20px 0;
+}
+
+.created-el {
+  padding: 7px 14px;
+  border-radius: var(--r);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .18s;
+  border: 1px solid transparent;
+  position: relative;
+}
+
+.created-el:hover::after {
+  content: '× click to remove';
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: #fff;
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* ============================================================
+   LAB 4 — FORM VALIDATION
+   ============================================================ */
+.form-lab {
+  padding: 20px;
+}
+
+.fl-form {
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 22px;
+  max-width: 480px;
+}
+
+.fl-title {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 16px;
+}
+
+.fl-group {
+  margin-bottom: 16px;
+}
+
+.fl-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--ink2);
+  margin-bottom: 6px;
+}
+
+.fl-input, .fl-select {
+  width: 100%;
+  padding: 10px 13px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  font-family: var(--body);
+  font-size: 14px;
+  color: var(--ink);
+  background: #fff;
+  outline: none;
+  transition: border-color .18s, background .18s;
+}
+
+.fl-input:focus, .fl-select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-lt); }
+.fl-input.valid    { border-color: var(--green); background: var(--grn-lt); }
+.fl-input.invalid  { border-color: var(--rose);  background: var(--rose-lt); }
+
+.fl-error {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--rose);
+  margin-top: 5px;
+  display: none;
+  align-items: center;
+  gap: 5px;
+}
+
+.fl-error.show { display: flex; }
+
+.fl-success {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--green);
+  margin-top: 5px;
+  display: none;
+  align-items: center;
+  gap: 5px;
+}
+
+.fl-success.show { display: flex; }
+
+/* Password strength */
+.strength-bar {
+  height: 5px;
+  background: var(--border);
+  border-radius: 3px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.strength-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width .3s, background .3s;
+  width: 0%;
+}
+
+.strength-label {
+  font-size: 11px;
+  font-weight: 700;
+  margin-top: 4px;
+  color: var(--muted);
+}
+
+.fl-submit {
+  width: 100%;
+  padding: 12px;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: var(--r);
+  font-family: var(--body);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .18s;
+  letter-spacing: .02em;
+}
+
+.fl-submit:hover { background: #1741b5; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(28,78,216,.25); }
+
+.fl-result {
+  margin-top: 14px;
+  padding: 12px 16px;
+  border-radius: var(--r);
+  font-size: 14px;
+  font-weight: 600;
+  display: none;
+}
+
+.fl-result.success { display: block; background: var(--grn-lt); color: var(--green); border: 1px solid var(--grn-bd); }
+.fl-result.fail    { display: block; background: var(--rose-lt); color: var(--rose); border: 1px solid var(--rose-bd); }
+
+/* ============================================================
+   QUICK REFERENCE PANEL
+   ============================================================ */
+.qr-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.qr-card {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 14px 16px;
+  transition: border-color .18s;
+}
+
+.qr-card:hover { border-color: var(--blue); }
+.qr-method { font-family: var(--mono); font-size: 12px; color: var(--blue); font-weight: 600; margin-bottom: 5px; display: block; }
+.qr-desc   { font-size: 13px; color: var(--ink2); line-height: 1.55; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.site-footer {
+  background: var(--ink);
+  color: rgba(255,255,255,.35);
+  text-align: center;
+  padding: 18px;
+  font-size: 12px;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 780px) {
+  .jump-grid          { grid-template-columns: 1fr 1fr; }
+  .two-col            { grid-template-columns: 1fr; }
+  .lab-editor-wrap    { grid-template-columns: 1fr; }
+  .ep-grid            { grid-template-columns: 1fr; }
+  .qr-grid            { grid-template-columns: 1fr 1fr; }
+  .header-inner       { padding: 0 16px; }
+  .page-wrap          { padding: 28px 16px 60px; }
+  .header-nav         { display: none; }
+}
+
+@media (max-width: 500px) {
+  .jump-grid { grid-template-columns: 1fr; }
+  .qr-grid   { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     HEADER
+     ══════════════════════════════════════════════════════════ -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <span class="brand-chip">DOM</span>
+      <span class="brand-title">VTU MCA — Module 4 · JavaScript &amp; DOM Manipulation</span>
+    </div>
+    <nav class="header-nav">
+      <a href="#sec-dom"     class="hn-link">§1 DOM Structure</a>
+      <a href="#sec-events"  class="hn-link">§2 Events</a>
+      <a href="#sec-create"  class="hn-link">§3 Create &amp; Modify</a>
+      <a href="#sec-forms"   class="hn-link">§4 Form Validation</a>
+    </nav>
+  </div>
+</header>
+
+<main class="page-wrap">
+
+  <!-- HERO -->
+  <div class="page-hero">
+    <div class="hero-kicker" >VTU MCA — Web Technologies · Module 4</div>
+    <h1 id="manjusha">Document Object Model<br><em>DOM Manipulation</em></h1>
+    <p>The DOM is the bridge between HTML and JavaScript. It lets you read, change, add, and remove everything on a webpage — live, without reloading. These notes cover all four VTU topics with theory, code examples, and hands-on labs.</p>
+    <div class="jump-grid">
+      <a href="#sec-dom"    class="jump-card"><div class="jc-icon">🌳</div><div class="jc-num">§1</div><div class="jc-title">DOM Structure &amp; Manipulation</div></a>
+      <a href="#sec-events" class="jump-card"><div class="jc-icon">🖱️</div><div class="jc-num">§2</div><div class="jc-title">Event Handling &amp; Listeners</div></a>
+      <a href="#sec-create" class="jump-card"><div class="jc-icon">🔧</div><div class="jc-num">§3</div><div class="jc-title">Creating &amp; Modifying Elements</div></a>
+      <a href="#sec-forms"  class="jump-card"><div class="jc-icon">✅</div><div class="jc-num">§4</div><div class="jc-title">Form Validation</div></a>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       §1 — DOM STRUCTURE & MANIPULATION
+       ══════════════════════════════════════════════════════ -->
+  <section class="topic" id="sec-dom">
+    <div class="topic-header">
+      <span class="topic-num">01</span>
+      <div class="topic-meta">
+        <div class="topic-tag">DOM Structure</div>
+        <div class="topic-title">Document Object Model — Structure &amp; Manipulation</div>
+        <div class="topic-intro">The DOM is a tree-structured, in-memory representation of an HTML page. Every tag becomes a <strong>node</strong>. JavaScript can traverse this tree and change any node — which instantly updates what the user sees.</div>
+      </div>
+    </div>
+
+    <!-- What is the DOM -->
+    <div class="two-col">
+      <div class="note-card">
+        <div class="card-heading">🌳 What is the DOM?</div>
+        <div class="card-body">
+          <p style="margin-bottom:10px">When a browser loads an HTML page, it parses the markup and creates a <strong>tree of objects</strong> in memory. This tree is the DOM (Document Object Model).</p>
+          <p>The <code>document</code> object is the root. Every HTML element is a <strong>node</strong>. Text inside elements are <strong>text nodes</strong>. Attributes are <strong>attribute nodes</strong>.</p>
+        </div>
+      </div>
+      <div class="note-card">
+        <div class="card-heading">📦 Node Types</div>
+        <div class="card-body">
+          <table class="ref-table" style="margin:0">
+            <tr><th>Type</th><th>nodeType</th><th>Example</th></tr>
+            <tr><td>Element</td><td>1</td><td style="color:var(--ink2)">&lt;div&gt;, &lt;p&gt;</td></tr>
+            <tr><td>Text</td><td>3</td><td style="color:var(--ink2)">"Hello World"</td></tr>
+            <tr><td>Comment</td><td>8</td><td style="color:var(--ink2)">&lt;!-- comment --&gt;</td></tr>
+            <tr><td>Document</td><td>9</td><td style="color:var(--ink2)">document</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOM Tree diagram -->
+    <div class="note-card">
+      <div class="card-heading">🌲 DOM Tree Structure</div>
+      <div class="dom-tree">
+<span class="dt-root">document</span>
+<span class="dt-conn">  └──</span> <span class="dt-el">&lt;html&gt;</span>
+<span class="dt-conn">        ├──</span> <span class="dt-el">&lt;head&gt;</span>
+<span class="dt-conn">        │     └──</span> <span class="dt-el">&lt;title&gt;</span> <span class="dt-text">"VTU MCA"</span>
+<span class="dt-conn">        └──</span> <span class="dt-el">&lt;body&gt;</span>
+<span class="dt-conn">              ├──</span> <span class="dt-el">&lt;h1</span> <span class="dt-attr">id="main-title"</span><span class="dt-el">&gt;</span> <span class="dt-text">"Hello"</span>
+<span class="dt-conn">              └──</span> <span class="dt-el">&lt;div</span> <span class="dt-attr">class="container"</span><span class="dt-el">&gt;</span>
+<span class="dt-conn">                    ├──</span> <span class="dt-el">&lt;p&gt;</span> <span class="dt-text">"Paragraph text"</span>
+<span class="dt-conn">                    └──</span> <span class="dt-el">&lt;ul&gt;</span>
+<span class="dt-conn">                          ├──</span> <span class="dt-el">&lt;li&gt;</span> <span class="dt-text">"Item 1"</span>
+<span class="dt-conn">                          └──</span> <span class="dt-el">&lt;li&gt;</span> <span class="dt-text">"Item 2"</span>
+      </div>
+    </div>
+
+    <!-- Selecting elements -->
+    <div class="note-card">
+      <div class="card-heading">🔍 Selecting Elements — 5 Methods</div>
+      <table class="ref-table">
+        <tr><th>Method</th><th>Returns</th><th>Use when</th></tr>
+        <tr><td>getElementById('id')</td>       <td style="color:var(--ink2)">Single element or null</td><td style="color:var(--ink2)">You have a unique id — fastest method</td></tr>
+        <tr><td>querySelector('css')</td>        <td style="color:var(--ink2)">First matching element or null</td><td style="color:var(--ink2)">Any CSS selector — most flexible</td></tr>
+        <tr><td>querySelectorAll('css')</td>     <td style="color:var(--ink2)">NodeList (all matches)</td><td style="color:var(--ink2)">Select multiple elements</td></tr>
+        <tr><td>getElementsByClassName('c')</td><td style="color:var(--ink2)">HTMLCollection (live)</td><td style="color:var(--ink2)">Select by class name</td></tr>
+        <tr><td>getElementsByTagName('p')</td>  <td style="color:var(--ink2)">HTMLCollection (live)</td><td style="color:var(--ink2)">Select all tags of a type</td></tr>
+      </table>
+    </div>
+
+    <!-- Manipulation code -->
+    <div class="code-block">
+      <div class="cb-bar">
+        <span class="cb-dot cbd-r"></span><span class="cb-dot cbd-y"></span><span class="cb-dot cbd-g"></span>
+        <span class="cb-filename">dom-manipulation.js</span>
+      </div>
+      <pre><span class="cm">// ── 1. Select elements ──────────────────────────────────</span>
+<span class="kw">const</span> title  = document.<span class="fn">getElementById</span>(<span class="str">'main-title'</span>);
+<span class="kw">const</span> first  = document.<span class="fn">querySelector</span>(<span class="str">'.card'</span>);       <span class="cm">// first .card</span>
+<span class="kw">const</span> allBtn = document.<span class="fn">querySelectorAll</span>(<span class="str">'button'</span>);   <span class="cm">// NodeList</span>
+
+<span class="cm">// ── 2. Read content ─────────────────────────────────────</span>
+console.<span class="fn">log</span>(title.<span class="prop">textContent</span>);       <span class="cm">// plain text only</span>
+console.<span class="fn">log</span>(title.<span class="prop">innerHTML</span>);         <span class="cm">// text + inner HTML tags</span>
+console.<span class="fn">log</span>(title.<span class="prop">outerHTML</span>);         <span class="cm">// includes the element itself</span>
+
+<span class="cm">// ── 3. Change content ───────────────────────────────────</span>
+title.<span class="prop">textContent</span> = <span class="str">'New Title'</span>;       <span class="cm">// safe — escapes HTML</span>
+title.<span class="prop">innerHTML</span>    = <span class="str">'&lt;em&gt;Italic&lt;/em&gt;'</span>; <span class="cm">// parses HTML (XSS risk)</span>
+
+<span class="cm">// ── 4. Change CSS styles ────────────────────────────────</span>
+title.<span class="prop">style</span>.<span class="prop">color</span>      = <span class="str">'#1c4ed8'</span>;
+title.<span class="prop">style</span>.<span class="prop">fontSize</span>   = <span class="str">'24px'</span>;
+title.<span class="prop">style</span>.<span class="prop">display</span>    = <span class="str">'none'</span>;    <span class="cm">// hide</span>
+title.<span class="prop">style</span>.<span class="prop">display</span>    = <span class="str">'block'</span>;   <span class="cm">// show</span>
+
+<span class="cm">// ── 5. Add / Remove CSS classes (preferred) ─────────────</span>
+title.<span class="prop">classList</span>.<span class="fn">add</span>(<span class="str">'active'</span>);
+title.<span class="prop">classList</span>.<span class="fn">remove</span>(<span class="str">'active'</span>);
+title.<span class="prop">classList</span>.<span class="fn">toggle</span>(<span class="str">'active'</span>);   <span class="cm">// add if absent, remove if present</span>
+title.<span class="prop">classList</span>.<span class="fn">contains</span>(<span class="str">'active'</span>); <span class="cm">// true/false</span>
+
+<span class="cm">// ── 6. Read / write attributes ──────────────────────────</span>
+title.<span class="fn">getAttribute</span>(<span class="str">'id'</span>);
+title.<span class="fn">setAttribute</span>(<span class="str">'data-role'</span>, <span class="str">'header'</span>);
+title.<span class="fn">removeAttribute</span>(<span class="str">'hidden'</span>);
+title.<span class="fn">hasAttribute</span>(<span class="str">'disabled'</span>);      <span class="cm">// true/false</span>
+
+<span class="cm">// ── 7. Navigate the tree ────────────────────────────────</span>
+title.<span class="prop">parentElement</span>;          <span class="cm">// the &lt;body&gt; or container above</span>
+title.<span class="prop">children</span>;               <span class="cm">// HTMLCollection of child elements</span>
+title.<span class="prop">firstElementChild</span>;      <span class="cm">// first child element</span>
+title.<span class="prop">lastElementChild</span>;       <span class="cm">// last child element</span>
+title.<span class="prop">nextElementSibling</span>;     <span class="cm">// next sibling element</span>
+title.<span class="prop">previousElementSibling</span>; <span class="cm">// previous sibling</span></pre>
+    </div>
+
+    <div class="callout blue">
+      <strong>textContent vs innerHTML:</strong> Always use <code>textContent</code> when inserting user-supplied text. Using <code>innerHTML</code> with untrusted input can introduce Cross-Site Scripting (XSS) vulnerabilities because it parses and runs embedded scripts.
+    </div>
+
+    <!-- LAB 1 -->
+    <div class="lab-section">
+      <div class="lab-header">
+        <div class="lab-title">
+          <span class="lab-badge">LAB 1</span>
+          DOM Structure Explorer — click buttons to manipulate the element live
+        </div>
+        <span class="lab-hint">No code to write — interact with the buttons</span>
+      </div>
+      <div class="dom-explorer">
+        <div class="de-title">Target element (manipulate it using the buttons below):</div>
+        <div id="dom-target">
+          <h2 id="dom-h2">VTU MCA Students</h2>
+          <p id="dom-p">This paragraph can be <span class="highlight">selected and changed</span> using JavaScript DOM methods.</p>
+          <ul id="dom-list">
+            <li>HTML5</li>
+            <li>CSS3</li>
+            <li>JavaScript</li>
+          </ul>
+        </div>
+        <div class="dom-btns">
+          <button class="dom-btn" onclick="domLab('getText')">textContent</button>
+          <button class="dom-btn" onclick="domLab('getHTML')">innerHTML</button>
+          <button class="dom-btn" onclick="domLab('changeText')">Change text</button>
+          <button class="dom-btn" onclick="domLab('changeColor')">Change colour</button>
+          <button class="dom-btn" onclick="domLab('addClass')">Add class</button>
+          <button class="dom-btn" onclick="domLab('toggleHide')">Toggle hide/show</button>
+          <button class="dom-btn" onclick="domLab('getAttr')">Get attribute</button>
+          <button class="dom-btn" onclick="domLab('parentEl')">parentElement</button>
+          <button class="dom-btn" onclick="domLab('children')">children</button>
+          <button class="dom-btn" onclick="domLab('reset')">↺ Reset</button>
+        </div>
+        <div class="dom-output" id="dom-output">// Output appears here. Click a button above ↑</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       §2 — EVENT HANDLING
+       ══════════════════════════════════════════════════════ -->
+  <section class="topic" id="sec-events">
+    <div class="topic-header">
+      <span class="topic-num">02</span>
+      <div class="topic-meta">
+        <div class="topic-tag">Events</div>
+        <div class="topic-title">Event Handling &amp; Event Listeners</div>
+        <div class="topic-intro">Events are signals fired by the browser when something happens — a click, a key press, a form submission. JavaScript listens for these signals with <strong>event listeners</strong> and runs a function in response.</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="note-card">
+        <div class="card-heading">📋 Three Ways to Handle Events</div>
+        <div class="card-body">
+          <p style="margin-bottom:10px"><strong>1. Inline (avoid)</strong> — mixes HTML and JS:</p>
+          <pre style="font-family:var(--mono);font-size:12px;background:var(--surf2);padding:8px 10px;border-radius:6px;margin-bottom:10px">&lt;button onclick="alert('Hi')"&gt;Click&lt;/button&gt;</pre>
+          <p style="margin-bottom:10px"><strong>2. DOM property (one handler only):</strong></p>
+          <pre style="font-family:var(--mono);font-size:12px;background:var(--surf2);padding:8px 10px;border-radius:6px;margin-bottom:10px">btn.onclick = function() { alert('Hi'); };</pre>
+          <p style="margin-bottom:10px"><strong>3. addEventListener (recommended):</strong></p>
+          <pre style="font-family:var(--mono);font-size:12px;background:var(--surf2);padding:8px 10px;border-radius:6px">btn.addEventListener('click', handler);
+btn.removeEventListener('click', handler);</pre>
+        </div>
+      </div>
+      <div class="note-card">
+        <div class="card-heading">📋 Common Events Reference</div>
+        <table class="ref-table" style="margin:0">
+          <tr><th>Category</th><th>Events</th></tr>
+          <tr><td>Mouse</td>   <td style="color:var(--ink2)">click, dblclick, mousedown, mouseup, mouseover, mouseout, mousemove</td></tr>
+          <tr><td>Keyboard</td><td style="color:var(--ink2)">keydown, keyup, keypress</td></tr>
+          <tr><td>Form</td>    <td style="color:var(--ink2)">submit, change, input, focus, blur, reset</td></tr>
+          <tr><td>Window</td>  <td style="color:var(--ink2)">load, DOMContentLoaded, resize, scroll</td></tr>
+          <tr><td>Touch</td>   <td style="color:var(--ink2)">touchstart, touchend, touchmove</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="cb-bar">
+        <span class="cb-dot cbd-r"></span><span class="cb-dot cbd-y"></span><span class="cb-dot cbd-g"></span>
+        <span class="cb-filename">events.js</span>
+      </div>
+      <pre><span class="cm">// ── addEventListener — the standard approach ─────────────</span>
+<span class="kw">const</span> btn = document.<span class="fn">getElementById</span>(<span class="str">'my-button'</span>);
+
+btn.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, <span class="kw">function</span>(event) {
+  console.<span class="fn">log</span>(<span class="str">'Clicked!'</span>, event.<span class="prop">type</span>);  <span class="cm">// "click"</span>
+});
+
+<span class="cm">// ── The Event object ─────────────────────────────────────</span>
+btn.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, (e) => {
+  console.<span class="fn">log</span>(e.<span class="prop">type</span>);          <span class="cm">// event name: "click"</span>
+  console.<span class="fn">log</span>(e.<span class="prop">target</span>);        <span class="cm">// element that was clicked</span>
+  console.<span class="fn">log</span>(e.<span class="prop">currentTarget</span>); <span class="cm">// element the listener is on</span>
+  console.<span class="fn">log</span>(e.<span class="prop">clientX</span>, e.<span class="prop">clientY</span>); <span class="cm">// mouse position</span>
+  e.<span class="fn">preventDefault</span>();           <span class="cm">// stop default action (e.g. form submit)</span>
+  e.<span class="fn">stopPropagation</span>();           <span class="cm">// stop event bubbling up the tree</span>
+});
+
+<span class="cm">// ── Keyboard events ──────────────────────────────────────</span>
+document.<span class="fn">addEventListener</span>(<span class="str">'keydown'</span>, (e) => {
+  console.<span class="fn">log</span>(<span class="str">'Key:'</span>, e.<span class="prop">key</span>);       <span class="cm">// 'Enter', 'a', 'Escape'…</span>
+  console.<span class="fn">log</span>(<span class="str">'Code:'</span>, e.<span class="prop">code</span>);     <span class="cm">// 'KeyA', 'Enter', 'Space'</span>
+  console.<span class="fn">log</span>(<span class="str">'Ctrl?'</span>, e.<span class="prop">ctrlKey</span>); <span class="cm">// true/false</span>
+  <span class="kw">if</span> (e.<span class="prop">key</span> === <span class="str">'Enter'</span>) { <span class="fn">submitForm</span>(); }
+});
+
+<span class="cm">// ── Event bubbling & delegation ──────────────────────────</span>
+<span class="cm">// Events bubble UP the DOM tree: child → parent → document</span>
+<span class="cm">// Event delegation = attach ONE listener to a parent</span>
+<span class="cm">// instead of individual listeners on each child:</span>
+document.<span class="fn">getElementById</span>(<span class="str">'list'</span>).<span class="fn">addEventListener</span>(<span class="str">'click'</span>, (e) => {
+  <span class="kw">if</span> (e.<span class="prop">target</span>.<span class="prop">tagName</span> === <span class="str">'LI'</span>) {
+    console.<span class="fn">log</span>(<span class="str">'List item clicked:'</span>, e.<span class="prop">target</span>.<span class="prop">textContent</span>);
+  }
+});</pre>
+    </div>
+
+    <div class="callout amber">
+      <strong>Event Bubbling:</strong> When you click a child element, the event also fires on every ancestor up to the <code>document</code>. Use <code>e.stopPropagation()</code> to stop it. <strong>Event delegation</strong> takes advantage of bubbling — attach one listener to a parent element and handle all children inside that listener by checking <code>e.target</code>.
+    </div>
+
+    <!-- LAB 2 -->
+    <div class="lab-section">
+      <div class="lab-header">
+        <div class="lab-title">
+          <span class="lab-badge">LAB 2</span>
+          Event Playground — interact to see events firing live
+        </div>
+        <span class="lab-hint">All events are logged below in real time</span>
+      </div>
+      <div class="event-playground">
+        <div class="ep-grid">
+          <div class="ep-card">
+            <div class="ep-card-title">Mouse Events</div>
+            <div class="ep-box" id="ep-mouse-box"
+              onmousedown="logEvent('mousedown','Mouse pressed')"
+              onmouseup="logEvent('mouseup','Mouse released')"
+              onclick="logEvent('click','Element clicked')"
+              ondblclick="logEvent('dblclick','Double clicked!')"
+              onmouseover="logEvent('mouseover','Mouse entered')"
+              onmouseout="logEvent('mouseout','Mouse left')">
+              Interact with me
+            </div>
+          </div>
+          <div class="ep-card">
+            <div class="ep-card-title">Keyboard &amp; Input Events</div>
+            <input class="ep-input" id="ep-input" placeholder="Type anything here…"
+              oninput="logEvent('input','Value: ' + this.value)"
+              onkeydown="logEvent('keydown','Key: ' + event.key)"
+              onfocus="logEvent('focus','Input focused')"
+              onblur="logEvent('blur','Input lost focus')">
+            <div style="font-size:12.5px;color:var(--muted);font-style:italic">Focus, type, and blur to see events.</div>
+          </div>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Live Event Log</div>
+        <div class="ep-log" id="ep-log">// Interact above to see events ↑</div>
+        <div style="margin-top:8px;display:flex;gap:8px">
+          <button class="dom-btn" onclick="document.getElementById('ep-log').textContent='// Log cleared.'">Clear log</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       §3 — CREATING & MODIFYING ELEMENTS
+       ══════════════════════════════════════════════════════ -->
+  <section class="topic" id="sec-create">
+    <div class="topic-header">
+      <span class="topic-num">03</span>
+      <div class="topic-meta">
+        <div class="topic-tag">DOM Manipulation</div>
+        <div class="topic-title">Creating &amp; Modifying DOM Elements</div>
+        <div class="topic-intro">JavaScript can build entirely new HTML elements, set their content and styles, and insert them anywhere in the document — all without touching the HTML file.</div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="cb-bar">
+        <span class="cb-dot cbd-r"></span><span class="cb-dot cbd-y"></span><span class="cb-dot cbd-g"></span>
+        <span class="cb-filename">create-elements.js</span>
+      </div>
+      <pre><span class="cm">// ── Create a new element ─────────────────────────────────</span>
+<span class="kw">const</span> card = document.<span class="fn">createElement</span>(<span class="str">'div'</span>);   <span class="cm">// creates &lt;div&gt;</span>
+
+<span class="cm">// ── Set its content, class, attributes ──────────────────</span>
+card.<span class="prop">textContent</span>     = <span class="str">'Hello from JS!'</span>;
+card.<span class="prop">className</span>       = <span class="str">'card active'</span>;
+card.<span class="prop">id</span>             = <span class="str">'new-card'</span>;
+card.<span class="fn">setAttribute</span>(<span class="str">'data-role'</span>, <span class="str">'info'</span>);
+
+<span class="cm">// ── Style it directly ────────────────────────────────────</span>
+card.<span class="prop">style</span>.<span class="prop">background</span> = <span class="str">'#eff6ff'</span>;
+card.<span class="prop">style</span>.<span class="prop">padding</span>    = <span class="str">'16px'</span>;
+card.<span class="prop">style</span>.<span class="prop">borderRadius</span> = <span class="str">'8px'</span>;
+
+<span class="cm">// ── Insert into the document ─────────────────────────────</span>
+<span class="kw">const</span> container = document.<span class="fn">getElementById</span>(<span class="str">'container'</span>);
+container.<span class="fn">appendChild</span>(card);      <span class="cm">// add as last child</span>
+container.<span class="fn">prepend</span>(card);           <span class="cm">// add as first child</span>
+container.<span class="fn">insertBefore</span>(card, ref); <span class="cm">// before a reference node</span>
+ref.<span class="fn">insertAdjacentElement</span>(<span class="str">'afterend'</span>, card); <span class="cm">// after ref</span>
+
+<span class="cm">// ── Remove an element ────────────────────────────────────</span>
+card.<span class="fn">remove</span>();                       <span class="cm">// modern — remove self</span>
+container.<span class="fn">removeChild</span>(card);        <span class="cm">// older approach</span>
+
+<span class="cm">// ── Clone an element ─────────────────────────────────────</span>
+<span class="kw">const</span> clone = card.<span class="fn">cloneNode</span>(<span class="bool">true</span>); <span class="cm">// true = deep clone (children too)</span>
+container.<span class="fn">appendChild</span>(clone);
+
+<span class="cm">// ── insertAdjacentHTML — insert HTML string efficiently ──</span>
+container.<span class="fn">insertAdjacentHTML</span>(<span class="str">'beforeend'</span>, <span class="str">`
+  &lt;div class="card"&gt;
+    &lt;h3&gt;Dynamic Card&lt;/h3&gt;
+    &lt;p&gt;Added without createElement&lt;/p&gt;
+  &lt;/div&gt;
+`</span>);
+<span class="cm">// Positions: 'beforebegin' | 'afterbegin' | 'beforeend' | 'afterend'</span></pre>
+    </div>
+
+    <div class="two-col">
+      <div class="note-card">
+        <div class="card-heading">📌 Insert Position Reference</div>
+        <table class="ref-table" style="margin:0">
+          <tr><th>Position</th><th>Where inserted</th></tr>
+          <tr><td>beforebegin</td><td style="color:var(--ink2)">Before the element itself</td></tr>
+          <tr><td>afterbegin</td> <td style="color:var(--ink2)">Inside, before first child</td></tr>
+          <tr><td>beforeend</td>  <td style="color:var(--ink2)">Inside, after last child</td></tr>
+          <tr><td>afterend</td>   <td style="color:var(--ink2)">After the element itself</td></tr>
+          <tr><td>appendChild</td><td style="color:var(--ink2)">As last child (most common)</td></tr>
+          <tr><td>prepend</td>    <td style="color:var(--ink2)">As first child</td></tr>
+        </table>
+      </div>
+      <div class="note-card">
+        <div class="card-heading">📌 Modify Existing Elements</div>
+        <div class="card-body" style="font-family:var(--mono);font-size:12px;line-height:2;color:var(--ink2)">
+          el.textContent = 'new text';<br>
+          el.innerHTML = '&lt;b&gt;bold&lt;/b&gt;';<br>
+          el.style.color = 'red';<br>
+          el.classList.add('active');<br>
+          el.classList.remove('old');<br>
+          el.classList.toggle('show');<br>
+          el.setAttribute('href', '/new');<br>
+          el.removeAttribute('disabled');<br>
+          el.remove(); &nbsp;// delete element
+        </div>
+      </div>
+    </div>
+
+    <div class="callout green">
+      <strong>Performance tip:</strong> When adding many elements, build them into a <code>DocumentFragment</code> first, then insert the fragment once. This causes only one reflow instead of many. Example: <code>const frag = document.createDocumentFragment();</code> → append children to frag → <code>container.appendChild(frag);</code>
+    </div>
+
+    <!-- LAB 3 -->
+    <div class="lab-section">
+      <div class="lab-header">
+        <div class="lab-title">
+          <span class="lab-badge">LAB 3</span>
+          Element Builder — create, style, and remove DOM elements live
+        </div>
+        <span class="lab-hint">Use the controls to build elements dynamically</span>
+      </div>
+      <div class="create-lab">
+        <div class="create-controls">
+          <div class="ctrl-group">
+            <label class="ctrl-label">Text:</label>
+            <input type="text" class="ctrl-input" id="el-text" placeholder="Element text" value="New Element">
+          </div>
+          <div class="ctrl-group">
+            <label class="ctrl-label">Type:</label>
+            <select class="ctrl-select" id="el-type">
+              <option value="div">div</option>
+              <option value="p">p</option>
+              <option value="span">span</option>
+              <option value="h3">h3</option>
+              <option value="li">li</option>
+              <option value="button">button</option>
+            </select>
+          </div>
+          <div class="ctrl-group">
+            <label class="ctrl-label">Colour:</label>
+            <select class="ctrl-select" id="el-color">
+              <option value="blue">Blue</option>
+              <option value="green">Green</option>
+              <option value="amber">Amber</option>
+              <option value="rose">Rose</option>
+              <option value="teal">Teal</option>
+            </select>
+          </div>
+          <button class="ctrl-btn primary" onclick="addElement()">+ Add Element</button>
+          <button class="ctrl-btn danger" onclick="clearCanvas()">Clear All</button>
+        </div>
+        <div id="element-canvas">
+          <div class="canvas-empty">Elements you create will appear here. Click an element to remove it.</div>
+        </div>
+        <div style="margin-top:10px;font-size:12.5px;color:var(--muted);font-style:italic">
+          Click any element in the canvas to remove it — uses el.remove()
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       §4 — FORM VALIDATION
+       ══════════════════════════════════════════════════════ -->
+  <section class="topic" id="sec-forms">
+    <div class="topic-header">
+      <span class="topic-num">04</span>
+      <div class="topic-meta">
+        <div class="topic-tag">Forms</div>
+        <div class="topic-title">Form Validation Using JavaScript</div>
+        <div class="topic-intro">Form validation checks user input before it is sent to the server. JavaScript gives you full control — you can validate on each keystroke, on blur, or on submit, and show clear error messages next to each field.</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="note-card">
+        <div class="card-heading">📋 Accessing Form Values</div>
+        <div class="code-block" style="margin:0">
+          <pre style="padding:12px 14px;font-size:12px"><span class="cm">// Get form element</span>
+<span class="kw">const</span> form = document.<span class="fn">getElementById</span>(<span class="str">'reg-form'</span>);
+
+<span class="cm">// Read input values</span>
+<span class="kw">const</span> name  = document.<span class="fn">getElementById</span>(<span class="str">'name'</span>).<span class="prop">value</span>;
+<span class="kw">const</span> email = document.<span class="fn">getElementById</span>(<span class="str">'email'</span>).<span class="prop">value</span>;
+<span class="kw">const</span> sel   = document.<span class="fn">getElementById</span>(<span class="str">'course'</span>).<span class="prop">value</span>;
+<span class="kw">const</span> chk   = document.<span class="fn">getElementById</span>(<span class="str">'terms'</span>).<span class="prop">checked</span>;
+
+<span class="cm">// Prevent submission until valid</span>
+form.<span class="fn">addEventListener</span>(<span class="str">'submit'</span>, (e) => {
+  e.<span class="fn">preventDefault</span>(); <span class="cm">// stop page reload</span>
+  <span class="kw">if</span> (<span class="fn">validate</span>()) form.<span class="fn">submit</span>();
+});</pre>
+        </div>
+      </div>
+      <div class="note-card">
+        <div class="card-heading">📋 Common Validation Rules</div>
+        <table class="ref-table" style="margin:0">
+          <tr><th>Rule</th><th>JavaScript check</th></tr>
+          <tr><td>Required</td>    <td style="color:var(--ink2)"><code>value.trim() === ''</code></td></tr>
+          <tr><td>Min length</td>  <td style="color:var(--ink2)"><code>value.length &lt; 6</code></td></tr>
+          <tr><td>Max length</td>  <td style="color:var(--ink2)"><code>value.length &gt; 50</code></td></tr>
+          <tr><td>Email format</td><td style="color:var(--ink2)"><code>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)</code></td></tr>
+          <tr><td>Numeric only</td><td style="color:var(--ink2)"><code>/^\d+$/.test(value)</code></td></tr>
+          <tr><td>Phone (IN)</td>  <td style="color:var(--ink2)"><code>/^[6-9]\d{9}$/.test(value)</code></td></tr>
+          <tr><td>Passwords match</td><td style="color:var(--ink2)"><code>pw1.value === pw2.value</code></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="cb-bar">
+        <span class="cb-dot cbd-r"></span><span class="cb-dot cbd-y"></span><span class="cb-dot cbd-g"></span>
+        <span class="cb-filename">form-validation.js — complete pattern</span>
+      </div>
+      <pre><span class="cm">// Helper: show or hide an error message beside a field</span>
+<span class="kw">function</span> <span class="fn">showError</span>(fieldId, message) {
+  <span class="kw">const</span> field = document.<span class="fn">getElementById</span>(fieldId);
+  <span class="kw">const</span> errEl = document.<span class="fn">getElementById</span>(fieldId + <span class="str">'-error'</span>);
+  field.<span class="prop">classList</span>.<span class="fn">add</span>(<span class="str">'invalid'</span>);
+  field.<span class="prop">classList</span>.<span class="fn">remove</span>(<span class="str">'valid'</span>);
+  errEl.<span class="prop">textContent</span> = message;
+  errEl.<span class="prop">style</span>.<span class="prop">display</span> = <span class="str">'block'</span>;
+}
+
+<span class="kw">function</span> <span class="fn">showValid</span>(fieldId) {
+  <span class="kw">const</span> field = document.<span class="fn">getElementById</span>(fieldId);
+  <span class="kw">const</span> errEl = document.<span class="fn">getElementById</span>(fieldId + <span class="str">'-error'</span>);
+  field.<span class="prop">classList</span>.<span class="fn">add</span>(<span class="str">'valid'</span>);
+  field.<span class="prop">classList</span>.<span class="fn">remove</span>(<span class="str">'invalid'</span>);
+  errEl.<span class="prop">style</span>.<span class="prop">display</span> = <span class="str">'none'</span>;
+}
+
+<span class="cm">// Validate all fields — returns true if form is valid</span>
+<span class="kw">function</span> <span class="fn">validateForm</span>() {
+  <span class="kw">let</span> isValid = <span class="bool">true</span>;
+  <span class="kw">const</span> name  = document.<span class="fn">getElementById</span>(<span class="str">'name'</span>).<span class="prop">value</span>.<span class="fn">trim</span>();
+  <span class="kw">const</span> email = document.<span class="fn">getElementById</span>(<span class="str">'email'</span>).<span class="prop">value</span>.<span class="fn">trim</span>();
+  <span class="kw">const</span> pass  = document.<span class="fn">getElementById</span>(<span class="str">'password'</span>).<span class="prop">value</span>;
+
+  <span class="cm">// Name: required, at least 3 characters</span>
+  <span class="kw">if</span> (!name) {
+    <span class="fn">showError</span>(<span class="str">'name'</span>, <span class="str">'Name is required'</span>);
+    isValid = <span class="bool">false</span>;
+  } <span class="kw">else if</span> (name.<span class="prop">length</span> < <span class="num">3</span>) {
+    <span class="fn">showError</span>(<span class="str">'name'</span>, <span class="str">'Name must be at least 3 characters'</span>);
+    isValid = <span class="bool">false</span>;
+  } <span class="kw">else</span> { <span class="fn">showValid</span>(<span class="str">'name'</span>); }
+
+  <span class="cm">// Email: required, valid format</span>
+  <span class="kw">const</span> emailRegex = <span class="op">/^[^\s@]+@[^\s@]+\.[^\s@]+$/</span>;
+  <span class="kw">if</span> (!email) {
+    <span class="fn">showError</span>(<span class="str">'email'</span>, <span class="str">'Email is required'</span>);
+    isValid = <span class="bool">false</span>;
+  } <span class="kw">else if</span> (!emailRegex.<span class="fn">test</span>(email)) {
+    <span class="fn">showError</span>(<span class="str">'email'</span>, <span class="str">'Enter a valid email address'</span>);
+    isValid = <span class="bool">false</span>;
+  } <span class="kw">else</span> { <span class="fn">showValid</span>(<span class="str">'email'</span>); }
+
+  <span class="cm">// Password: required, minimum 8 characters</span>
+  <span class="kw">if</span> (!pass) {
+    <span class="fn">showError</span>(<span class="str">'password'</span>, <span class="str">'Password is required'</span>);
+    isValid = <span class="bool">false</span>;
+  } <span class="kw">else if</span> (pass.<span class="prop">length</span> < <span class="num">8</span>) {
+    <span class="fn">showError</span>(<span class="str">'password'</span>, <span class="str">'Password must be at least 8 characters'</span>);
+    isValid = <span class="bool">false</span>;
+  } <span class="kw">else</span> { <span class="fn">showValid</span>(<span class="str">'password'</span>); }
+
+  <span class="kw">return</span> isValid;
+}</pre>
+    </div>
+
+    <div class="callout teal">
+      <strong>Real-time validation:</strong> Attach a listener to the <code>input</code> event (fires on every keystroke) or <code>blur</code> event (fires when focus leaves a field) to show errors as the user types — not just on submit. This gives much better user experience.
+    </div>
+
+    <!-- LAB 4 -->
+    <div class="lab-section">
+      <div class="lab-header">
+        <div class="lab-title">
+          <span class="lab-badge">LAB 4</span>
+          Live Form Validation — validation fires as you type
+        </div>
+        <span class="lab-hint">Each field validates in real time — try submitting with errors too</span>
+      </div>
+      <div class="form-lab">
+        <form class="fl-form" id="reg-form" onsubmit="return submitForm(event)" novalidate>
+          <div class="fl-title">Student Registration</div>
+
+          <!-- Full Name -->
+          <div class="fl-group">
+            <label class="fl-label" for="fl-name">Full Name <span style="color:var(--rose)">*</span></label>
+            <input class="fl-input" type="text" id="fl-name"
+              placeholder="Min 3 characters"
+              oninput="validateName(this)"
+              onblur="validateName(this)">
+            <div class="fl-error" id="fl-name-error"></div>
+            <div class="fl-success" id="fl-name-ok"></div>
+          </div>
+
+          <!-- Email -->
+          <div class="fl-group">
+            <label class="fl-label" for="fl-email">Email Address <span style="color:var(--rose)">*</span></label>
+            <input class="fl-input" type="email" id="fl-email"
+              placeholder="student@vtu.ac.in"
+              oninput="validateEmail(this)"
+              onblur="validateEmail(this)">
+            <div class="fl-error" id="fl-email-error"></div>
+            <div class="fl-success" id="fl-email-ok"></div>
+          </div>
+
+          <!-- Password -->
+          <div class="fl-group">
+            <label class="fl-label" for="fl-pass">Password <span style="color:var(--rose)">*</span></label>
+            <input class="fl-input" type="password" id="fl-pass"
+              placeholder="Min 8 characters, 1 number"
+              oninput="validatePassword(this)"
+              onblur="validatePassword(this)">
+            <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+            <div class="strength-label" id="strength-label">Enter a password</div>
+            <div class="fl-error" id="fl-pass-error"></div>
+          </div>
+
+          <!-- Phone -->
+          <div class="fl-group">
+            <label class="fl-label" for="fl-phone">Phone Number</label>
+            <input class="fl-input" type="tel" id="fl-phone"
+              placeholder="10-digit Indian mobile number"
+              oninput="validatePhone(this)"
+              onblur="validatePhone(this)">
+            <div class="fl-error"   id="fl-phone-error"></div>
+            <div class="fl-success" id="fl-phone-ok"></div>
+          </div>
+
+          <!-- Course -->
+          <div class="fl-group">
+            <label class="fl-label" for="fl-course">Course <span style="color:var(--rose)">*</span></label>
+            <select class="fl-input fl-select" id="fl-course" onchange="validateSelect(this)">
+              <option value="">— Select your course —</option>
+              <option value="MCA">MCA</option>
+              <option value="BCA">BCA</option>
+              <option value="MTech">M.Tech</option>
+              <option value="BTech">B.Tech</option>
+            </select>
+            <div class="fl-error" id="fl-course-error"></div>
+          </div>
+
+          <button type="submit" class="fl-submit">Submit Registration →</button>
+          <div class="fl-result" id="fl-result"></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Quick reference -->
+    <div class="note-card" style="margin-top:20px">
+      <div class="card-heading">📖 Quick Reference — All DOM Methods</div>
+      <div class="qr-grid">
+        <div class="qr-card"><span class="qr-method">getElementById(id)</span><span class="qr-desc">Select element by its id attribute</span></div>
+        <div class="qr-card"><span class="qr-method">querySelector(css)</span><span class="qr-desc">First element matching CSS selector</span></div>
+        <div class="qr-card"><span class="qr-method">querySelectorAll(css)</span><span class="qr-desc">All matching elements as NodeList</span></div>
+        <div class="qr-card"><span class="qr-method">createElement(tag)</span><span class="qr-desc">Create a new element in memory</span></div>
+        <div class="qr-card"><span class="qr-method">appendChild(el)</span><span class="qr-desc">Add element as last child</span></div>
+        <div class="qr-card"><span class="qr-method">prepend(el)</span><span class="qr-desc">Add element as first child</span></div>
+        <div class="qr-card"><span class="qr-method">remove()</span><span class="qr-desc">Remove element from the DOM</span></div>
+        <div class="qr-card"><span class="qr-method">cloneNode(deep)</span><span class="qr-desc">Duplicate an element</span></div>
+        <div class="qr-card"><span class="qr-method">addEventListener()</span><span class="qr-desc">Attach an event listener</span></div>
+        <div class="qr-card"><span class="qr-method">removeEventListener()</span><span class="qr-desc">Detach an event listener</span></div>
+        <div class="qr-card"><span class="qr-method">classList.toggle()</span><span class="qr-desc">Add class if absent, remove if present</span></div>
+        <div class="qr-card"><span class="qr-method">getAttribute / setAttribute</span><span class="qr-desc">Read or set any HTML attribute</span></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  VTU MCA — Web Technologies · Module 4 · JavaScript &amp; DOM Manipulation
+</footer>
+
+<!-- ============================================================
+     JAVASCRIPT — ALL LAB LOGIC
+     ============================================================ -->
+<script>
+
+/* ── LAB 1 — DOM Explorer ──────────────────────────────────── */
+const domOriginal = document.getElementById('dom-target').innerHTML;
+const manjusha = document.getElementById('manjusha');
+manjusha.textContent = 'Text changed by Manjusha!';
+
+
+function domLab(action) {
+  const h2  = document.getElementById('dom-h2');
+  h2.innerHTML = 'Text changed by MCA!';
+  const p   = document.getElementById('dom-p');
+  const out = document.getElementById('dom-output');
+
+  const actions = {
+    getText:    () => { out.textContent = 'h2.textContent = "' + h2.textContent + '"'; },
+    getHTML:    () => { out.textContent = 'h2.innerHTML =\n' + h2.innerHTML; },
+    changeText: () => { h2.textContent = 'Text changed by JS!'; out.textContent = 'h2.textContent = "Text changed by JS!" ✓'; },
+    changeColor:() => {
+      const colors = ['#1c4ed8','#15803d','#b45309','#be123c'];
+      const c = colors[Math.floor(Math.random() * colors.length)];
+      h2.style.color = c;
+      out.textContent = 'h2.style.color = "' + c + '" ✓';
+    },
+    addClass:   () => {
+      h2.classList.toggle('highlight');
+      h2.style.background = h2.classList.contains('highlight') ? '#fef9c3' : '';
+      out.textContent = 'classList.toggle("highlight")\nh2.classList contains "highlight": ' + h2.classList.contains('highlight');
+    },
+    toggleHide: () => {
+      const hidden = p.style.display === 'none';
+      p.style.display = hidden ? '' : 'none';
+      out.textContent = 'p.style.display = "' + (hidden ? 'block (visible)' : 'none (hidden)') + '" ✓';
+    },
+    getAttr:    () => { out.textContent = 'h2.getAttribute("id") = "' + h2.getAttribute('id') + '"\ndocument.getElementById("dom-h2") → element found ✓'; },
+    parentEl:   () => { out.textContent = 'h2.parentElement.id = "' + (h2.parentElement.id || h2.parentElement.tagName) + '"'; },
+    children:   () => {
+      const kids = [...document.getElementById('dom-target').children].map(c => c.tagName).join(', ');
+      out.textContent = 'dom-target.children = [' + kids + ']\nchildren.length = ' + document.getElementById('dom-target').children.length;
+    },
+    reset:      () => { document.getElementById('dom-target').innerHTML = domOriginal; h2.style.color = ''; out.textContent = '// Reset complete ✓'; },
+  };
+
+  if (actions[action]) actions[action]();
+}
+
+/* ── LAB 2 — Event Log ─────────────────────────────────────── */
+let logCount = 0;
+
+function logEvent(type, detail) {
+  const log  = document.getElementById('ep-log');
+  const time = new Date().toLocaleTimeString();
+  logCount++;
+  const line = `[${time}] <span class="log-event">${type}</span>  <span class="log-data">${detail}</span>\n`;
+  if (log.textContent.startsWith('//')) log.innerHTML = '';
+  log.innerHTML = line + log.innerHTML;
+  if (logCount > 30) {
+    const lines = log.innerHTML.split('\n');
+    log.innerHTML = lines.slice(0, 25).join('\n');
+  }
+}
+
+/* ── LAB 3 — Element Builder ───────────────────────────────── */
+const COLOR_STYLES = {
+  blue : { bg:'#eff6ff', color:'#1c4ed8', border:'#bfdbfe' },
+  green: { bg:'#f0fdf4', color:'#15803d', border:'#bbf7d0' },
+  amber: { bg:'#fffbeb', color:'#b45309', border:'#fde68a' },
+  rose : { bg:'#fff1f2', color:'#be123c', border:'#fecdd3' },
+  teal : { bg:'#f0fdfa', color:'#0f766e', border:'#99f6e4' },
+};
+
+function addElement() {
+  const text  = document.getElementById('el-text').value.trim() || 'Element';
+  const tag   = document.getElementById('el-type').value;
+  const color = document.getElementById('el-color').value;
+  const canvas = document.getElementById('element-canvas');
+  const styles = COLOR_STYLES[color];
+
+  // Remove empty placeholder
+  const empty = canvas.querySelector('.canvas-empty');
+  if (empty) empty.remove();
+
+  const el = document.createElement(tag);
+  el.textContent = text;
+  el.className   = 'created-el';
+  el.style.background = styles.bg;
+  el.style.color      = styles.color;
+  el.style.border     = '1px solid ' + styles.border;
+
+  // Click to remove
+  el.addEventListener('click', function() {
+    this.style.transform = 'scale(0.9)';
+    this.style.opacity   = '0';
+    this.style.transition = 'all .2s';
+    setTimeout(() => {
+      this.remove();
+      if (canvas.children.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'canvas-empty';
+        empty.textContent = 'Elements you create will appear here. Click an element to remove it.';
+        canvas.appendChild(empty);
+      }
+    }, 200);
+  });
+
+  canvas.appendChild(el);
+}
+
+function clearCanvas() {
+  const canvas = document.getElementById('element-canvas');
+  canvas.innerHTML = '<div class="canvas-empty">Canvas cleared. Add new elements above.</div>';
+}
+
+/* ── LAB 4 — Form Validation ───────────────────────────────── */
+function setField(input, isValid, errorId, errorMsg, okId, okMsg) {
+  const errEl = document.getElementById(errorId);
+  if (isValid) {
+    input.classList.add('valid');
+    input.classList.remove('invalid');
+    if (errEl) { errEl.textContent = ''; errEl.className = 'fl-error'; }
+    if (okId) { const ok = document.getElementById(okId); ok.textContent = '✓ ' + okMsg; ok.className = 'fl-success show'; }
+    return true;
+  } else {
+    input.classList.add('invalid');
+    input.classList.remove('valid');
+    if (errEl) { errEl.textContent = '✗ ' + errorMsg; errEl.className = 'fl-error show'; }
+    if (okId) { document.getElementById(okId).className = 'fl-success'; }
+    return false;
+  }
+}
+
+function validateName(input) {
+  const v = input.value.trim();
+  if (!v)          return setField(input, false, 'fl-name-error', 'Name is required',                  'fl-name-ok', '');
+  if (v.length<3)  return setField(input, false, 'fl-name-error', 'Name must be at least 3 characters','fl-name-ok', '');
+  if (!/^[a-zA-Z\s]+$/.test(v)) return setField(input, false, 'fl-name-error', 'Name must contain only letters', 'fl-name-ok', '');
+  return setField(input, true, 'fl-name-error', '', 'fl-name-ok', 'Looks good!');
+}
+
+function validateEmail(input) {
+  const v = input.value.trim();
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!v)      return setField(input, false, 'fl-email-error', 'Email is required',          'fl-email-ok', '');
+  if (!re.test(v)) return setField(input, false, 'fl-email-error', 'Enter a valid email address','fl-email-ok', '');
+  return setField(input, true, 'fl-email-error', '', 'fl-email-ok', 'Valid email!');
+}
+
+function validatePassword(input) {
+  const v = input.value;
+  const fill  = document.getElementById('strength-fill');
+  const label = document.getElementById('strength-label');
+  const errEl = document.getElementById('fl-pass-error');
+
+  let strength = 0;
+  if (v.length >= 8) strength++;
+  if (v.length >= 12) strength++;
+  if (/[0-9]/.test(v)) strength++;
+  if (/[A-Z]/.test(v)) strength++;
+  if (/[!@#$%^&*]/.test(v)) strength++;
+
+  const levels = [
+    { w:'0%',   bg:'transparent', lbl:'Enter a password',  col:'var(--muted)' },
+    { w:'25%',  bg:'#ef4444',     lbl:'Weak',              col:'#ef4444' },
+    { w:'50%',  bg:'#f59e0b',     lbl:'Fair',              col:'#f59e0b' },
+    { w:'75%',  bg:'#3b82f6',     lbl:'Good',              col:'#3b82f6' },
+    { w:'90%',  bg:'#22c55e',     lbl:'Strong',            col:'#22c55e' },
+    { w:'100%', bg:'#15803d',     lbl:'Very Strong!',      col:'#15803d' },
+  ];
+
+  const lvl = levels[Math.min(strength, 5)];
+  fill.style.width      = v.length > 0 ? lvl.w : '0%';
+  fill.style.background = lvl.bg;
+  label.textContent     = lvl.lbl;
+  label.style.color     = lvl.col;
+
+  if (!v)          { input.classList.remove('valid','invalid'); errEl.className = 'fl-error'; return false; }
+  if (v.length<8)  return setField(input, false, 'fl-pass-error', 'Password must be at least 8 characters', null, '');
+  if (!/[0-9]/.test(v)) return setField(input, false, 'fl-pass-error', 'Include at least one number', null, '');
+  return setField(input, true, 'fl-pass-error', '', null, '');
+}
+
+function validatePhone(input) {
+  const v = input.value.trim();
+  if (!v) { input.classList.remove('valid','invalid'); return true; } // optional field
+  if (!/^[6-9]\d{9}$/.test(v)) return setField(input, false, 'fl-phone-error', 'Enter a valid 10-digit Indian mobile number','fl-phone-ok', '');
+  return setField(input, true, 'fl-phone-error', '', 'fl-phone-ok', 'Valid number!');
+}
+
+function validateSelect(input) {
+  if (!input.value) return setField(input, false, 'fl-course-error', 'Please select a course', null, '');
+  return setField(input, true, 'fl-course-error', '', null, '');
+}
+
+function submitForm(e) {
+  e.preventDefault();
+  const nameEl   = document.getElementById('fl-name');
+  const emailEl  = document.getElementById('fl-email');
+  const passEl   = document.getElementById('fl-pass');
+  const courseEl = document.getElementById('fl-course');
+  const result   = document.getElementById('fl-result');
+
+  const v1 = validateName(nameEl);
+  const v2 = validateEmail(emailEl);
+  const v3 = validatePassword(passEl);
+  const v4 = validateSelect(courseEl);
+  validatePhone(document.getElementById('fl-phone'));
+
+  if (v1 && v2 && v3 && v4) {
+    result.className = 'fl-result success';
+    result.innerHTML = `✓ Registration successful!<br>
+      <span style="font-size:13px;font-weight:400">
+        Name: ${nameEl.value} &nbsp;·&nbsp;
+        Email: ${emailEl.value} &nbsp;·&nbsp;
+        Course: ${courseEl.value}
+      </span>`;
+  } else {
+    result.className = 'fl-result fail';
+    result.textContent = '✗ Please fix the errors above before submitting.';
+  }
+  return false;
+}
+
+/* ── Keyboard shortcut — Ctrl+Enter in textareas ─────────── */
+document.querySelectorAll('.code-area').forEach(ta => {
+  ta.addEventListener('keydown', e => {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const s = ta.selectionStart;
+      ta.value = ta.value.substring(0,s) + '  ' + ta.value.substring(ta.selectionEnd);
+      ta.selectionStart = ta.selectionEnd = s + 2;
+    }
+  });
+});
+</script>
+</body>
+</html>
