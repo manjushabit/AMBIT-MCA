@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Async JS Notes — VTU MCA</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Rubik:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   RESET & TOKENS
+   ══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --page   : #faf9f5;
+  --white  : #ffffff;
+  --surf   : #f4f2ec;
+  --border : #dedad0;
+  --border2: #c8c3b5;
+  --ink    : #1c1a16;
+  --ink2   : #4a4740;
+  --muted  : #888070;
+  --blue   : #1b58d8;
+  --blu-lt : #eef3fd;
+  --blu-bd : #b4caef;
+  --green  : #14803a;
+  --grn-lt : #edf7f1;
+  --grn-bd : #a8dfc0;
+  --amber  : #b85c00;
+  --amb-lt : #fef5e7;
+  --amb-bd : #f5c98a;
+  --rose   : #c01f3e;
+  --rse-lt : #fef0f3;
+  --rse-bd : #f0a8b8;
+  --purple : #6e35c8;
+  --pur-lt : #f3eeff;
+  --pur-bd : #c8a8ef;
+  --teal   : #107070;
+  --tel-lt : #eaf6f6;
+  --tel-bd : #8dd8d8;
+  --mono   : 'Fira Code', monospace;
+  --serif  : 'Newsreader', serif;
+  --body   : 'Rubik', sans-serif;
+  --r      : 8px;
+  --r-lg   : 14px;
+}
+
+body {
+  font-family: var(--body);
+  background: var(--page);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* ══════════════════════════════════════════
+   STICKY HEADER
+   ══════════════════════════════════════════ */
+.hdr {
+  background: var(--ink);
+  position: sticky; top: 0; z-index: 100;
+  padding: 0 32px; height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.hdr-l { display: flex; align-items: center; gap: 12px; }
+.hdr-chip {
+  font-family: var(--mono); font-size: 11px; font-weight: 600;
+  background: #f5d547; color: var(--ink);
+  padding: 3px 9px; border-radius: 5px;
+}
+.hdr-title { font-size: 13px; font-weight: 500; color: rgba(255,255,255,.65); }
+.hdr-nav { display: flex; gap: 4px; overflow-x: auto; }
+.hn {
+  font-size: 12px; font-weight: 500; color: rgba(255,255,255,.5);
+  text-decoration: none; padding: 5px 12px; border-radius: var(--r);
+  transition: all .15s; white-space: nowrap;
+}
+.hn:hover { background: rgba(255,255,255,.1); color: #fff; }
+
+/* ══════════════════════════════════════════
+   PAGE LAYOUT
+   ══════════════════════════════════════════ */
+.page { max-width: 960px; margin: 0 auto; padding: 44px 24px 80px; }
+
+/* ══════════════════════════════════════════
+   HERO
+   ══════════════════════════════════════════ */
+.hero { margin-bottom: 48px; padding-bottom: 28px; border-bottom: 2px solid var(--border); }
+.hero-tag {
+  font-family: var(--mono); font-size: 11px; font-weight: 600;
+  color: var(--blue); letter-spacing: .12em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+}
+.hero-tag::before { content: ''; width: 20px; height: 2px; background: var(--blue); border-radius: 2px; }
+.hero h1 {
+  font-family: var(--serif); font-size: clamp(28px,4vw,46px);
+  font-weight: 600; color: var(--ink); line-height: 1.12; margin-bottom: 10px;
+}
+.hero h1 em { font-style: italic; color: var(--blue); }
+.hero p { font-size: 15px; color: var(--ink2); max-width: 580px; line-height: 1.75; margin-bottom: 20px; }
+
+.jump-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+.jc {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 14px 16px;
+  text-decoration: none; color: inherit;
+  transition: border-color .15s, transform .15s, box-shadow .15s;
+  display: block;
+}
+.jc:hover { border-color: var(--blue); transform: translateY(-2px); box-shadow: 0 6px 18px rgba(27,88,216,.1); }
+.jc-ic { font-size: 20px; margin-bottom: 7px; }
+.jc-n  { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-bottom: 3px; }
+.jc-t  { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.3; }
+
+/* ══════════════════════════════════════════
+   TOPIC SECTIONS
+   ══════════════════════════════════════════ */
+.topic { margin-bottom: 68px; scroll-margin-top: 64px; }
+.t-head {
+  display: flex; align-items: flex-start; gap: 14px;
+  margin-bottom: 22px; padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.t-num { font-family: var(--mono); font-size: 26px; font-weight: 600; color: var(--border2); min-width: 38px; margin-top: 2px; }
+.t-tag { font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+.t-title { font-family: var(--serif); font-size: 22px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
+.t-intro { font-size: 14px; color: var(--ink2); line-height: 1.7; }
+
+/* ══════════════════════════════════════════
+   CARDS & CALLOUTS
+   ══════════════════════════════════════════ */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+
+.card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 18px 20px; margin-bottom: 14px;
+}
+.card-h { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 10px; display: flex; align-items: center; gap: 7px; }
+.card-b { font-size: 14px; color: var(--ink2); line-height: 1.7; }
+
+.callout {
+  border-left: 3px solid; border-radius: 0 var(--r) var(--r) 0;
+  padding: 11px 16px; font-size: 13.5px; line-height: 1.65; margin: 14px 0;
+}
+.c-blue   { border-color: var(--blue);   background: var(--blu-lt); color: #183a99; }
+.c-green  { border-color: var(--green);  background: var(--grn-lt); color: #0c5228; }
+.c-amber  { border-color: var(--amber);  background: var(--amb-lt); color: #7a3d00; }
+.c-rose   { border-color: var(--rose);   background: var(--rse-lt); color: #8c1530; }
+.c-purple { border-color: var(--purple); background: var(--pur-lt); color: #4a1f99; }
+.c-teal   { border-color: var(--teal);   background: var(--tel-lt); color: #0a5050; }
+
+code {
+  font-family: var(--mono); font-size: 12.5px;
+  background: var(--surf); border: 1px solid var(--border);
+  color: var(--blue); padding: 1px 6px; border-radius: 4px;
+}
+
+/* ══════════════════════════════════════════
+   TABLE
+   ══════════════════════════════════════════ */
+.tbl {
+  width: 100%; border-collapse: collapse; font-size: 13px;
+  margin: 12px 0; border: 1px solid var(--border);
+  border-radius: var(--r-lg); overflow: hidden;
+}
+.tbl th {
+  background: var(--surf); padding: 8px 13px; text-align: left;
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--muted); border-bottom: 1px solid var(--border);
+}
+.tbl td { padding: 9px 13px; border-bottom: 1px solid #f0ede5; vertical-align: top; line-height: 1.55; }
+.tbl tr:last-child td { border-bottom: none; }
+.tbl tr:nth-child(even) td { background: #fafaf7; }
+.tbl td:first-child { font-family: var(--mono); font-size: 12px; color: var(--blue); white-space: nowrap; }
+.tbl td:last-child  { color: var(--ink2); }
+
+/* ══════════════════════════════════════════
+   CODE DISPLAY (read-only)
+   ══════════════════════════════════════════ */
+.code-box { background: #0f1117; border-radius: var(--r-lg); overflow: hidden; margin: 14px 0; }
+.cb-bar {
+  background: #1a1d26; padding: 8px 14px; display: flex; align-items: center;
+  gap: 7px; border-bottom: 1px solid #2a2d38;
+}
+.cd  { width: 8px; height: 8px; border-radius: 50%; }
+.cd-r { background: #ef4444; } .cd-y { background: #f59e0b; } .cd-g { background: #22c55e; }
+.cb-fn { font-family: var(--mono); font-size: 11px; color: #5a6080; margin-left: 4px; }
+.code-box pre {
+  font-family: var(--mono); font-size: 12.5px; line-height: 1.8;
+  padding: 16px 18px; overflow-x: auto; color: #c9d1d9;
+  white-space: pre; margin: 0;
+}
+/* syntax */
+.kw   { color: #ff79c6; }
+.fn   { color: #82aaff; }
+.str  { color: #c3e88d; }
+.num  { color: #f78c6c; }
+.cm   { color: #546e7a; font-style: italic; }
+.op   { color: #89ddff; }
+.bool { color: #ff5874; }
+.cls  { color: #f5d547; }
+
+/* ══════════════════════════════════════════
+   SANDBOXES (editable + runnable)
+   ══════════════════════════════════════════ */
+.sandbox { border: 1.5px solid var(--border); border-radius: var(--r-lg); overflow: hidden; margin: 16px 0; transition: border-color .2s; }
+.sandbox:focus-within { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(27,88,216,.08); }
+.sb-bar {
+  background: var(--surf); padding: 8px 14px; display: flex;
+  align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.sb-lbl { display: flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+.sb-dot { width: 7px; height: 7px; border-radius: 50%; background: #f5d547; animation: blink 2s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+.sb-btns { display: flex; gap: 7px; }
+.btn-run, .btn-clr {
+  padding: 5px 14px; border-radius: 6px; border: none;
+  font-family: var(--mono); font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all .15s;
+}
+.btn-run { background: #f5d547; color: var(--ink); }
+.btn-run:hover { background: #e8c93a; transform: translateY(-1px); }
+.btn-run:active { transform: scale(.97); }
+.btn-clr { background: var(--surf); border: 1px solid var(--border2); color: var(--muted); }
+.btn-clr:hover { background: var(--rse-lt); border-color: var(--rse-bd); color: var(--rose); }
+
+textarea.editor {
+  font-family: var(--mono); font-size: 12.5px; line-height: 1.8;
+  padding: 14px 16px; background: #0f1117; color: #c9d1d9;
+  border: none; outline: none; width: 100%; resize: vertical;
+  min-height: 140px; caret-color: #f5d547; tab-size: 2;
+}
+
+.sb-out {
+  background: #080b10; border-top: 1px solid #1e2330;
+  padding: 10px 14px; min-height: 44px;
+  font-family: var(--mono); font-size: 12.5px; line-height: 1.7;
+}
+.out-ok    { color: #4ade80; white-space: pre-wrap; word-break: break-all; }
+.out-err   { color: #f87171; white-space: pre-wrap; }
+.out-empty { color: #374151; font-style: italic; }
+.out-info  { color: #93c5fd; white-space: pre-wrap; }
+
+/* ══════════════════════════════════════════
+   TIMELINE (for promise states etc.)
+   ══════════════════════════════════════════ */
+.timeline { display: flex; gap: 0; margin: 14px 0; }
+.tl-step {
+  flex: 1; background: var(--white); border: 1px solid var(--border);
+  border-right: none; padding: 12px 14px; position: relative;
+  font-size: 13px;
+}
+.tl-step:first-child { border-radius: var(--r) 0 0 var(--r); }
+.tl-step:last-child  { border-radius: 0 var(--r) var(--r) 0; border-right: 1px solid var(--border); }
+.tl-step::after {
+  content: '→'; position: absolute; right: -12px; top: 50%;
+  transform: translateY(-50%); font-size: 16px; color: var(--muted); z-index: 1;
+}
+.tl-step:last-child::after { display: none; }
+.tl-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 4px; }
+.tl-text  { font-size: 12.5px; color: var(--ink2); line-height: 1.5; }
+.tl-pending  { border-top: 3px solid var(--amber);  } .tl-pending  .tl-label { color: var(--amber); }
+.tl-resolved { border-top: 3px solid var(--green);  } .tl-resolved .tl-label { color: var(--green); }
+.tl-rejected { border-top: 3px solid var(--rose);   } .tl-rejected .tl-label { color: var(--rose);  }
+
+/* ══════════════════════════════════════════
+   AJAX / FETCH DEMO UI
+   ══════════════════════════════════════════ */
+.fetch-demo { background: var(--white); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 18px; margin: 14px 0; }
+.fd-controls { display: flex; gap: 9px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
+.fd-url {
+  flex: 1; min-width: 200px; padding: 9px 12px;
+  border: 1.5px solid var(--border); border-radius: var(--r);
+  font-family: var(--mono); font-size: 12.5px; color: var(--ink);
+  background: var(--surf); outline: none; transition: border-color .18s;
+}
+.fd-url:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blu-lt); }
+.fd-btn {
+  padding: 9px 18px; border-radius: var(--r); border: none;
+  font-family: var(--body); font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all .15s;
+}
+.fd-btn.go   { background: var(--blue); color: #fff; }
+.fd-btn.go:hover { background: #1444c0; }
+.fd-btn.sec  { background: var(--surf); border: 1px solid var(--border2); color: var(--ink2); }
+.fd-btn.sec:hover { background: var(--grn-lt); border-color: var(--grn-bd); color: var(--green); }
+.fd-result {
+  background: #0f1117; border-radius: var(--r); padding: 14px 16px;
+  font-family: var(--mono); font-size: 12px; line-height: 1.7;
+  min-height: 60px; max-height: 240px; overflow-y: auto; color: #c9d1d9;
+  white-space: pre-wrap; word-break: break-all;
+}
+.fd-status { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+.fd-spinner {
+  display: none; align-items: center; gap: 7px;
+  font-size: 12.5px; color: var(--blue);
+}
+.fd-spinner.show { display: flex; }
+.spin {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 2px solid var(--blu-bd); border-top-color: var(--blue);
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ══════════════════════════════════════════
+   JQUERY DEMO
+   ══════════════════════════════════════════ */
+.jq-demo { background: var(--white); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 18px; margin: 14px 0; }
+.jq-demo h4 { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 12px; }
+.jq-target {
+  background: var(--surf); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 14px; margin-bottom: 12px;
+}
+.jq-target h3 { color: var(--blue); margin-bottom: 6px; font-size: 15px; }
+.jq-target p  { font-size: 14px; color: var(--ink2); }
+.jq-target ul { margin: 8px 0 0 18px; font-size: 14px; color: var(--ink2); }
+.jq-btn-row   { display: flex; flex-wrap: wrap; gap: 7px; }
+.jq-btn {
+  padding: 7px 14px; border-radius: var(--r);
+  border: 1px solid var(--border); background: var(--surf);
+  font-family: var(--body); font-size: 12.5px; font-weight: 600;
+  color: var(--ink2); cursor: pointer; transition: all .15s;
+}
+.jq-btn:hover { background: var(--blu-lt); border-color: var(--blu-bd); color: var(--blue); }
+
+/* ══════════════════════════════════════════
+   QUICK REFERENCE GRID
+   ══════════════════════════════════════════ */
+.qr-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 14px; }
+.qr-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 14px 16px; transition: border-color .15s; }
+.qr-card:hover { border-color: var(--blue); }
+.qr-m { font-family: var(--mono); font-size: 12px; color: var(--blue); font-weight: 600; margin-bottom: 5px; display: block; }
+.qr-d { font-size: 13px; color: var(--ink2); line-height: 1.55; }
+
+/* ══════════════════════════════════════════
+   FOOTER
+   ══════════════════════════════════════════ */
+.footer { background: var(--ink); color: rgba(255,255,255,.35); text-align: center; padding: 18px; font-size: 12px; }
+
+/* ══════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════ */
+@media (max-width: 740px) {
+  .jump-row { grid-template-columns: 1fr 1fr; }
+  .two-col, .three-col { grid-template-columns: 1fr; }
+  .qr-grid { grid-template-columns: 1fr 1fr; }
+  .hdr-nav { display: none; }
+  .page { padding: 24px 16px 60px; }
+}
+@media (max-width: 480px) {
+  .jump-row { grid-template-columns: 1fr; }
+  .qr-grid  { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────────── -->
+<header class="hdr">
+  <div class="hdr-l">
+    <span class="hdr-chip">ASYNC</span>
+    <span class="hdr-title">VTU MCA · Module 4 — Async JS, AJAX &amp; jQuery</span>
+  </div>
+  <nav class="hdr-nav">
+    <a href="#sec-sync"     class="hn">§1 Sync vs Async</a>
+    <a href="#sec-callback" class="hn">§2 Callbacks</a>
+    <a href="#sec-promise"  class="hn">§3 Promises</a>
+    <a href="#sec-async"    class="hn">§4 async/await</a>
+    <a href="#sec-ajax"     class="hn">§5 AJAX</a>
+    <a href="#sec-fetch"    class="hn">§6 Fetch API</a>
+    <a href="#sec-jquery"   class="hn">§7 jQuery</a>
+  </nav>
+</header>
+
+<main class="page">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">VTU MCA — Web Technologies · Module 4</div>
+  <h1>Asynchronous JavaScript,<br><em>AJAX &amp; jQuery</em></h1>
+  <p>How JavaScript handles tasks that take time — network requests, timers, and file reads — without freezing the browser. Covers the full journey from callbacks to modern async/await, plus the Fetch API and jQuery.</p>
+  <div class="jump-row">
+    <a href="#sec-callback" class="jc"><div class="jc-ic">📞</div><div class="jc-n">§2–3</div><div class="jc-t">Callbacks &amp; Promises</div></a>
+    <a href="#sec-async"    class="jc"><div class="jc-ic">⏳</div><div class="jc-n">§4</div><div class="jc-t">async / await</div></a>
+    <a href="#sec-fetch"    class="jc"><div class="jc-ic">🌐</div><div class="jc-n">§5–6</div><div class="jc-t">AJAX &amp; Fetch API</div></a>
+    <a href="#sec-jquery"   class="jc"><div class="jc-ic">💲</div><div class="jc-n">§7</div><div class="jc-t">jQuery</div></a>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     §1  SYNCHRONOUS VS ASYNCHRONOUS
+     ══════════════════════════════════════════════════════════ -->
+<section class="topic" id="sec-sync">
+  <div class="t-head">
+    <span class="t-num">01</span>
+    <div>
+      <div class="t-tag">Foundation</div>
+      <div class="t-title">Synchronous vs Asynchronous</div>
+      <div class="t-intro">JavaScript is <strong>single-threaded</strong> — it can only do one thing at a time. Synchronous code runs line-by-line, blocking everything until each line finishes. Asynchronous code lets long tasks (network calls, timers) run in the background so the page stays responsive.</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-h">🔴 Synchronous — blocks</div>
+      <div class="code-box">
+        <pre><span class="cm">// Each line waits for the previous</span>
+console.<span class="fn">log</span>(<span class="str">"Step 1"</span>);
+
+<span class="cm">// Imagine this takes 3 seconds</span>
+<span class="kw">const</span> result = <span class="fn">heavyTask</span>(); <span class="cm">// BLOCKS</span>
+
+console.<span class="fn">log</span>(<span class="str">"Step 2"</span>); <span class="cm">// waits</span>
+console.<span class="fn">log</span>(<span class="str">"Step 3"</span>); <span class="cm">// waits</span>
+
+<span class="cm">// Page is frozen for 3 seconds!</span></pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h">🟢 Asynchronous — non-blocking</div>
+      <div class="code-box">
+        <pre><span class="cm">// Long task runs in the background</span>
+console.<span class="fn">log</span>(<span class="str">"Step 1"</span>);
+
+<span class="fn">setTimeout</span>(() => {
+  console.<span class="fn">log</span>(<span class="str">"Step 2 (after 3s)"</span>);
+}, <span class="num">3000</span>); <span class="cm">// schedules, doesn't block</span>
+
+console.<span class="fn">log</span>(<span class="str">"Step 3"</span>); <span class="cm">// runs immediately!</span>
+
+<span class="cm">// Output: Step 1 → Step 3 → Step 2</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout c-blue">
+    <strong>The Event Loop:</strong> JavaScript uses a <em>call stack</em> for synchronous code and a <em>callback queue</em> for async tasks. The event loop continuously checks — when the call stack is empty, it picks the next task from the queue and runs it. This is why <code>setTimeout(fn, 0)</code> still runs after synchronous code finishes.
+  </div>
+
+  <div class="sandbox" id="sb-sync">
+    <div class="sb-bar">
+      <div class="sb-lbl"><span class="sb-dot"></span>sync-vs-async.js — edit and run</div>
+      <div class="sb-btns">
+        <button class="btn-clr" onclick="clearSb('sb-sync')">Clear</button>
+        <button class="btn-run" onclick="runSb('sb-sync')">▶ Run</button>
+      </div>
+    </div>
+    <textarea class="editor" id="sb-sync-code" rows="10" spellcheck="false">// Run this to see the order of execution
+console.log("1 — Start");
+
+setTimeout(function() {
+  console.log("3 — I was scheduled for 1 second later");
+}, 1000);
+
+setTimeout(function() {
+  console.log("4 — I was scheduled for 2 seconds later");
+}, 2000);
+
+console.log("2 — End of synchronous code");
+// Try changing the timeout values and observe the order!</textarea>
+    <div class="sb-out"><span class="out-empty" id="sb-sync-out">Press ▶ Run — watch the order of 1, 2, 3, 4</span></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     §2  CALLBACKS
+     ══════════════════════════════════════════════════════════ -->
+<section class="topic" id="sec-callback">
+  <div class="t-head">
+    <span class="t-num">02</span>
+    <div>
+      <div class="t-tag">Async JavaScript</div>
+      <div class="t-title">Callbacks</div>
+      <div class="t-intro">A <strong>callback</strong> is a function passed as an argument to another function, to be called when an async task completes. It was the original way to handle async JavaScript — still used in many older APIs.</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-h">What is a callback?</div>
+      <div class="card-b">
+        <p style="margin-bottom:10px">You pass a function <em>into</em> another function. When the task finishes, it <em>calls back</em> your function with the result.</p>
+        <p>Think of it like ordering food: you give the waiter your number (the callback). When the food is ready, they call your number — you don't stand at the counter waiting.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h">⚠ Callback Hell</div>
+      <div class="card-b">
+        <p style="margin-bottom:8px">When callbacks are nested inside callbacks, code becomes deeply indented and hard to read. This is called <strong>Callback Hell</strong> or the <em>"Pyramid of Doom"</em>.</p>
+        <pre style="font-family:var(--mono);font-size:11.5px;color:var(--rose);background:#fff8f8;padding:8px;border-radius:6px;border:1px solid var(--rse-bd)">login(user, () => {
+  getProfile(user, () => {
+    getCourses(user, () => {
+      getGrades(user, () => {
+        // pyramid of doom!
+      });
+    });
+  });
+});</pre>
+        <p style="margin-top:8px;font-size:13px;color:var(--ink2)">Promises and async/await solve this problem.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-box">
+    <div class="cb-bar"><span class="cd cd-r"></span><span class="cd cd-y"></span><span class="cd cd-g"></span><span class="cb-fn">callbacks.js — reference</span></div>
+    <pre><span class="cm">// Basic callback pattern</span>
+<span class="kw">function</span> <span class="fn">fetchData</span>(url, callback) {
+  <span class="cm">// Simulate async task with setTimeout</span>
+  <span class="fn">setTimeout</span>(() => {
+    <span class="kw">const</span> data = { name: <span class="str">"Arjun"</span>, course: <span class="str">"MCA"</span> };
+    callback(<span class="bool">null</span>, data); <span class="cm">// null = no error, data = result</span>
+  }, <span class="num">1000</span>);
+}
+
+<span class="cm">// Call with a callback function</span>
+<span class="fn">fetchData</span>(<span class="str">"api/student"</span>, <span class="kw">function</span>(error, result) {
+  <span class="kw">if</span> (error) {
+    console.<span class="fn">log</span>(<span class="str">"Error:"</span>, error);
+    <span class="kw">return</span>;
+  }
+  console.<span class="fn">log</span>(<span class="str">"Got data:"</span>, result.name, result.course);
+});
+
+<span class="cm">// Node.js error-first callback convention</span>
+<span class="cm">// callback(error, result) — null for no error</span>
+
+<span class="cm">// Callbacks you already use:</span>
+document.<span class="fn">getElementById</span>(<span class="str">'btn'</span>).<span class="fn">addEventListener</span>(<span class="str">'click'</span>, <span class="kw">function</span>() {
+  <span class="cm">// THIS is a callback!</span>
+});
+
+[<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>].<span class="fn">forEach</span>(<span class="kw">function</span>(n) {
+  <span class="cm">// Also a callback!</span>
+});</pre>
+  </div>
+
+  <div class="sandbox" id="sb-cb">
+    <div class="sb-bar">
+      <div class="sb-lbl"><span class="sb-dot"></span>callbacks-lab.js — edit values and run</div>
+      <div class="sb-btns">
+        <button class="btn-clr" onclick="clearSb('sb-cb')">Clear</button>
+        <button class="btn-run" onclick="runSb('sb-cb')">▶ Run</button>
+      </div>
+    </div>
+    <textarea class="editor" id="sb-cb-code" rows="22" spellcheck="false">// A function that accepts a callback
+function getStudentData(studentName, callback) {
+  console.log("Fetching data for: " + studentName + "...");
+
+  // Simulating a 1-second delay (like a real API call)
+  setTimeout(function() {
+    const student = {
+      name    : studentName,
+      course  : "MCA",
+      semester: 3,
+      gpa     : 8.5
+    };
+    callback(null, student); // null = no error
+  }, 1000);
+}
+
+// Call the function and handle the result in the callback
+getStudentData("Priya", function(error, data) {
+  if (error) {
+    console.log("Error:", error);
+    return;
+  }
+  console.log("Name   :", data.name);
+  console.log("Course :", data.course);
+  console.log("GPA    :", data.gpa);
+});
+
+console.log("This runs BEFORE the callback (async!)");
+// Try changing the student name above</textarea>
+    <div class="sb-out"><span class="out-empty" id="sb-cb-out">Press ▶ Run — notice which line prints first</span></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     §3  PROMISES
+     ══════════════════════════════════════════════════════════ -->
+<section class="topic" id="sec-promise">
+  <div class="t-head">
+    <span class="t-num">03</span>
+    <div>
+      <div class="t-tag">Async JavaScript</div>
+      <div class="t-title">Promises</div>
+      <div class="t-intro">A <strong>Promise</strong> is an object that represents a value that will be available in the future. It solves callback hell by letting you chain <code>.then()</code> calls instead of nesting callbacks. Introduced in ES6 (2015).</div>
+    </div>
+  </div>
+
+  <!-- States timeline -->
+  <div class="timeline">
+    <div class="tl-step tl-pending">
+      <div class="tl-label">Pending</div>
+      <div class="tl-text">Initial state — operation in progress, result not yet known</div>
+    </div>
+    <div class="tl-step tl-resolved">
+      <div class="tl-label">Fulfilled</div>
+      <div class="tl-text">Operation succeeded — <code>.then()</code> callback runs with the result</div>
+    </div>
+    <div class="tl-step tl-rejected">
+      <div class="tl-label">Rejected</div>
+      <div class="tl-text">Operation failed — <code>.catch()</code> callback runs with the error</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-h">Creating a Promise</div>
+      <div class="code-box" style="margin:0">
+        <pre style="padding:12px 14px;font-size:12px"><span class="cm">// new Promise takes an executor function</span>
+<span class="kw">const</span> myPromise = <span class="kw">new</span> <span class="cls">Promise</span>((resolve, reject) => {
+  <span class="cm">// Do async work here</span>
+  <span class="kw">const</span> success = <span class="bool">true</span>;
+
+  <span class="kw">if</span> (success) {
+    <span class="fn">resolve</span>(<span class="str">"Data loaded!"</span>); <span class="cm">// → .then()</span>
+  } <span class="kw">else</span> {
+    <span class="fn">reject</span>(<span class="str">"Something failed"</span>); <span class="cm">// → .catch()</span>
+  }
+});
+
+<span class="cm">// Consume the promise</span>
+myPromise
+  .<span class="fn">then</span>(result => console.<span class="fn">log</span>(result))
+  .<span class="fn">catch</span>(error => console.<span class="fn">log</span>(error))
+  .<span class="fn">finally</span>(() => console.<span class="fn">log</span>(<span class="str">"Always runs"</span>));</pre>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h">Promise Chaining — vs Callback Hell</div>
+      <div class="code-box" style="margin:0">
+        <pre style="padding:12px 14px;font-size:12px"><span class="cm">// Flat chain — much cleaner than nesting!</span>
+<span class="fn">login</span>(user)
+  .<span class="fn">then</span>(token => <span class="fn">getProfile</span>(token))
+  .<span class="fn">then</span>(profile => <span class="fn">getCourses</span>(profile.id))
+  .<span class="fn">then</span>(courses => {
+    console.<span class="fn">log</span>(<span class="str">"Courses:"</span>, courses);
+  })
+  .<span class="fn">catch</span>(err => {
+    <span class="cm">// ONE catch handles ALL errors above</span>
+    console.<span class="fn">log</span>(<span class="str">"Error:"</span>, err);
+  });
+
+<span class="cm">// Promise.all — run multiple in parallel</span>
+<span class="cls">Promise</span>.<span class="fn">all</span>([<span class="fn">getUser</span>(), <span class="fn">getCourses</span>()])
+  .<span class="fn">then</span>(([user, courses]) => {
+    console.<span class="fn">log</span>(user, courses);
+  });</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout c-green">
+    <strong>Promise.all vs Promise.race:</strong> <code>Promise.all([p1, p2, p3])</code> waits for ALL promises to resolve (fails if any one fails). <code>Promise.race([p1, p2, p3])</code> resolves/rejects as soon as the FIRST promise settles. Use <code>Promise.allSettled()</code> to get results of all, regardless of success or failure.
+  </div>
+
+  <div class="sandbox" id="sb-promise">
+    <div class="sb-bar">
+      <div class="sb-lbl"><span class="sb-dot"></span>promises-lab.js — try changing resolve/reject and the chain</div>
+      <div class="sb-btns">
+        <button class="btn-clr" onclick="clearSb('sb-promise')">Clear</button>
+        <button class="btn-run" onclick="runSb('sb-promise')">▶ Run</button>
+      </div>
+    </div>
+    <textarea class="editor" id="sb-promise-code" rows="36" spellcheck="false">// ── Creating a Promise ────────────────────────
+function fetchScore(studentName) {
+  return new Promise(function(resolve, reject) {
+    setTimeout(function() {
+      // Change to false to see rejection
+      const success = true;
+
+      if (success) {
+        resolve({ name: studentName, score: 88 });
+      } else {
+        reject("Server error: could not fetch score");
+      }
+    }, 800);
+  });
+}
+
+// ── Consuming with .then() and .catch() ───────
+console.log("Fetching score...");
+
+fetchScore("Arjun")
+  .then(function(result) {
+    console.log("Name :", result.name);
+    console.log("Score:", result.score);
+    // Return a value to chain the next .then()
+    return result.score >= 75 ? "Pass" : "Fail";
+  })
+  .then(function(grade) {
+    console.log("Result:", grade);
+  })
+  .catch(function(error) {
+    console.log("Error caught:", error);
+  })
+  .finally(function() {
+    console.log("Done — .finally() always runs");
+  });
+
+console.log("This runs before the promise resolves!");</textarea>
+    <div class="sb-out"><span class="out-empty" id="sb-promise-out">Press ▶ Run — try changing success = false to see .catch()</span></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     §4  ASYNC / AWAIT
+     ══════════════════════════════════════════════════════════ -->
+<section class="topic" id="sec-async">
+  <div class="t-head">
+    <span class="t-num">04</span>
+    <div>
+      <div class="t-tag">Async JavaScript</div>
+      <div class="t-title">async / await</div>
+      <div class="t-intro"><code>async/await</code> is syntactic sugar built on top of Promises. It lets you write asynchronous code that <em>looks and reads</em> like synchronous code — no more chaining. Introduced in ES2017. It is the modern standard.</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-h">Rules</div>
+      <table class="tbl" style="margin:0">
+        <tr><th>Keyword</th><th>What it does</th></tr>
+        <tr><td>async</td>    <td style="color:var(--ink2)">Marks a function as asynchronous. Always returns a Promise, even if you return a plain value.</td></tr>
+        <tr><td>await</td>    <td style="color:var(--ink2)">Pauses the async function until the Promise resolves. Can ONLY be used inside an async function.</td></tr>
+        <tr><td>try/catch</td><td style="color:var(--ink2)">Handles errors from awaited calls — replaces .catch()</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-h">Promise chain → async/await comparison</div>
+      <div class="code-box" style="margin:0">
+        <pre style="padding:12px 14px;font-size:12px"><span class="cm">// Promise chain (old way)</span>
+<span class="fn">getUser</span>()
+  .<span class="fn">then</span>(u => <span class="fn">getCourses</span>(u.id))
+  .<span class="fn">then</span>(c => console.<span class="fn">log</span>(c))
+  .<span class="fn">catch</span>(e => console.<span class="fn">log</span>(e));
+
+<span class="cm">// async/await (modern way — same result!)</span>
+<span class="kw">async function</span> <span class="fn">loadData</span>() {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> user    = <span class="kw">await</span> <span class="fn">getUser</span>();
+    <span class="kw">const</span> courses = <span class="kw">await</span> <span class="fn">getCourses</span>(user.id);
+    console.<span class="fn">log</span>(courses);
+  } <span class="kw">catch</span> (error) {
+    console.<span class="fn">log</span>(error);
+  }
+}
+<span class="fn">loadData</span>();</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout c-amber">
+    <strong>Common mistake:</strong> <code>await</code> can only be used inside an <code>async</code> function. Using it at the top level of a script (outside any function) causes a SyntaxError in older environments. In modern browsers and Node.js 14+, top-level await is supported in ES modules.
+  </div>
+
+  <div class="sandbox" id="sb-async">
+    <div class="sb-bar">
+      <div class="sb-lbl"><span class="sb-dot"></span>async-await-lab.js — modify the delay and see how it reads</div>
+      <div class="sb-btns">
+        <button class="btn-clr" onclick="clearSb('sb-async')">Clear</button>
+        <button class="btn-run" onclick="runSb('sb-async')">▶ Run</button>
+      </div>
+    </div>
+    <textarea class="editor" id="sb-async-code" rows="38" spellcheck="false">// Helper: wraps setTimeout in a Promise
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Helper: simulates fetching student info
+function getStudent(id) {
+  return new Promise(function(resolve, reject) {
+    setTimeout(function() {
+      if (id > 0) {
+        resolve({ id: id, name: "Arjun", course: "MCA" });
+      } else {
+        reject("Invalid student ID");
+      }
+    }, 600);
+  });
+}
+
+// Helper: simulates fetching grades
+function getGrades(studentId) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve({ studentId: studentId, math: 85, web: 92, os: 78 });
+    }, 400);
+  });
+}
+
+// ── Main async function ────────────────────────
+async function loadStudentReport(id) {
+  console.log("Loading student", id, "...");
+
+  try {
+    // await pauses here until promise resolves
+    const student = await getStudent(id);
+    console.log("Got student:", student.name);
+
+    const grades = await getGrades(student.id);
+    console.log("Grades:", grades.math, grades.web, grades.os);
+
+    const avg = (grades.math + grades.web + grades.os) / 3;
+    console.log("Average:", avg.toFixed(1));
+
+  } catch (error) {
+    console.log("Error:", error);
+  }
+
+  console.log("Done!");
+}
+
+// Call it — try id = -1 to test the catch
+loadStudentReport(1);</textarea>
+    <div class="sb-out"><span class="out-empty" id="sb-async-out">Press ▶ Run — try changing loadStudentReport(-1) to test error handling</span></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     §5  AJAX
+     ══════════════════════════════════════════════════════════ -->
+<section class="topic" id="sec-ajax">
+  <div class="t-head">
+    <span class="t-num">05</span>
+    <div>
+      <div class="t-tag">Network Requests</div>
+      <div class="t-title">AJAX — Asynchronous JavaScript and XML</div>
+      <div class="t-intro">AJAX is a technique for sending HTTP requests from JavaScript without reloading the page. The original approach used <code>XMLHttpRequest</code> (XHR). Today, the <code>Fetch API</code> replaces it — but you will see XHR in older codebases.</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-h">What AJAX enables</div>
+      <table class="tbl" style="margin:0">
+        <tr><th>Without AJAX</th><th>With AJAX</th></tr>
+        <tr><td style="color:var(--rose)">Submit form → full page reload</td><td style="color:var(--green)">Submit form → update just the result area</td></tr>
+        <tr><td style="color:var(--rose)">Load new data → reload page</td><td style="color:var(--green)">Load data → inject into page silently</td></tr>
+        <tr><td style="color:var(--rose)">Search → new page for each query</td><td style="color:var(--green)">Search → live results as you type</td></tr>
+        <tr><td style="color:var(--rose)">Every action = server round-trip visible to user</td><td style="color:var(--green)">Background requests, seamless UX</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-h">XMLHttpRequest (XHR) — the original</div>
+      <div class="code-box" style="margin:0">
+        <pre style="padding:12px 14px;font-size:12px"><span class="cm">// Still used in legacy code</span>
+<span class="kw">const</span> xhr = <span class="kw">new</span> <span class="cls">XMLHttpRequest</span>();
+
+xhr.<span class="fn">open</span>(<span class="str">'GET'</span>, <span class="str">'https://api.example.com/data'</span>);
+
+xhr.<span class="fn">onload</span> = <span class="kw">function</span>() {
+  <span class="kw">if</span> (xhr.<span class="prop">status</span> === <span class="num">200</span>) {
+    <span class="kw">const</span> data = <span class="cls">JSON</span>.<span class="fn">parse</span>(xhr.<span class="prop">responseText</span>);
+    console.<span class="fn">log</span>(data);
+  }
+};
+
+xhr.<span class="fn">onerror</span> = <span class="kw">function</span>() {
+  console.<span class="fn">log</span>(<span class="str">'Request failed'</span>);
+};
+
+xhr.<span class="fn">send</span>(); <span class="cm">// send the request</span>
+
+<span class="cm">// Fetch API is much cleaner — see §6</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout c-purple">
+    <strong>Why "XML" in AJAX?</strong> When AJAX was invented (early 2000s), XML was the standard data format. Today, JSON is used almost exclusively — but the name AJAX stuck. Modern AJAX = <strong>JSON over HTTP using the Fetch API or axios</strong>.
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     §6  FETCH API
+     ══════════════════════════════════════════════════════════ -->
+<section class="topic" id="sec-fetch">
+  <div class="t-head">
+    <span class="t-num">06</span>
+    <div>
+      <div class="t-tag">Network Requests</div>
+      <div class="t-title">Fetch API</div>
+      <div class="t-intro">The <code>fetch()</code> function is the modern, Promise-based replacement for XMLHttpRequest. It is built into all modern browsers — no library needed. You pass a URL, get a Promise back, then read the response.</div>
+    </div>
+  </div>
+
+  <div class="code-box">
+    <div class="cb-bar"><span class="cd cd-r"></span><span class="cd cd-y"></span><span class="cd cd-g"></span><span class="cb-fn">fetch-api.js — complete reference</span></div>
+    <pre><span class="cm">// ── Basic GET request ─────────────────────────────────────</span>
+<span class="fn">fetch</span>(<span class="str">'https://jsonplaceholder.typicode.com/users/1'</span>)
+  .<span class="fn">then</span>(response => response.<span class="fn">json</span>())  <span class="cm">// parse JSON body</span>
+  .<span class="fn">then</span>(data    => console.<span class="fn">log</span>(data))
+  .<span class="fn">catch</span>(error  => console.<span class="fn">log</span>(<span class="str">'Error:'</span>, error));
+
+<span class="cm">// ── Same request with async/await ────────────────────────</span>
+<span class="kw">async function</span> <span class="fn">getUser</span>() {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'https://jsonplaceholder.typicode.com/users/1'</span>);
+
+    <span class="kw">if</span> (!response.<span class="prop">ok</span>) {  <span class="cm">// ok = true when status 200–299</span>
+      <span class="kw">throw new</span> <span class="cls">Error</span>(<span class="str">'HTTP Error: '</span> + response.<span class="prop">status</span>);
+    }
+
+    <span class="kw">const</span> user = <span class="kw">await</span> response.<span class="fn">json</span>();
+    console.<span class="fn">log</span>(user.name, user.email);
+  } <span class="kw">catch</span> (error) {
+    console.<span class="fn">log</span>(<span class="str">'Failed:'</span>, error.<span class="prop">message</span>);
+  }
+}
+
+<span class="cm">// ── POST request (send data) ─────────────────────────────</span>
+<span class="kw">async function</span> <span class="fn">createUser</span>(userData) {
+  <span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'https://jsonplaceholder.typicode.com/users'</span>, {
+    method:  <span class="str">'POST'</span>,
+    headers: { <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span> },
+    body:    <span class="cls">JSON</span>.<span class="fn">stringify</span>(userData) <span class="cm">// object → JSON string</span>
+  });
+  <span class="kw">return await</span> response.<span class="fn">json</span>();
+}
+
+<span class="cm">// ── Response methods ─────────────────────────────────────</span>
+<span class="cm">// response.json()    → parse body as JSON (returns Promise)</span>
+<span class="cm">// response.text()    → parse body as plain text</span>
+<span class="cm">// response.blob()    → for images/files</span>
+<span class="cm">// response.ok        → true if status 200-299</span>
+<span class="cm">// response.status    → HTTP status code (200, 404, 500...)</span>
+<span class="cm">// response.headers   → response headers</span></pre>
+  </div>
+
+  <!-- Live Fetch Demo -->
+  <div class="fetch-demo">
+    <div style="font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:12px">🔴 Live Demo — Real Fetch API call to a public test API</div>
+    <div class="fd-controls">
+      <input class="fd-url" id="fd-url" value="https://jsonplaceholder.typicode.com/users/1" type="text">
+      <button class="fd-btn go" onclick="doFetch()">Fetch →</button>
+      <button class="fd-btn sec" onclick="doFetch('https://jsonplaceholder.typicode.com/posts/1')">Post example</button>
+      <button class="fd-btn sec" onclick="doFetch('https://jsonplaceholder.typicode.com/todos/1')">Todo example</button>
+    </div>
+    <div class="fd-spinner" id="fd-spinner"><div class="spin"></div> Fetching…</div>
+    <div class="fd-status" id="fd-status"></div>
+    <div class="fd-result" id="fd-result">// Result will appear here after clicking Fetch →</div>
+  </div>
+
+  <div class="callout c-rose">
+    <strong>Important:</strong> <code>fetch()</code> only rejects the Promise on network errors (no internet, DNS failure). A 404 or 500 response still <em>resolves</em> — always check <code>response.ok</code> or <code>response.status</code> to catch HTTP errors.
+  </div>
+
+  <div class="sandbox" id="sb-fetch">
+    <div class="sb-bar">
+      <div class="sb-lbl"><span class="sb-dot"></span>fetch-lab.js — live API call, modify the URL or endpoint</div>
+      <div class="sb-btns">
+        <button class="btn-clr" onclick="clearSb('sb-fetch')">Clear</button>
+        <button class="btn-run" onclick="runFetchLab()">▶ Run (live API)</button>
+      </div>
+    </div>
+    <textarea class="editor" id="sb-fetch-code" rows="26" spellcheck="false">// This makes a real HTTP request to a public test API
+// Try changing the URL number (1-10) to get different users
+const url = "https://jsonplaceholder.typicode.com/users/2";
+
+async function loadUser() {
+  console.log("Fetching:", url);
+
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error("HTTP error! Status: " + response.status);
+    }
+
+    const user = await response.json();
+
+    // Display the data
+    console.log("Name   :", user.name);
+    console.log("Email  :", user.email);
+    console.log("City   :", user.address.city);
+    console.log("Company:", user.company.name);
+
+    // Try accessing other fields:
+    // user.phone, user.website, user.username
+
+  } catch (error) {
+    console.log("Error:", error.message);
+  }
+}
+
+loadUser();</textarea>
+    <div class="sb-out"><span class="out-empty" id="sb-fetch-out">Press ▶ Run — makes a real HTTP request to jsonplaceholder.typicode.com</span></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     §7  JQUERY
+     ══════════════════════════════════════════════════════════ -->
+<section class="topic" id="sec-jquery">
+  <div class="t-head">
+    <span class="t-num">07</span>
+    <div>
+      <div class="t-tag">JavaScript Libraries</div>
+      <div class="t-title">jQuery — Introduction</div>
+      <div class="t-intro">jQuery is a JavaScript library that simplifies DOM manipulation, event handling, animations, and AJAX. Released in 2006, it was the most popular JS library for a decade. The motto: <em>"Write less, do more."</em> Modern browsers have closed the gap, but jQuery is still widely used in legacy projects.</div>
+    </div>
+  </div>
+
+  <div class="three-col">
+    <div class="card">
+      <div class="card-h">Why jQuery was created</div>
+      <div class="card-b" style="font-size:13.5px">In 2006, browsers had massively different JavaScript behaviour. jQuery smoothed those differences behind one simple API. You wrote jQuery code once — it worked everywhere.</div>
+    </div>
+    <div class="card">
+      <div class="card-h">The $ symbol</div>
+      <div class="card-b" style="font-size:13.5px"><code>$</code> is just jQuery's shorthand. <code>$('#id')</code> is the same as <code>jQuery('#id')</code>. It selects elements using CSS selectors — like <code>querySelector</code>, but returns a jQuery object with extra methods.</div>
+    </div>
+    <div class="card">
+      <div class="card-h">Should I use jQuery today?</div>
+      <div class="card-b" style="font-size:13.5px">For new projects: probably not — vanilla JS is powerful enough. For existing codebases: yes, jQuery is often deeply embedded. VTU includes it as it is widely referenced in real-world code.</div>
+    </div>
+  </div>
+
+  <!-- Side-by-side comparison -->
+  <div class="card">
+    <div class="card-h">Vanilla JS vs jQuery — side by side</div>
+    <div class="two-col" style="margin:0">
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Vanilla JavaScript</div>
+        <div class="code-box" style="margin:0">
+          <pre style="padding:12px 14px;font-size:12px"><span class="cm">// Select</span>
+document.<span class="fn">getElementById</span>(<span class="str">'btn'</span>);
+document.<span class="fn">querySelector</span>(<span class="str">'.card'</span>);
+
+<span class="cm">// Change text</span>
+el.<span class="prop">textContent</span> = <span class="str">'Hello'</span>;
+
+<span class="cm">// Hide element</span>
+el.<span class="prop">style</span>.<span class="prop">display</span> = <span class="str">'none'</span>;
+
+<span class="cm">// Add class</span>
+el.<span class="prop">classList</span>.<span class="fn">add</span>(<span class="str">'active'</span>);
+
+<span class="cm">// Click event</span>
+el.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, fn);
+
+<span class="cm">// AJAX (Fetch)</span>
+<span class="fn">fetch</span>(url).<span class="fn">then</span>(r => r.<span class="fn">json</span>());</pre>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">jQuery — shorter</div>
+        <div class="code-box" style="margin:0">
+          <pre style="padding:12px 14px;font-size:12px"><span class="cm">// Select</span>
+$(<span class="str">'#btn'</span>);
+$(<span class="str">'.card'</span>);
+
+<span class="cm">// Change text</span>
+$(<span class="str">'#el'</span>).<span class="fn">text</span>(<span class="str">'Hello'</span>);
+
+<span class="cm">// Hide element</span>
+$(<span class="str">'#el'</span>).<span class="fn">hide</span>();
+
+<span class="cm">// Add class</span>
+$(<span class="str">'#el'</span>).<span class="fn">addClass</span>(<span class="str">'active'</span>);
+
+<span class="cm">// Click event</span>
+$(<span class="str">'#el'</span>).<span class="fn">click</span>(fn);
+
+<span class="cm">// AJAX</span>
+$.<span class="fn">ajax</span>({ url: url, <span class="prop">success</span>: fn });</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- jQuery reference -->
+  <div class="card">
+    <div class="card-h">jQuery Quick Reference</div>
+    <div class="qr-grid" style="margin:0">
+      <div class="qr-card"><span class="qr-m">$('#id')</span><span class="qr-d">Select element by id (like getElementById)</span></div>
+      <div class="qr-card"><span class="qr-m">$('.class')</span><span class="qr-d">Select by class name</span></div>
+      <div class="qr-card"><span class="qr-m">$('p')</span><span class="qr-d">Select all &lt;p&gt; elements</span></div>
+      <div class="qr-card"><span class="qr-m">.text('val')</span><span class="qr-d">Get or set text content</span></div>
+      <div class="qr-card"><span class="qr-m">.html('val')</span><span class="qr-d">Get or set innerHTML</span></div>
+      <div class="qr-card"><span class="qr-m">.val('val')</span><span class="qr-d">Get or set input field value</span></div>
+      <div class="qr-card"><span class="qr-m">.css('prop', 'val')</span><span class="qr-d">Set inline CSS property</span></div>
+      <div class="qr-card"><span class="qr-m">.addClass / .removeClass</span><span class="qr-d">Add or remove a CSS class</span></div>
+      <div class="qr-card"><span class="qr-m">.show() / .hide()</span><span class="qr-d">Show or hide element</span></div>
+      <div class="qr-card"><span class="qr-m">.toggle()</span><span class="qr-d">Show if hidden, hide if shown</span></div>
+      <div class="qr-card"><span class="qr-m">.click(fn)</span><span class="qr-d">Attach a click event handler</span></div>
+      <div class="qr-card"><span class="qr-m">.on('event', fn)</span><span class="qr-d">Attach any event handler</span></div>
+      <div class="qr-card"><span class="qr-m">.append('html')</span><span class="qr-d">Add HTML inside element at end</span></div>
+      <div class="qr-card"><span class="qr-m">.remove()</span><span class="qr-d">Remove element from DOM</span></div>
+      <div class="qr-card"><span class="qr-m">.each(fn)</span><span class="qr-d">Loop over matched elements</span></div>
+    </div>
+  </div>
+
+  <!-- jQuery live demo -->
+  <div class="jq-demo" id="jq-demo-area">
+    <div style="font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:12px">🔴 Live Demo — jQuery DOM manipulation (jQuery loaded via CDN)</div>
+    <div class="jq-target" id="jq-target">
+      <h3 id="jq-heading">VTU MCA Students</h3>
+      <p id="jq-para">This paragraph can be manipulated using jQuery methods below.</p>
+      <ul id="jq-list">
+        <li>Web Technologies</li>
+        <li>Database Management</li>
+        <li>Operating Systems</li>
+      </ul>
+    </div>
+    <div class="jq-btn-row">
+      <button class="jq-btn" onclick="jqDemo('changeText')">Change text</button>
+      <button class="jq-btn" onclick="jqDemo('changeColor')">Change colour</button>
+      <button class="jq-btn" onclick="jqDemo('hide')">Hide paragraph</button>
+      <button class="jq-btn" onclick="jqDemo('show')">Show paragraph</button>
+      <button class="jq-btn" onclick="jqDemo('toggle')">Toggle list</button>
+      <button class="jq-btn" onclick="jqDemo('addClass')">Add class</button>
+      <button class="jq-btn" onclick="jqDemo('append')">Append item</button>
+      <button class="jq-btn" onclick="jqDemo('animate')">Animate</button>
+      <button class="jq-btn" onclick="jqDemo('reset')">↺ Reset</button>
+    </div>
+  </div>
+
+  <div class="sandbox" id="sb-jquery">
+    <div class="sb-bar">
+      <div class="sb-lbl"><span class="sb-dot"></span>jquery-lab.js — jQuery is loaded, $ is available</div>
+      <div class="sb-btns">
+        <button class="btn-clr" onclick="clearSb('sb-jquery')">Clear</button>
+        <button class="btn-run" onclick="runJQueryLab()">▶ Run</button>
+      </div>
+    </div>
+    <textarea class="editor" id="sb-jquery-code" rows="26" spellcheck="false">// jQuery is loaded — use $ freely
+// This lab uses the demo box above
+
+// ── Selecting and reading ──────────────────────
+const headingText = $('#jq-heading').text();
+console.log("Heading text:", headingText);
+
+const paraHtml = $('#jq-para').html();
+console.log("Paragraph HTML:", paraHtml);
+
+// ── Count elements ────────────────────────────
+const itemCount = $('#jq-list li').length;
+console.log("List items:", itemCount);
+
+// ── Each loop ────────────────────────────────
+$('#jq-list li').each(function(index, element) {
+  console.log("Item " + (index + 1) + ":", $(element).text());
+});
+
+// ── Check visibility ─────────────────────────
+console.log("Heading visible?", $('#jq-heading').is(':visible'));
+
+// Try modifying the DOM:
+// $('#jq-heading').text('New Title');
+// $('#jq-para').css('color', 'blue');
+// $('#jq-list').append('<li>New Item</li>');</textarea>
+    <div class="sb-out"><span class="out-empty" id="sb-jquery-out">Press ▶ Run — jQuery reads from the demo box above</span></div>
+  </div>
+</section>
+
+<!-- Quick Reference Summary -->
+<section class="topic" style="margin-bottom:0">
+  <div class="t-head">
+    <span class="t-num">✦</span>
+    <div>
+      <div class="t-tag">Exam Prep</div>
+      <div class="t-title">VTU Quick Reference</div>
+    </div>
+  </div>
+  <div class="qr-grid">
+    <div class="qr-card"><span class="qr-m">Callback</span><span class="qr-d">Function passed as argument, called when async task completes. Original async pattern. Problem: callback hell.</span></div>
+    <div class="qr-card"><span class="qr-m">Promise</span><span class="qr-d">Object representing future value. States: pending → fulfilled / rejected. Methods: .then() .catch() .finally()</span></div>
+    <div class="qr-card"><span class="qr-m">async/await</span><span class="qr-d">Built on Promises. async marks a function. await pauses it. try/catch handles errors. Reads like synchronous code.</span></div>
+    <div class="qr-card"><span class="qr-m">AJAX</span><span class="qr-d">Technique for making HTTP requests without page reload. Originally used XHR. Now done with Fetch API or axios.</span></div>
+    <div class="qr-card"><span class="qr-m">Fetch API</span><span class="qr-d">fetch(url) returns a Promise. .json() parses response. Always check response.ok. POST needs method + headers + body.</span></div>
+    <div class="qr-card"><span class="qr-m">jQuery</span><span class="qr-d">Library using $ selector. Simplifies DOM, events, AJAX. Used in legacy code. Modern alternative: vanilla JS.</span></div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">VTU MCA — Web Technologies · Module 4 · Async JS, AJAX &amp; jQuery</footer>
+
+<!-- jQuery CDN -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   SANDBOX RUNNER
+   ══════════════════════════════════════════════════════════ */
+function runSb(id) {
+  const code = document.getElementById(id + '-code').value;
+  const out  = document.getElementById(id + '-out');
+  const lines = [];
+
+  const fake = {
+    log:   (...a) => lines.push({ t:'ok',  m: fmt(a) }),
+    warn:  (...a) => lines.push({ t:'ok',  m: fmt(a) }),
+    error: (...a) => lines.push({ t:'err', m: fmt(a) }),
+    info:  (...a) => lines.push({ t:'info',m: fmt(a) }),
+  };
+
+  function fmt(args) {
+    return args.map(a => {
+      if (a === null)      return 'null';
+      if (a === undefined) return 'undefined';
+      if (typeof a === 'object') { try { return JSON.stringify(a, null, 2); } catch { return String(a); } }
+      return String(a);
+    }).join(' ');
+  }
+
+  try {
+    new Function('console', 'setTimeout', 'Promise', code)(
+      fake,
+      (fn, ms) => { setTimeout(() => { const l=[]; const f={log:(...a)=>l.push({t:'ok',m:fmt(a)}),warn:(...a)=>l.push({t:'ok',m:fmt(a)}),error:(...a)=>l.push({t:'err',m:fmt(a)}),info:(...a)=>l.push({t:'info',m:fmt(a)})}; try{ new Function('console',fn.toString().replace(/^function\s*\(\)\s*\{/,'').replace(/\}$/,''))(f); } catch(e){l.push({t:'err',m:e.message});} renderLines(out, l, true); }, ms); },
+      Promise
+    );
+    renderLines(out, lines, false);
+  } catch(e) {
+    out.innerHTML = '<span class="out-err">⚠ ' + e.message + '</span>';
+  }
+}
+
+function renderLines(el, lines, append) {
+  if (!append) el.innerHTML = '';
+  if (!lines.length && !append) { el.innerHTML = '<span class="out-empty">(no output)</span>'; return; }
+  lines.forEach(l => {
+    const sp = document.createElement('span');
+    sp.className = 'out-' + l.t;
+    sp.textContent = l.m + '\n';
+    el.appendChild(sp);
+  });
+}
+
+function clearSb(id) {
+  document.getElementById(id + '-out').innerHTML = '<span class="out-empty">Cleared.</span>';
+}
+
+/* Tab key in editors */
+document.querySelectorAll('.editor').forEach(ta => {
+  ta.addEventListener('keydown', e => {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const s = ta.selectionStart;
+      ta.value = ta.value.substring(0,s) + '  ' + ta.value.substring(ta.selectionEnd);
+      ta.selectionStart = ta.selectionEnd = s + 2;
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      const id = ta.id.replace('-code','');
+      if (id === 'sb-fetch') runFetchLab();
+      else if (id === 'sb-jquery') runJQueryLab();
+      else runSb(id);
+    }
+  });
+});
+
+/* Realtime setTimeout runner for sync lab */
+function runSb_realtime(id) {
+  const code = document.getElementById(id + '-code').value;
+  const out  = document.getElementById(id + '-out');
+  out.innerHTML = '';
+
+  const append = (msg, cls) => {
+    const sp = document.createElement('span');
+    sp.className = cls;
+    sp.textContent = msg + '\n';
+    out.appendChild(sp);
+  };
+
+  const fake = { log: (...a) => append(a.map(String).join(' '), 'out-ok'), error: (...a) => append(a.join(' '),'out-err') };
+  try {
+    const fn = new Function('console', 'setTimeout', code);
+    fn(fake, (cb, ms) => setTimeout(() => { try { cb(); } catch(e){ append('Error: '+e.message,'out-err'); } }, ms));
+    if (!out.children.length) out.innerHTML = '<span class="out-empty">(sync lines will appear, timer lines after delay)</span>';
+  } catch(e) { out.innerHTML = '<span class="out-err">⚠ '+e.message+'</span>'; }
+}
+
+/* Override sync sandbox to use realtime runner */
+document.getElementById('sb-sync').querySelector('.btn-run').onclick = function(){ runSb_realtime('sb-sync'); };
+
+/* Override callback sandbox */
+(function() {
+  const origCode = document.getElementById('sb-cb-code');
+  document.getElementById('sb-cb').querySelector('.btn-run').onclick = function() {
+    const out = document.getElementById('sb-cb-out');
+    out.innerHTML = '';
+    const append = (msg, cls) => { const sp=document.createElement('span'); sp.className=cls; sp.textContent=msg+'\n'; out.appendChild(sp); };
+    const fake = { log: (...a)=>append(a.map(x=>typeof x==='object'?JSON.stringify(x):String(x)).join(' '),'out-ok'), error:(...a)=>append(a.join(' '),'out-err') };
+    try {
+      const fn = new Function('console','setTimeout',origCode.value);
+      fn(fake, (cb, ms) => setTimeout(() => { try{ cb(); } catch(e){ append('Error: '+e.message,'out-err'); } }, ms));
+    } catch(e) { out.innerHTML = '<span class="out-err">⚠ '+e.message+'</span>'; }
+  };
+})();
+
+/* Override async/await sandbox */
+(function() {
+  const aCode = document.getElementById('sb-async-code');
+  document.getElementById('sb-async').querySelector('.btn-run').onclick = function() {
+    const out = document.getElementById('sb-async-out');
+    out.innerHTML = '<span class="out-info">Running async function…</span>';
+    const lines = [];
+    const append = (msg, cls) => { const sp=document.createElement('span'); sp.className=cls; sp.textContent=msg+'\n'; out.appendChild(sp); };
+    const fake = { log: (...a)=>append(a.map(x=>typeof x==='object'?JSON.stringify(x):String(x)).join(' '),'out-ok'), error:(...a)=>append(a.join(' '),'out-err') };
+    try {
+      const fn = new Function('console','Promise','setTimeout',aCode.value);
+      const result = fn(fake, Promise, setTimeout);
+      if (result && typeof result.then === 'function') {
+        result.catch(e => append('Unhandled: '+e,'out-err'));
+      }
+    } catch(e) { out.innerHTML = '<span class="out-err">⚠ '+e.message+'</span>'; }
+  };
+})();
+
+/* ══════════════════════════════════════════════════════════
+   FETCH DEMO
+   ══════════════════════════════════════════════════════════ */
+async function doFetch(url) {
+  const u = url || document.getElementById('fd-url').value.trim();
+  if (!u) return;
+  document.getElementById('fd-url').value = u;
+  document.getElementById('fd-result').textContent = '';
+  document.getElementById('fd-status').textContent = '';
+  document.getElementById('fd-spinner').classList.add('show');
+
+  const t = Date.now();
+  try {
+    const res  = await fetch(u);
+    const data = await res.json();
+    const ms   = Date.now() - t;
+    document.getElementById('fd-spinner').classList.remove('show');
+    document.getElementById('fd-status').textContent = `✓ ${res.status} ${res.statusText} · ${ms}ms`;
+    document.getElementById('fd-status').style.color = res.ok ? 'var(--green)' : 'var(--rose)';
+    document.getElementById('fd-result').textContent = JSON.stringify(data, null, 2);
+  } catch(e) {
+    document.getElementById('fd-spinner').classList.remove('show');
+    document.getElementById('fd-status').textContent = '✗ Network error';
+    document.getElementById('fd-status').style.color = 'var(--rose)';
+    document.getElementById('fd-result').textContent = '// Error: ' + e.message;
+  }
+}
+
+/* Fetch lab — real fetch */
+async function runFetchLab() {
+  const out  = document.getElementById('sb-fetch-out');
+  const code = document.getElementById('sb-fetch-code').value;
+  out.innerHTML = '<span class="out-info">Making HTTP request…</span>';
+  const append = (msg, cls) => { const sp=document.createElement('span'); sp.className=cls; sp.textContent=msg+'\n'; out.appendChild(sp); };
+  const fake = { log:(...a)=>append(a.map(x=>typeof x==='object'?JSON.stringify(x,null,2):String(x)).join(' '),'out-ok'), error:(...a)=>append(a.join(' '),'out-err') };
+  try {
+    const fn = new Function('console','fetch','Promise',code);
+    out.innerHTML = '';
+    const res = fn(fake, fetch.bind(window), Promise);
+    if (res && typeof res.then === 'function') res.catch(e=>append('Unhandled: '+e,'out-err'));
+  } catch(e) { out.innerHTML = '<span class="out-err">⚠ '+e.message+'</span>'; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   JQUERY LIVE DEMO
+   ══════════════════════════════════════════════════════════ */
+const jqOriginalHTML = $('#jq-target').html();
+
+function jqDemo(action) {
+  const colors = ['#1b58d8','#14803a','#b85c00','#be123c','#107070','#6e35c8'];
+  const c = colors[Math.floor(Math.random()*colors.length)];
+  const acts = {
+    changeText : () => $('#jq-heading').text('Changed by jQuery — .text() method!'),
+    changeColor: () => { $('#jq-para').css('color', c); $('#jq-heading').css('color', c); },
+    hide       : () => $('#jq-para').hide(300),
+    show       : () => $('#jq-para').show(300),
+    toggle     : () => $('#jq-list').toggle(300),
+    addClass   : () => { $('#jq-heading').css({ 'text-decoration':'underline', 'font-style':'italic' }); },
+    append     : () => $('#jq-list').append('<li style="color:'+c+'">New item — added by .append()</li>'),
+    animate    : () => $('#jq-target').animate({ opacity: 0.3 }, 200).animate({ opacity: 1 }, 400),
+    reset      : () => $('#jq-target').html(jqOriginalHTML).css({ opacity:1 }),
+  };
+  if (acts[action]) acts[action]();
+}
+
+/* jQuery lab runner */
+function runJQueryLab() {
+  const code = document.getElementById('sb-jquery-code').value;
+  const out  = document.getElementById('sb-jquery-out');
+  out.innerHTML = '';
+  const append = (msg,cls) => { const sp=document.createElement('span'); sp.className=cls; sp.textContent=msg+'\n'; out.appendChild(sp); };
+  const fake = { log:(...a)=>append(a.map(x=>typeof x==='object'?JSON.stringify(x):String(x)).join(' '),'out-ok'), error:(...a)=>append(a.join(' '),'out-err') };
+  try {
+    const fn = new Function('console','$','jQuery',code);
+    fn(fake, $, jQuery);
+  } catch(e) { out.innerHTML = '<span class="out-err">⚠ '+e.message+'</span>'; }
+}
+</script>
+</body>
+</html>
