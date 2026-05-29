@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════════════╗
+  ║  VTU MCA — AngularJS Student Manager                        ║
+  ║  A complete AngularJS project built from scratch            ║
+  ║  Every single line is explained with comments               ║
+  ╚══════════════════════════════════════════════════════════════╝
+-->
+<html ng-app="studentApp">
+<!--
+  ↑ ng-app="studentApp"
+  This tells AngularJS: "This is where my Angular application starts."
+  AngularJS will scan everything INSIDE <html> for Angular code.
+  "studentApp" is the name we give our app — it must match the
+  name we use when creating the module in JavaScript below.
+-->
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AngularJS Student Manager</title>
+
+  <!-- ── STEP 1: Load AngularJS from a CDN ────────────────────
+       Without this line, nothing works.
+       AngularJS is a JavaScript library — we load it from Google's servers.
+       After this loads, the global variable "angular" is available.
+  ──────────────────────────────────────────────────────────── -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Mulish:wght@300;400;500;600;700&family=Inconsolata:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Basic page styles — nothing to do with AngularJS ──── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+
+    :root {
+      --bg        : #f7f5f0;
+      --white     : #ffffff;
+      --surf      : #f0ede6;
+      --border    : #ddd9d0;
+      --ink       : #1a1714;
+      --ink2      : #4a4640;
+      --muted     : #8a8070;
+      --red       : #c0392b;
+      --red-lt    : #fef5f4;
+      --blue      : #1d4ed8;
+      --blue-lt   : #eff6ff;
+      --green     : #15803d;
+      --grn-lt    : #f0fdf4;
+      --amber     : #b45309;
+      --amb-lt    : #fffbeb;
+      --serif     : 'DM Serif Display', serif;
+      --body      : 'Mulish', sans-serif;
+      --mono      : 'Inconsolata', monospace;
+    }
+
+    body {
+      font-family: var(--body);
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.65;
+      font-size: 15px;
+    }
+
+    /* ── Top header ──────────────────────────────────────────── */
+    .app-header {
+      background: var(--ink);
+      color: #fff;
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .app-title {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 400;
+      letter-spacing: -.01em;
+    }
+
+    .app-subtitle {
+      font-size: 12px;
+      color: rgba(255,255,255,.45);
+      margin-top: 2px;
+      font-family: var(--mono);
+      letter-spacing: .06em;
+    }
+
+    .ng-chip {
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--red);
+      color: #fff;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: .04em;
+    }
+
+    /* ── Main layout ─────────────────────────────────────────── */
+    .main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+    }
+
+    /* ── Section heading ─────────────────────────────────────── */
+    .sec-title {
+      font-family: var(--serif);
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--ink);
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sec-tag {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    /* ── Card ────────────────────────────────────────────────── */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px 24px;
+      margin-bottom: 20px;
+    }
+
+    /* ── Two column ──────────────────────────────────────────── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    /* ── Stats row ───────────────────────────────────────────── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      text-align: center;
+    }
+
+    .stat-val {
+      font-family: var(--serif);
+      font-size: 28px;
+      color: var(--ink);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-lbl {
+      font-size: 11.5px;
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+    }
+
+    /* ── Form ────────────────────────────────────────────────── */
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--ink2);
+      margin-bottom: 6px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-family: var(--body);
+      font-size: 14px;
+      color: var(--ink);
+      background: var(--surf);
+      outline: none;
+      transition: border-color .18s, background .18s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--blue);
+      background: var(--blue-lt);
+      box-shadow: 0 0 0 3px rgba(29,78,216,.08);
+    }
+
+    /* ── Buttons ─────────────────────────────────────────────── */
+    .btn {
+      padding: 9px 20px;
+      border-radius: 8px;
+      border: none;
+      font-family: var(--body);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .btn-primary { background: var(--ink); color: #fff; }
+    .btn-primary:hover { background: #2d2a24; transform: translateY(-1px); }
+
+    .btn-danger  { background: var(--red-lt); color: var(--red); border: 1px solid #f0c0bb; }
+    .btn-danger:hover { background: var(--red); color: #fff; }
+
+    .btn-sm { padding: 5px 12px; font-size: 12.5px; }
+
+    /* ── Search input ────────────────────────────────────────── */
+    .search-wrap {
+      position: relative;
+      margin-bottom: 14px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 9px 12px 9px 36px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-family: var(--body);
+      font-size: 14px;
+      background: var(--surf);
+      color: var(--ink);
+      outline: none;
+      transition: border-color .18s;
+    }
+
+    .search-input:focus { border-color: var(--blue); }
+    .search-icon {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 15px;
+      pointer-events: none;
+    }
+
+    /* ── Student table ───────────────────────────────────────── */
+    .stu-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .stu-table th {
+      background: var(--surf);
+      padding: 9px 13px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .09em;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .stu-table th:hover { color: var(--ink); }
+
+    .stu-table td {
+      padding: 10px 13px;
+      border-bottom: 1px solid #f0ede8;
+      vertical-align: middle;
+    }
+
+    .stu-table tr:last-child td { border-bottom: none; }
+    .stu-table tr:hover td { background: #fafaf6; }
+
+    /* ── GPA badge ───────────────────────────────────────────── */
+    .gpa-badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 20px;
+    }
+
+    .gpa-a  { background: var(--grn-lt); color: var(--green); border: 1px solid #bbf7d0; }
+    .gpa-b  { background: var(--blue-lt); color: var(--blue); border: 1px solid #bfdbfe; }
+    .gpa-c  { background: var(--amb-lt); color: var(--amber); border: 1px solid #fde68a; }
+    .gpa-d  { background: var(--red-lt); color: var(--red);   border: 1px solid #f0c0bb; }
+
+    /* ── Preview box ─────────────────────────────────────────── */
+    .preview-box {
+      background: var(--surf);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-top: 12px;
+      font-size: 13.5px;
+    }
+
+    .preview-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-family: var(--mono);
+    }
+
+    .preview-value {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    /* ── Empty state ─────────────────────────────────────────── */
+    .empty {
+      text-align: center;
+      padding: 28px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* ── Error message (ng-show) ─────────────────────────────── */
+    .error-msg {
+      background: var(--red-lt);
+      color: var(--red);
+      border: 1px solid #f0c0bb;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    /* ── Code annotation boxes ───────────────────────────────── */
+    .annotation {
+      background: #1a1d26;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.8;
+      margin-top: 12px;
+      color: #c9d1d9;
+    }
+
+    .ak  { color: #ff79c6; }   /* keywords     */
+    .as  { color: #c3e88d; }   /* strings      */
+    .af  { color: #82aaff; }   /* function names */
+    .ac  { color: #546e7a; font-style: italic; }  /* comments */
+    .an  { color: #f78c6c; }   /* numbers      */
+    .ad  { color: #f07178; }   /* html tags    */
+    .aa  { color: #ffcb6b; }   /* attributes   */
+    .ao  { color: #89ddff; }   /* ng directives */
+    .at  { color: #f5d547; }   /* template     */
+
+    @media (max-width: 680px) {
+      .two-col, .stats-row { grid-template-columns: 1fr; }
+      .app-header { padding: 16px 18px; }
+      .main { padding: 20px 14px 48px; }
+    }
+  </style>
+</head>
+
+<!-- ── STEP 2: ng-controller on the body ────────────────────────
+     ng-controller="StudentCtrl" connects this section of HTML
+     to our JavaScript controller function called "StudentCtrl".
+     Everything inside <body> now has access to $scope variables
+     and functions we define in StudentCtrl.
+──────────────────────────────────────────────────────────────── -->
+<body ng-controller="StudentCtrl">
+
+<header class="app-header">
+  <div>
+    <div class="app-title">Student Manager</div>
+    <div class="app-subtitle">ng-app="studentApp" · ng-controller="StudentCtrl"</div>
+  </div>
+  <span class="ng-chip">AngularJS 1.8</span>
+</header>
+
+<main class="main">
+
+  <!-- ════════════════════════════════════════════════════════════
+       SECTION 1: STATS — showing computed values from $scope
+       ════════════════════════════════════════════════════════════ -->
+
+  <div class="sec-title">
+    Live Statistics
+    <span class="sec-tag">{{ }} interpolation + functions</span>
+  </div>
+
+  <div class="stats-row">
+
+    <div class="stat-card">
+      <!-- {{ students.length }}
+           Double curly braces = interpolation.
+           AngularJS reads students.length from $scope and displays it.
+           Updates automatically every time the students array changes. -->
+      <div class="stat-val">{{ students.length }}</div>
+      <div class="stat-lbl">Total</div>
+    </div>
+
+    <div class="stat-card">
+      <!-- avgGPA() calls the avgGPA function on $scope.
+           AngularJS calls this function and displays the return value.
+           It re-runs automatically when data changes (digest cycle). -->
+      <div class="stat-val">{{ avgGPA() }}</div>
+      <div class="stat-lbl">Avg GPA</div>
+    </div>
+
+    <div class="stat-card">
+      <!-- passCount() — custom function we wrote in the controller.
+           Returns how many students have GPA >= 7. -->
+      <div class="stat-val">{{ passCount() }}</div>
+      <div class="stat-lbl">Pass</div>
+    </div>
+
+    <div class="stat-card">
+      <!-- students.length - passCount() — inline expression.
+           AngularJS can evaluate JavaScript expressions inside {{ }}. -->
+      <div class="stat-val">{{ students.length - passCount() }}</div>
+      <div class="stat-lbl">At Risk</div>
+    </div>
+
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════════════════
+       SECTION 2: ADD STUDENT FORM — ng-model, ng-submit, ng-show
+       ════════════════════════════════════════════════════════════ -->
+
+  <div class="sec-title">
+    Add New Student
+    <span class="sec-tag">ng-model · ng-submit · two-way binding</span>
+  </div>
+
+  <div class="two-col">
+
+    <!-- LEFT: The form -->
+    <div class="card">
+
+      <!-- ng-submit="addStudent()"
+           When the form is submitted (Enter key or submit button),
+           AngularJS calls addStudent() from our $scope.
+           It automatically prevents the default browser reload. -->
+      <form ng-submit="addStudent()">
+
+        <div class="form-group">
+          <label>Full Name</label>
+          <!-- ng-model="newStudent.name"
+               This creates TWO-WAY data binding:
+               1. When user types → $scope.newStudent.name updates
+               2. When $scope.newStudent.name changes → input updates
+               "newStudent" is an object on $scope.
+               ".name" is a property on that object. -->
+          <input type="text"
+                 ng-model="newStudent.name"
+                 placeholder="e.g. Arjun Sharma">
+        </div>
+
+        <div class="form-group">
+          <label>Roll Number</label>
+          <input type="text"
+                 ng-model="newStudent.roll"
+                 placeholder="e.g. 4MCA004">
+        </div>
+
+        <div class="form-group">
+          <label>GPA (0 – 10)</label>
+          <input type="number"
+                 ng-model="newStudent.gpa"
+                 placeholder="e.g. 8.5"
+                 min="0" max="10" step="0.1">
+        </div>
+
+        <div class="form-group">
+          <label>Course</label>
+          <!-- ng-model on a <select> works the same way.
+               The selected option value is bound to $scope.newStudent.course. -->
+          <select ng-model="newStudent.course">
+            <option value="MCA">MCA</option>
+            <option value="BCA">BCA</option>
+            <option value="M.Tech">M.Tech</option>
+            <option value="B.Tech">B.Tech</option>
+          </select>
+        </div>
+
+        <!-- ng-show="formError"
+             This element is HIDDEN by default.
+             AngularJS shows it ONLY when $scope.formError is truthy.
+             If formError is "", null, false, or undefined → hidden.
+             If formError is a non-empty string → visible. -->
+        <div class="error-msg" ng-show="formError">
+          {{ formError }}
+          <!-- {{ formError }} displays the error message string -->
+        </div>
+
+        <!-- type="submit" triggers the form's ng-submit handler above -->
+        <button type="submit" class="btn btn-primary" style="width:100%;margin-top:8px">
+          + Add Student
+        </button>
+
+      </form>
+    </div>
+
+    <!-- RIGHT: Live preview — demonstrates two-way binding in real time -->
+    <div class="card">
+      <div style="font-size:13.5px;color:var(--ink2);margin-bottom:14px;line-height:1.7">
+        <strong>Two-way binding live demo.</strong><br>
+        As you type in the form on the left, the values appear here instantly —
+        no button click needed. This is <code style="font-family:var(--mono);font-size:12.5px;background:var(--surf);padding:1px 5px;border-radius:4px;color:var(--blue)">ng-model</code> at work.
+      </div>
+
+      <!-- newStudent.name reflects EXACTLY what is in the input — live -->
+      <div class="preview-box">
+        <div class="preview-label">newStudent.name</div>
+        <div class="preview-value">{{ newStudent.name || '(empty)' }}</div>
+      </div>
+
+      <div class="preview-box">
+        <div class="preview-label">newStudent.roll</div>
+        <div class="preview-value">{{ newStudent.roll || '(empty)' }}</div>
+      </div>
+
+      <div class="preview-box">
+        <div class="preview-label">newStudent.gpa</div>
+        <!-- newStudent.gpa — AngularJS shows the live number value -->
+        <div class="preview-value">{{ newStudent.gpa || '(empty)' }}</div>
+      </div>
+
+      <div class="preview-box">
+        <div class="preview-label">newStudent.course</div>
+        <div class="preview-value">{{ newStudent.course }}</div>
+      </div>
+
+      <!-- This entire block demonstrates ng-show / ng-hide.
+           It only appears when newStudent.name has a value. -->
+      <div ng-show="newStudent.name" style="margin-top:14px;padding:12px;background:var(--grn-lt);border:1px solid #bbf7d0;border-radius:8px;font-size:13px;color:var(--green)">
+        <!-- ng-show="newStudent.name"
+             Shows this div ONLY when newStudent.name is truthy (non-empty string).
+             Automatically updates as you type. -->
+        ✓ Ready to add: <strong>{{ newStudent.name }}</strong>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════════════════
+       SECTION 3: STUDENT LIST — ng-repeat, filter, orderBy
+       ════════════════════════════════════════════════════════════ -->
+
+  <div class="sec-title">
+    Student List
+    <span class="sec-tag">ng-repeat · filter · orderBy</span>
+  </div>
+
+  <div class="card">
+
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <!-- ng-model="searchText"
+           Binds the search box to $scope.searchText.
+           We use this in ng-repeat's filter below to search live. -->
+      <input type="text"
+             class="search-input"
+             ng-model="searchText"
+             placeholder="Search by name, roll, or course…">
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
+      <span style="font-size:12.5px;color:var(--muted);font-weight:600">Sort by:</span>
+      <!-- ng-click="sortBy('name')"
+           When clicked, calls sortBy() with 'name' as argument.
+           This sets $scope.sortField = 'name', which ng-repeat uses. -->
+      <button class="btn btn-sm" ng-click="sortBy('name')"
+              ng-class="{'btn-primary': sortField=='name'}">
+        <!-- ng-class="{ 'className': condition }"
+             Adds 'btn-primary' class ONLY when sortField == 'name'.
+             The button highlights to show which sort is active. -->
+        Name
+      </button>
+      <button class="btn btn-sm" ng-click="sortBy('gpa')"
+              ng-class="{'btn-primary': sortField=='gpa'}">
+        GPA
+      </button>
+      <button class="btn btn-sm" ng-click="sortBy('course')"
+              ng-class="{'btn-primary': sortField=='course'}">
+        Course
+      </button>
+      <button class="btn btn-sm" ng-click="toggleReverse()"
+              style="margin-left:auto">
+        <!-- {{ sortReverse ? '↓ Desc' : '↑ Asc' }}
+             Ternary expression inside {{ }}.
+             Shows different text based on $scope.sortReverse value. -->
+        {{ sortReverse ? '↓ Desc' : '↑ Asc' }}
+      </button>
+    </div>
+
+    <!-- ng-show="students.length == 0"
+         Shows this empty message ONLY when the array is empty. -->
+    <div class="empty" ng-show="students.length == 0">
+      No students yet. Add one using the form above.
+    </div>
+
+    <!-- ng-hide="students.length == 0"
+         ng-hide is the opposite of ng-show.
+         Hides this table when the array is empty. -->
+    <table class="stu-table" ng-hide="students.length == 0">
+      <thead>
+        <tr>
+          <th ng-click="sortBy('name')">Name</th>
+          <th ng-click="sortBy('roll')">Roll No</th>
+          <th ng-click="sortBy('course')">Course</th>
+          <th ng-click="sortBy('gpa')">GPA</th>
+          <th>Grade</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- ════════════════════════════════════════════════════
+             ng-repeat — THE most important AngularJS directive
+
+             ng-repeat="student in students | filter:searchText | orderBy:sortField:sortReverse"
+
+             Breaking it down:
+             1. student in students
+                → Loop through $scope.students array
+                → Each item is called "student" inside this loop
+
+             2. | filter:searchText
+                → The pipe | applies a FILTER
+                → filter:searchText searches ALL properties of each
+                  student object for the value of $scope.searchText
+                → Typing in the search box instantly narrows the list
+
+             3. | orderBy:sortField:sortReverse
+                → Sorts the array by whatever $scope.sortField is
+                  ('name', 'gpa', 'course', etc.)
+                → sortReverse:true means descending order
+
+             AngularJS creates one <tr> for each student that
+             passes the filter. The list updates automatically
+             when students array, searchText, or sortField changes.
+        ════════════════════════════════════════════════════════ -->
+        <tr ng-repeat="student in students | filter:searchText | orderBy:sortField:sortReverse">
+
+          <!-- {{ student.name }}
+               Inside ng-repeat, "student" refers to the current item.
+               This displays the name property of the current student. -->
+          <td style="font-weight:600">{{ student.name }}</td>
+
+          <td style="font-family:var(--mono);font-size:13px;color:var(--muted)">
+            {{ student.roll }}
+          </td>
+
+          <td>{{ student.course }}</td>
+
+          <td>
+            <!-- ng-class with multiple conditions.
+                 Adds ONE of the gpa-* classes depending on the GPA value.
+                 AngularJS evaluates each condition and applies the matching class. -->
+            <span class="gpa-badge"
+                  ng-class="{
+                    'gpa-a': student.gpa >= 9,
+                    'gpa-b': student.gpa >= 8 && student.gpa < 9,
+                    'gpa-c': student.gpa >= 7 && student.gpa < 8,
+                    'gpa-d': student.gpa < 7
+                  }">
+              {{ student.gpa }}
+            </span>
+          </td>
+
+          <td>
+            <!-- Ternary expression — works inside {{ }} in AngularJS.
+                 Returns a grade string based on the GPA. -->
+            {{ student.gpa >= 9 ? 'A+' :
+               student.gpa >= 8 ? 'A'  :
+               student.gpa >= 7 ? 'B'  : 'C' }}
+          </td>
+
+          <td>
+            <!-- ng-click="removeStudent($index)"
+                 $index is a special AngularJS variable available inside ng-repeat.
+                 It holds the current item's position in the array (0, 1, 2…).
+                 Calls removeStudent() with this index to delete the student. -->
+            <button class="btn btn-danger btn-sm"
+                    ng-click="removeStudent($index)">
+              Remove
+            </button>
+          </td>
+
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Show count of filtered results.
+         (students | filter:searchText).length
+         Applies the same filter to get the count of visible rows. -->
+    <div style="margin-top:12px;font-size:12.5px;color:var(--muted);text-align:right"
+         ng-hide="students.length == 0">
+      Showing {{ (students | filter:searchText).length }} of {{ students.length }} students
+    </div>
+
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════════════════
+       SECTION 4: CUSTOM FILTER DEMO — | uppercase, | number, | currency
+       ════════════════════════════════════════════════════════════ -->
+
+  <div class="sec-title">
+    Built-in Filters
+    <span class="sec-tag">| uppercase · | number · | limitTo</span>
+  </div>
+
+  <div class="card">
+    <div style="font-size:13.5px;color:var(--ink2);margin-bottom:16px">
+      Filters format values for display. Use the pipe <code style="font-family:var(--mono);font-size:12.5px;background:var(--surf);padding:1px 5px;border-radius:4px;color:var(--blue)">|</code> character inside <code style="font-family:var(--mono);font-size:12.5px;background:var(--surf);padding:1px 5px;border-radius:4px;color:var(--blue)">{{ }}</code> expressions.
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+
+      <div class="preview-box">
+        <div class="preview-label">{{ 'hello world' | uppercase }}</div>
+        <!-- | uppercase — converts string to uppercase -->
+        <div class="preview-value">{{ 'hello world' | uppercase }}</div>
+      </div>
+
+      <div class="preview-box">
+        <div class="preview-label">{{ avgGPA() | number:3 }}</div>
+        <!-- | number:3 — formats to 3 decimal places -->
+        <div class="preview-value">{{ avgGPA() | number:3 }}</div>
+      </div>
+
+      <div class="preview-box">
+        <div class="preview-label">{{ students | limitTo:2 }} count</div>
+        <!-- | limitTo:2 — takes only 2 items from the array -->
+        <div class="preview-value">{{ (students | limitTo:2).length }} items</div>
+      </div>
+
+      <div class="preview-box">
+        <div class="preview-label">{{ 9876.5 | currency:"₹" }}</div>
+        <!-- | currency:"₹" — formats as currency with symbol -->
+        <div class="preview-value">{{ 9876.5 | currency:"₹" }}</div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     STEP 3: The JavaScript — this is where we create the Angular
+     module and controller. All the logic lives here.
+════════════════════════════════════════════════════════════════════ -->
+<script>
+
+// ── STEP 3A: Create the Angular Module ──────────────────────────
+//
+// angular.module('studentApp', [])
+//
+// angular   → the global AngularJS object (loaded from CDN above)
+// .module() → creates (or retrieves) an Angular module
+// 'studentApp' → the name — MUST match ng-app="studentApp" in HTML
+// []          → array of dependencies (empty = no other modules needed)
+//               For routing you'd add 'ngRoute' here.
+//
+// We store it in a variable so we can chain .controller() below.
+var app = angular.module('studentApp', []);
+
+
+// ── STEP 3B: Create the Controller ──────────────────────────────
+//
+// app.controller('StudentCtrl', function($scope) { ... })
+//
+// app             → our module from above
+// .controller()   → registers a controller with this module
+// 'StudentCtrl'   → name — MUST match ng-controller="StudentCtrl" in HTML
+// function($scope)→ the controller function. AngularJS automatically
+//                   passes in the $scope object via Dependency Injection.
+//
+// $scope is the BRIDGE between this JavaScript and the HTML.
+// Everything you put on $scope is accessible in the HTML template.
+// Everything ng-model writes in the HTML lands on $scope.
+//
+app.controller('StudentCtrl', function($scope) {
+
+  // ── Initial data ─────────────────────────────────────────────
+  //
+  // $scope.students — this array is available in HTML as "students"
+  // It's the same array that ng-repeat loops through.
+  // When we push/splice items here, ng-repeat updates automatically.
+  //
+  $scope.students = [
+    { name: 'Arjun Sharma', roll: '4MCA001', course: 'MCA', gpa: 8.7 },
+    { name: 'Priya Nair',   roll: '4MCA002', course: 'MCA', gpa: 9.1 },
+    { name: 'Ravi Kumar',   roll: '4MCA003', course: 'MCA', gpa: 7.5 },
+    { name: 'Anjali Desai', roll: '4MCA004', course: 'BCA', gpa: 6.8 },
+  ];
+
+  // ── newStudent object — bound to the form via ng-model ────────
+  //
+  // $scope.newStudent is the object that ng-model writes into.
+  // When the user types in "Full Name" input (ng-model="newStudent.name"),
+  // AngularJS sets $scope.newStudent.name automatically.
+  // We start with a default course so the select has an initial value.
+  //
+  $scope.newStudent = {
+    name   : '',
+    roll   : '',
+    gpa    : null,
+    course : 'MCA'
+  };
+
+  // ── Search and sort variables ─────────────────────────────────
+  //
+  // $scope.searchText — bound to the search input via ng-model.
+  // We start it as empty string (no filter = show all students).
+  //
+  $scope.searchText  = '';
+
+  // $scope.sortField — which property to sort ng-repeat by.
+  $scope.sortField   = 'name';
+
+  // $scope.sortReverse — true = descending, false = ascending.
+  $scope.sortReverse = false;
+
+  // $scope.formError — shown via ng-show="formError" in the HTML.
+  // Empty string = falsy = hidden.
+  $scope.formError   = '';
+
+
+  // ── FUNCTION: addStudent ─────────────────────────────────────
+  //
+  // Called by ng-submit="addStudent()" on the form.
+  // "this" is not used — we always refer to $scope explicitly.
+  //
+  $scope.addStudent = function() {
+
+    // Validate — check required fields
+    if (!$scope.newStudent.name || !$scope.newStudent.name.trim()) {
+      $scope.formError = 'Name is required.';
+      return;  // stop here, don't add the student
+    }
+
+    if (!$scope.newStudent.gpa) {
+      $scope.formError = 'GPA is required.';
+      return;
+    }
+
+    if ($scope.newStudent.gpa < 0 || $scope.newStudent.gpa > 10) {
+      $scope.formError = 'GPA must be between 0 and 10.';
+      return;
+    }
+
+    // Clear any previous error
+    $scope.formError = '';
+
+    // push() adds the new student to the array.
+    // Because $scope.students is watched by AngularJS,
+    // ng-repeat will IMMEDIATELY re-render the table to show the new row.
+    // No DOM manipulation needed — AngularJS handles it.
+    $scope.students.push({
+      name  : $scope.newStudent.name.trim(),
+      roll  : $scope.newStudent.roll || 'N/A',
+      course: $scope.newStudent.course,
+      gpa   : parseFloat($scope.newStudent.gpa)
+    });
+
+    // Reset the form — set newStudent back to empty values.
+    // Because ng-model is two-way, clearing this object
+    // also clears all the input fields in the HTML automatically.
+    $scope.newStudent = {
+      name   : '',
+      roll   : '',
+      gpa    : null,
+      course : 'MCA'
+    };
+  };
+
+
+  // ── FUNCTION: removeStudent ───────────────────────────────────
+  //
+  // Called by ng-click="removeStudent($index)" in ng-repeat.
+  // $index is passed in from the HTML (the loop's current position).
+  //
+  $scope.removeStudent = function(index) {
+    // splice(index, 1) removes 1 item at position "index".
+    // AngularJS watches this array and removes the <tr> from the DOM.
+    $scope.students.splice(index, 1);
+  };
+
+
+  // ── FUNCTION: avgGPA ─────────────────────────────────────────
+  //
+  // Called by {{ avgGPA() }} in the HTML.
+  // AngularJS calls this every time the digest cycle runs
+  // (i.e., every time any $scope variable changes).
+  // Returns the average GPA formatted to 1 decimal place.
+  //
+  $scope.avgGPA = function() {
+    if ($scope.students.length === 0) return '0.0';
+    var total = $scope.students.reduce(function(sum, s) {
+      return sum + s.gpa;
+    }, 0);
+    return (total / $scope.students.length).toFixed(1);
+  };
+
+
+  // ── FUNCTION: passCount ───────────────────────────────────────
+  //
+  // Called by {{ passCount() }} in the HTML.
+  // Counts students with GPA >= 7 (pass mark).
+  //
+  $scope.passCount = function() {
+    return $scope.students.filter(function(s) {
+      return s.gpa >= 7;
+    }).length;
+  };
+
+
+  // ── FUNCTION: sortBy ─────────────────────────────────────────
+  //
+  // Called by ng-click="sortBy('name')" etc.
+  // Sets $scope.sortField which ng-repeat's orderBy uses.
+  //
+  $scope.sortBy = function(field) {
+    $scope.sortField = field;
+  };
+
+
+  // ── FUNCTION: toggleReverse ───────────────────────────────────
+  //
+  // Flips the sort direction.
+  // $scope.sortReverse is used by orderBy:sortField:sortReverse in ng-repeat.
+  //
+  $scope.toggleReverse = function() {
+    $scope.sortReverse = !$scope.sortReverse;
+  };
+
+});
+// ↑ End of controller function and app.controller() call
+
+</script>
+<!-- ↑ End of <script> — AngularJS bootstraps automatically when
+     the page loads because of ng-app on the <html> element above -->
+
+</body>
+</html>

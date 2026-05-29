@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AngularJS Basics — VTU MCA Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+
+<style>
+/* ══════════════════════ BASE ═══════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+:root{
+  --page   :#faf9f5;
+  --white  :#ffffff;
+  --surf   :#f4f2ec;
+  --surf2  :#edeae3;
+  --border :#ddd9d0;
+  --border2:#c8c3b8;
+  --ink    :#1a1814;
+  --ink2   :#3d3a34;
+  --sub    :#5a5650;
+  --muted  :#8a8680;
+  --red    :#dd0031;
+  --red-lt :#fff0f2;
+  --red-bd :#fca5a5;
+  --blue   :#1d4ed8;
+  --blu-lt :#eff6ff;
+  --blu-bd :#bfdbfe;
+  --green  :#15803d;
+  --grn-lt :#f0fdf4;
+  --grn-bd :#bbf7d0;
+  --amber  :#b45309;
+  --amb-lt :#fffbeb;
+  --amb-bd :#fde68a;
+  --yt     :#ff0000;
+  --mono   :'Fira Code',monospace;
+  --serif  :'Playfair Display',serif;
+  --body   :'Source Sans 3',sans-serif;
+  --r      :8px;
+  --r-lg   :14px;
+}
+body{font-family:var(--body);background:var(--page);color:var(--ink);line-height:1.7;font-size:15px}
+
+/* ══════════════════════ HEADER ═════════════════════════════ */
+.page-hdr{background:var(--ink);color:#fff;padding:36px 40px 28px;position:relative;overflow:hidden}
+.page-hdr::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);background-size:22px 22px}
+.hdr-in{position:relative;z-index:1;max-width:980px;margin:0 auto}
+.hdr-tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.hdr-tag::before{content:'';width:20px;height:2px;background:rgba(255,255,255,.3);border-radius:2px}
+.page-hdr h1{font-family:var(--serif);font-size:clamp(26px,3.5vw,42px);font-weight:600;line-height:1.1;margin-bottom:10px}
+.page-hdr h1 em{font-style:italic;font-weight:400;color:rgba(255,255,255,.6)}
+.hdr-desc{font-size:14px;color:rgba(255,255,255,.45);max-width:540px;line-height:1.75;margin-bottom:22px}
+.hdr-chips{display:flex;gap:8px;flex-wrap:wrap}
+.hdr-chip{font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px}
+.chip-ng{background:rgba(221,0,49,.3);color:#fca5a5;border:1px solid rgba(221,0,49,.4)}
+.chip-yt{background:rgba(255,0,0,.25);color:#fca5a5;border:1px solid rgba(255,0,0,.35)}
+.chip-ok{background:rgba(21,128,61,.25);color:#86efac;border:1px solid rgba(21,128,61,.35)}
+
+/* ══════════════════════ TOC BAR ════════════════════════════ */
+.toc-bar{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;padding:0 28px;height:44px;display:flex;align-items:center;gap:3px;overflow-x:auto;white-space:nowrap}
+.toc-a{font-size:12.5px;font-weight:500;color:var(--sub);text-decoration:none;padding:5px 11px;border-radius:var(--r);transition:all .15s;flex-shrink:0}
+.toc-a:hover{background:var(--red-lt);color:var(--red)}
+
+/* ══════════════════════ LAYOUT ═════════════════════════════ */
+.wrap{max-width:980px;margin:0 auto;padding:44px 24px 80px}
+
+/* ══════════════════════ SECTION ════════════════════════════ */
+.section{margin-bottom:64px;scroll-margin-top:56px}
+.sec-hd{display:flex;align-items:flex-start;gap:16px;margin-bottom:22px;padding-bottom:14px;border-bottom:2px solid var(--border)}
+.sec-num{font-family:var(--mono);font-size:26px;font-weight:600;color:var(--border2);min-width:48px;line-height:1;margin-top:2px}
+.sec-tag{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.sec-title{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--ink);margin-bottom:3px}
+.sec-intro{font-size:14px;color:var(--sub);line-height:1.75}
+
+/* ══════════════════════ CARDS ══════════════════════════════ */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;margin-bottom:14px}
+.card-h{font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.card-b{font-size:13.5px;color:var(--sub);line-height:1.75}
+
+/* ══════════════════════ CALLOUTS ═══════════════════════════ */
+.callout{border-left:3px solid;border-radius:0 var(--r) var(--r) 0;padding:11px 16px;font-size:13px;line-height:1.65;margin:12px 0}
+.callout strong{font-weight:700}
+.c-red  {border-color:var(--red);  background:var(--red-lt); color:#7f1d1d}
+.c-blue {border-color:var(--blue); background:var(--blu-lt); color:#1e3a8a}
+.c-green{border-color:var(--green);background:var(--grn-lt); color:#14532d}
+.c-amber{border-color:var(--amber);background:var(--amb-lt); color:#78350f}
+code{font-family:var(--mono);font-size:12px;background:var(--surf2);border:1px solid var(--border);color:var(--blue);padding:1px 6px;border-radius:4px}
+
+/* ══════════════════════ CODE BLOCKS ════════════════════════ */
+.code-block{background:#0f1117;border-radius:var(--r-lg);overflow:hidden;margin:12px 0}
+.cb-bar{background:#1a1d26;padding:7px 14px;display:flex;align-items:center;gap:7px;border-bottom:1px solid rgba(255,255,255,.06)}
+.cbd{width:8px;height:8px;border-radius:50%}
+.cbd-r{background:#ef4444} .cbd-y{background:#f59e0b} .cbd-g{background:#22c55e}
+.cb-fn{font-family:var(--mono);font-size:11px;color:#4a5180;margin-left:4px}
+.code-block pre{font-family:var(--mono);font-size:12.5px;line-height:1.85;padding:15px 18px;overflow-x:auto;color:#c9d1d9;white-space:pre;margin:0}
+.kw{color:#ff79c6} .fn{color:#82aaff} .str{color:#c3e88d}
+.tg{color:#f07178} .at{color:#ffcb6b} .cm{color:#546e7a;font-style:italic}
+.ng{color:#89dceb} .num{color:#f78c6c} .op{color:#89ddff}
+
+/* ══════════════════════ REFERENCE TABLE ════════════════════ */
+.ref-table{width:100%;border-collapse:collapse;font-size:13px;border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;margin:12px 0}
+.ref-table th{background:var(--surf);padding:8px 13px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--border)}
+.ref-table td{padding:9px 13px;border-bottom:1px solid #f0ede8;vertical-align:top;line-height:1.55}
+.ref-table tr:last-child td{border-bottom:none}
+.ref-table tr:nth-child(even) td{background:#fafaf7}
+.ref-table td:first-child{font-family:var(--mono);font-size:12px;color:var(--red)}
+.ref-table td:last-child{color:var(--sub)}
+
+/* ══════════════════════ YOUTUBE CARDS ══════════════════════ */
+.yt-section{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;margin-bottom:14px}
+.yt-header{background:#0f0f0f;padding:12px 18px;display:flex;align-items:center;gap:10px}
+.yt-logo{font-size:18px}
+.yt-header-text{font-family:var(--mono);font-size:12px;color:rgba(255,255,255,.6)}
+.yt-header-title{font-size:14px;font-weight:600;color:#fff}
+.yt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0}
+.yt-card{border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:14px 16px;text-decoration:none;color:inherit;display:block;transition:background .15s}
+.yt-card:hover{background:var(--red-lt)}
+.yt-card:hover .yt-card-title{color:var(--red)}
+.yt-ep{font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:4px}
+.yt-card-title{font-size:13px;font-weight:600;color:var(--ink);line-height:1.4;margin-bottom:4px}
+.yt-card-desc{font-size:12px;color:var(--muted);line-height:1.45}
+.yt-play-icon{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--yt);margin-top:5px;font-weight:600}
+
+/* ══════════════════════ LIVE DEMO ══════════════════════════ */
+.live-demo{border:1.5px solid var(--border);border-radius:var(--r-lg);overflow:hidden;margin:14px 0}
+.demo-bar{background:var(--surf);border-bottom:1px solid var(--border);padding:9px 16px;display:flex;align-items:center;justify-content:space-between}
+.demo-label{font-family:var(--mono);font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:7px}
+.demo-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.demo-tag{font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:20px;background:var(--red-lt);color:var(--red);border:1px solid var(--red-bd)}
+.demo-body{padding:18px 20px;background:var(--white)}
+
+/* Demo-specific */
+.demo-input{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--r);font-family:var(--body);font-size:14px;color:var(--ink);background:var(--surf);outline:none;transition:border-color .18s}
+.demo-input:focus{border-color:var(--red)}
+.demo-preview{background:var(--surf);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;margin-top:10px;font-size:14px;color:var(--sub)}
+.demo-preview strong{color:var(--ink);font-weight:700}
+
+/* ══════════════════════ QR GRID ════════════════════════════ */
+.qr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.qr-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:13px 15px;transition:border-color .15s}
+.qr-card:hover{border-color:var(--red)}
+.qr-m{font-family:var(--mono);font-size:12px;color:var(--red);font-weight:600;margin-bottom:4px;display:block}
+.qr-d{font-size:12.5px;color:var(--sub);line-height:1.5}
+
+/* ══════════════════════ DIGEST DIAGRAM ═════════════════════ */
+.digest-flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0;padding:14px;background:var(--surf);border-radius:var(--r);border:1px solid var(--border)}
+.df-box{padding:8px 14px;border-radius:var(--r);font-size:13px;font-weight:600;text-align:center;font-family:var(--mono)}
+.df-arrow{color:var(--border2);font-size:20px}
+
+/* ══════════════════════ FOOTER ═════════════════════════════ */
+.page-foot{background:var(--ink);color:rgba(255,255,255,.3);text-align:center;padding:18px;font-size:12px}
+
+/* ══════════════════════ RESPONSIVE ════════════════════════ */
+@media(max-width:760px){
+  .two-col,.three-col{grid-template-columns:1fr}
+  .qr-grid{grid-template-columns:1fr 1fr}
+  .yt-grid{grid-template-columns:1fr}
+  .page-hdr{padding:24px 18px 20px}
+  .wrap{padding:24px 14px 60px}
+  .toc-bar{padding:0 14px}
+}
+@media(max-width:480px){.qr-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     HEADER
+     ══════════════════════════════════════════════════════════ -->
+<header class="page-hdr">
+  <div class="hdr-in">
+    <div class="hdr-tag">VTU MCA — Web Technologies · Module 5</div>
+    <h1>AngularJS Basics<br><em>Complete Notes &amp; Video Resources</em></h1>
+    <p class="hdr-desc">Modules, controllers, scope, directives, expressions, and filters — with live demos, code examples, and curated YouTube videos for every topic.</p>
+    <div class="hdr-chips">
+      <span class="hdr-chip chip-ng">AngularJS 1.8</span>
+      <span class="hdr-chip chip-yt">▶ YouTube Videos</span>
+      <span class="hdr-chip chip-ok">Live Demos</span>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════════ TOC ══════════════════════════════ -->
+<nav class="toc-bar">
+  <a href="#sec-intro"   class="toc-a">§1 Introduction</a>
+  <a href="#sec-module"  class="toc-a">§2 Modules</a>
+  <a href="#sec-ctrl"    class="toc-a">§3 Controllers</a>
+  <a href="#sec-scope"   class="toc-a">§4 Scope</a>
+  <a href="#sec-dir"     class="toc-a">§5 Directives</a>
+  <a href="#sec-expr"    class="toc-a">§6 Expressions</a>
+  <a href="#sec-filter"  class="toc-a">§7 Filters</a>
+  <a href="#sec-videos"  class="toc-a">§8 All Videos</a>
+  <a href="#sec-qr"      class="toc-a">§9 Quick Ref</a>
+</nav>
+
+<!-- ══════════════════════ AngularJS DEMO APP ═══════════════ -->
+<!-- ng-app and ng-controller are on a wrapper div, not body,
+     so the live demos work without conflicting with each other -->
+
+<main class="wrap">
+
+<!-- ════════════════════════════════════════════════════════════
+     §1 — INTRODUCTION
+     ════════════════════════════════════════════════════════════ -->
+<section class="section" id="sec-intro">
+  <div class="sec-hd">
+    <span class="sec-num">01</span>
+    <div>
+      <div class="sec-tag">Overview</div>
+      <div class="sec-title">Introduction to AngularJS</div>
+      <div class="sec-intro">AngularJS (Angular 1) is an open-source JavaScript framework maintained by Google. Released in 2010, it brought server-side MVC architecture to the browser and introduced the concept of two-way data binding for single-page applications.</div>
+    </div>
+  </div>
+
+  <div class="three-col">
+    <div class="card">
+      <div class="card-h">📋 What is AngularJS?</div>
+      <div class="card-b">A <strong>JavaScript framework</strong> that extends HTML with new attributes. It follows the <strong>MVC pattern</strong> — Model (data), View (HTML), Controller (logic). The framework automatically keeps the View and Model in sync.</div>
+    </div>
+    <div class="card">
+      <div class="card-h">⚡ Key features</div>
+      <div class="card-b">
+        Two-way data binding · Directives (custom HTML) · Dependency injection · Routing (ngRoute) · Templates · Filters · Services · Form validation
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h">🚀 How to start</div>
+      <div class="card-b">Just add one <code>&lt;script&gt;</code> tag from CDN. No build tools, no npm, no Node.js needed. Then add <code>ng-app</code> to your HTML root element.</div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="cb-bar"><span class="cbd cbd-r"></span><span class="cbd cbd-y"></span><span class="cbd cbd-g"></span><span class="cb-fn">minimum AngularJS setup — 3 things needed</span></div>
+    <pre><span class="cm">&lt;!-- 1. Load AngularJS from CDN --&gt;</span>
+<span class="tg">&lt;script</span> <span class="at">src</span>=<span class="str">"https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"</span><span class="tg">&gt;&lt;/script&gt;</span>
+
+<span class="cm">&lt;!-- 2. ng-app marks the Angular boundary --&gt;</span>
+<span class="tg">&lt;html</span> <span class="ng">ng-app</span>=<span class="str">"myApp"</span><span class="tg">&gt;</span>
+
+  <span class="cm">&lt;!-- 3. ng-controller connects JavaScript to HTML --&gt;</span>
+  <span class="tg">&lt;div</span> <span class="ng">ng-controller</span>=<span class="str">"MyCtrl"</span><span class="tg">&gt;</span>
+    <span class="tg">&lt;p&gt;</span>Hello, {{ name }}!<span class="tg">&lt;/p&gt;</span>   <span class="cm">&lt;!-- displays $scope.name --&gt;</span>
+  <span class="tg">&lt;/div&gt;</span>
+
+<span class="tg">&lt;/html&gt;</span>
+
+<span class="cm">// JavaScript</span>
+<span class="kw">var</span> app = angular.<span class="fn">module</span>(<span class="str">'myApp'</span>, []);
+
+app.<span class="fn">controller</span>(<span class="str">'MyCtrl'</span>, <span class="kw">function</span>($scope) {
+  $scope.name = <span class="str">'VTU Student'</span>;  <span class="cm">// shows in HTML</span>
+});</pre>
+  </div>
+
+  <!-- YouTube card -->
+  <div class="yt-section">
+    <div class="yt-header">
+      <span class="yt-logo">▶</span>
+      <div>
+        <div class="yt-header-title">Watch: Introduction to AngularJS</div>
+        <div class="yt-header-text">The Net Ninja · Tutorial #1</div>
+      </div>
+    </div>
+    <div style="padding:14px 18px">
+      <a href="https://www.youtube.com/watch?v=FlUCU13dJyo" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:var(--yt);color:#fff;padding:8px 18px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700">
+        ▶ Watch on YouTube — AngularJS Tutorial #1: Introduction
+      </a>
+      <p style="margin-top:10px;font-size:13px;color:var(--muted)">What is AngularJS, why it was built, how it extends HTML, and setting up the first hello-world app. Best 8-minute intro for beginners.</p>
+    </div>
+  </div>
+
+  <div class="callout c-red">
+    <strong>Remember:</strong> AngularJS = Angular 1 (JavaScript, 2010). Angular = Angular 2+ (TypeScript, 2016). They are completely different. Your VTU syllabus and textbook cover <em>AngularJS</em> — the JavaScript one.
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     §2 — MODULES
+     ════════════════════════════════════════════════════════════ -->
+<section class="section" id="sec-module">
+  <div class="sec-hd">
+    <span class="sec-num">02</span>
+    <div>
+      <div class="sec-tag">Core Concept</div>
+      <div class="sec-title">Modules</div>
+      <div class="sec-intro">A module is a container that holds all the parts of your AngularJS application — controllers, services, directives, and filters. Every AngularJS app has at least one module. Think of it as the main folder that organises everything.</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-h">What a module does</div>
+      <div class="card-b">
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:7px;font-size:13.5px">
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">→</span> Groups all related controllers, services, directives together</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">→</span> Declares other modules it depends on (e.g. <code>ngRoute</code>)</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">→</span> The name must match <code>ng-app</code> value in HTML</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">→</span> Can be split into multiple files for large apps</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h">Syntax — two forms</div>
+      <div class="code-block" style="margin:0">
+        <pre style="padding:10px 14px;font-size:12px"><span class="cm">// CREATE a module (with empty [] dependencies)</span>
+<span class="kw">var</span> app = angular.<span class="fn">module</span>(<span class="str">'myApp'</span>, []);
+
+<span class="cm">// With dependencies (ngRoute for routing)</span>
+<span class="kw">var</span> app = angular.<span class="fn">module</span>(<span class="str">'myApp'</span>, [<span class="str">'ngRoute'</span>]);
+
+<span class="cm">// RETRIEVE an existing module (no [] array)</span>
+<span class="kw">var</span> app = angular.<span class="fn">module</span>(<span class="str">'myApp'</span>);
+<span class="cm">// ↑ Used in separate .js files to add controllers</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="cb-bar"><span class="cbd cbd-r"></span><span class="cbd cbd-y"></span><span class="cbd cbd-g"></span><span class="cb-fn">modules — complete example with dependency</span></div>
+    <pre><span class="cm">&lt;!-- HTML --&gt;</span>
+<span class="tg">&lt;html</span> <span class="ng">ng-app</span>=<span class="str">"studentApp"</span><span class="tg">&gt;</span>  <span class="cm">&lt;!-- name MUST match module name --&gt;</span>
+
+<span class="cm">// app.js — create the module</span>
+<span class="kw">var</span> app = angular.<span class="fn">module</span>(<span class="str">'studentApp'</span>, []);
+<span class="cm">//                          ↑ name     ↑ dependencies (empty = none)</span>
+
+<span class="cm">// controller.js — add a controller to the SAME module</span>
+<span class="cm">// Note: no [] here — we are RETRIEVING, not creating</span>
+angular.<span class="fn">module</span>(<span class="str">'studentApp'</span>)
+  .<span class="fn">controller</span>(<span class="str">'HomeCtrl'</span>, <span class="kw">function</span>($scope) {
+    $scope.title = <span class="str">'Home Page'</span>;
+  });
+
+<span class="cm">// service.js — add a service to the same module</span>
+angular.<span class="fn">module</span>(<span class="str">'studentApp'</span>)
+  .<span class="fn">service</span>(<span class="str">'DataService'</span>, <span class="kw">function</span>() {
+    <span class="kw">this</span>.getData = <span class="kw">function</span>() { <span class="kw">return</span> []; };
+  });</pre>
+  </div>
+
+  <div class="yt-section">
+    <div class="yt-header">
+      <span class="yt-logo">▶</span>
+      <div>
+        <div class="yt-header-title">Watch: AngularJS Modules</div>
+        <div class="yt-header-text">The Net Ninja · Tutorial #8</div>
+      </div>
+    </div>
+    <div style="padding:14px 18px">
+      <a href="https://www.youtube.com/watch?v=ybnw5JwBk8g" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:var(--yt);color:#fff;padding:8px 18px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700">
+        ▶ Watch on YouTube — AngularJS Tutorial #8: Modules
+      </a>
+      <p style="margin-top:10px;font-size:13px;color:var(--muted)">What modules are, how to create and retrieve them, splitting across multiple files, and the dependency injection array.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     §3 — CONTROLLERS
+     ════════════════════════════════════════════════════════════ -->
+<section class="section" id="sec-ctrl">
+  <div class="sec-hd">
+    <span class="sec-num">03</span>
+    <div>
+      <div class="sec-tag">Core Concept</div>
+      <div class="sec-title">Controllers</div>
+      <div class="sec-intro">A controller is a JavaScript function that sets up the initial state and behaviour for a section of the HTML page. It is the C in MVC. It communicates with the View (HTML) through the <code>$scope</code> object.</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-h">What a controller does</div>
+      <div class="card-b">
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:7px;font-size:13.5px">
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">→</span> Puts initial data onto <code>$scope</code> (variables)</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">→</span> Puts functions onto <code>$scope</code> (called from HTML)</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">→</span> Responds to user events (clicks, form submits)</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">→</span> Fetches data from services and passes to view</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">→</span> Does NOT manipulate the DOM directly</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h">Controller rules</div>
+      <div class="card-b">
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:7px;font-size:13.5px">
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--green)">✓</span> One controller per section of the page</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--green)">✓</span> Controllers can be nested (child inherits parent scope)</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--green)">✓</span> Use services to share data between controllers</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">✗</span> Do NOT use <code>$scope</code> to directly touch DOM elements</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">✗</span> Do NOT put presentation logic in controllers</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="cb-bar"><span class="cbd cbd-r"></span><span class="cbd cbd-y"></span><span class="cbd cbd-g"></span><span class="cb-fn">controllers.js — anatomy of a controller</span></div>
+    <pre><span class="kw">var</span> app = angular.<span class="fn">module</span>(<span class="str">'myApp'</span>, []);
+
+<span class="cm">// Controller function takes $scope as argument</span>
+<span class="cm">// $scope is injected by AngularJS automatically (Dependency Injection)</span>
+app.<span class="fn">controller</span>(<span class="str">'StudentCtrl'</span>, <span class="kw">function</span>($scope) {
+
+  <span class="cm">// ── Data on $scope (available in HTML as variables) ──────</span>
+  $scope.studentName = <span class="str">'Arjun'</span>;
+  $scope.gpa          = <span class="num">8.7</span>;
+  $scope.courses      = [<span class="str">'HTML'</span>, <span class="str">'CSS'</span>, <span class="str">'JavaScript'</span>];
+
+  <span class="cm">// ── Functions on $scope (callable from HTML via ng-click etc) ──</span>
+  $scope.<span class="fn">greet</span> = <span class="kw">function</span>() {
+    <span class="kw">return</span> <span class="str">'Hello, '</span> + $scope.studentName + <span class="str">'!'</span>;
+  };
+
+  $scope.<span class="fn">addCourse</span> = <span class="kw">function</span>(course) {
+    $scope.courses.<span class="fn">push</span>(course);     <span class="cm">// DOM updates automatically</span>
+  };
+
+  $scope.<span class="fn">removeCourse</span> = <span class="kw">function</span>(i) {
+    $scope.courses.<span class="fn">splice</span>(i, <span class="num">1</span>);
+  };
+});
+
+<span class="cm">&lt;!-- HTML uses the controller --&gt;</span>
+<span class="tg">&lt;div</span> <span class="ng">ng-controller</span>=<span class="str">"StudentCtrl"</span><span class="tg">&gt;</span>
+  <span class="tg">&lt;p&gt;</span>{{ studentName }} — GPA: {{ gpa }}<span class="tg">&lt;/p&gt;</span>
+  <span class="tg">&lt;p&gt;</span>{{ greet() }}<span class="tg">&lt;/p&gt;</span>
+  <span class="tg">&lt;li</span> <span class="ng">ng-repeat</span>=<span class="str">"c in courses"</span><span class="tg">&gt;</span>{{ c }}<span class="tg">&lt;/li&gt;</span>
+<span class="tg">&lt;/div&gt;</span></pre>
+  </div>
+
+  <!-- LIVE DEMO: Controller -->
+  <div class="live-demo" ng-app="ctrlDemo" ng-controller="CtrlDemoCtrl">
+    <div class="demo-bar">
+      <div class="demo-label"><span class="demo-dot"></span>Live — Controller + $scope demo</div>
+      <span class="demo-tag">ng-controller</span>
+    </div>
+    <div class="demo-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div>
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">Input → $scope</div>
+          <input class="demo-input" ng-model="sName" placeholder="Type your name">
+          <input class="demo-input" ng-model="sGpa" type="number" placeholder="Enter GPA (0-10)" style="margin-top:7px">
+          <button ng-click="addToList()" style="margin-top:7px;width:100%;padding:8px;border-radius:var(--r);border:none;background:var(--red);color:#fff;font-family:var(--body);font-size:14px;font-weight:700;cursor:pointer">Add to list</button>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">$scope → View</div>
+          <div class="demo-preview"><strong>{{ sName || '(type a name)' }}</strong><br>GPA: {{ sGpa || '—' }}</div>
+          <div style="margin-top:10px;font-size:13px;color:var(--sub)">
+            <div ng-repeat="s in sList" style="display:flex;justify-content:space-between;padding:5px 8px;background:var(--surf);border-radius:5px;margin-bottom:4px;font-size:13px">
+              <span>{{s.name}}</span>
+              <span style="font-family:var(--mono);color:var(--red)">{{s.gpa}}</span>
+            </div>
+            <div ng-show="sList.length==0" style="color:var(--muted);font-style:italic;font-size:13px">No students added yet</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="yt-section" style="margin-top:14px">
+    <div class="yt-header">
+      <span class="yt-logo">▶</span>
+      <div>
+        <div class="yt-header-title">Watch: AngularJS Controllers</div>
+        <div class="yt-header-text">The Net Ninja · Tutorial #9</div>
+      </div>
+    </div>
+    <div style="padding:14px 18px">
+      <a href="https://www.youtube.com/watch?v=QAUjWaQrY4A" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:var(--yt);color:#fff;padding:8px 18px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700">
+        ▶ Watch on YouTube — AngularJS Tutorial #9: Controllers
+      </a>
+      <p style="margin-top:10px;font-size:13px;color:var(--muted)">Creating controllers, using $scope to pass data, calling functions from HTML, and understanding the controller-view relationship.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     §4 — SCOPE
+     ════════════════════════════════════════════════════════════ -->
+<section class="section" id="sec-scope">
+  <div class="sec-hd">
+    <span class="sec-num">04</span>
+    <div>
+      <div class="sec-tag">Core Concept</div>
+      <div class="sec-title">Scope — $scope &amp; $rootScope</div>
+      <div class="sec-intro"><code>$scope</code> is the glue between the controller and the view. It is a plain JavaScript object. Whatever you put on <code>$scope</code> in the controller is immediately accessible in the HTML template, and vice versa.</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-h">$scope — local to one controller</div>
+      <div class="card-b">
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:7px;font-size:13.5px">
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">→</span> Each controller gets its own <code>$scope</code></li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">→</span> Variables on <code>$scope</code> are visible in that controller's HTML</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">→</span> Nested controllers inherit parent's <code>$scope</code></li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">→</span> Injected automatically — just add <code>$scope</code> as parameter</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h">$rootScope — global, shared by all</div>
+      <div class="card-b">
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:7px;font-size:13.5px">
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">→</span> Accessible by ALL controllers across the app</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">→</span> Parent of all other <code>$scope</code> objects</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">→</span> Use sparingly — can cause tight coupling</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">→</span> Inject as <code>function($scope, $rootScope)</code></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Digest cycle -->
+  <div class="card">
+    <div class="card-h">⚙ The Digest Cycle — how $scope updates work</div>
+    <div class="card-b" style="margin-bottom:12px">When any event fires (click, input, HTTP response), AngularJS runs the <strong>digest cycle</strong> — it loops through all watchers, finds what changed, and updates the DOM. This is called <strong>dirty checking</strong>.</div>
+    <div class="digest-flow">
+      <div class="df-box" style="background:var(--blu-lt);color:var(--blue);border:1px solid var(--blu-bd)">User Event<br><span style="font-size:10.5px;font-weight:400">click / input</span></div>
+      <span class="df-arrow">→</span>
+      <div class="df-box" style="background:var(--red-lt);color:var(--red);border:1px solid var(--red-bd)">Digest Cycle<br><span style="font-size:10.5px;font-weight:400">loop all watchers</span></div>
+      <span class="df-arrow">→</span>
+      <div class="df-box" style="background:var(--amb-lt);color:var(--amber);border:1px solid var(--amb-bd)">Dirty Check<br><span style="font-size:10.5px;font-weight:400">old vs new value</span></div>
+      <span class="df-arrow">→</span>
+      <div class="df-box" style="background:var(--grn-lt);color:var(--green);border:1px solid var(--grn-bd)">DOM Update<br><span style="font-size:10.5px;font-weight:400">only changed parts</span></div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="cb-bar"><span class="cbd cbd-r"></span><span class="cbd cbd-y"></span><span class="cbd cbd-g"></span><span class="cb-fn">scope.js — $scope vs $rootScope</span></div>
+    <pre><span class="kw">var</span> app = angular.<span class="fn">module</span>(<span class="str">'myApp'</span>, []);
+
+<span class="cm">// $rootScope — accessible everywhere in the app</span>
+app.<span class="fn">controller</span>(<span class="str">'AppCtrl'</span>, <span class="kw">function</span>($scope, $rootScope) {
+  $rootScope.appName = <span class="str">'VTU Portal'</span>;  <span class="cm">// visible to ALL controllers</span>
+  $scope.localData  = <span class="str">'Only in AppCtrl'</span>;
+});
+
+<span class="cm">// Child controller — inherits from parent scope</span>
+app.<span class="fn">controller</span>(<span class="str">'ChildCtrl'</span>, <span class="kw">function</span>($scope, $rootScope) {
+  <span class="cm">// $rootScope.appName is accessible here too</span>
+  console.<span class="fn">log</span>($rootScope.appName);  <span class="cm">// "VTU Portal"</span>
+});
+
+<span class="cm">&lt;!-- HTML --&gt;</span>
+<span class="tg">&lt;p&gt;</span>App: {{ appName }}<span class="tg">&lt;/p&gt;</span>   <span class="cm">&lt;!-- $rootScope.appName --&gt;</span>
+<span class="tg">&lt;p&gt;</span>{{ localData }}<span class="tg">&lt;/p&gt;</span>     <span class="cm">&lt;!-- $scope.localData --&gt;</span></pre>
+  </div>
+
+  <div class="callout c-amber">
+    <strong>$scope is NOT the same as a global variable.</strong> It is scoped to the <code>ng-controller</code> block it belongs to. Think of each controller as a room — <code>$scope</code> is visible only inside that room. <code>$rootScope</code> is visible in every room (the hallway).
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     §5 — DIRECTIVES
+     ════════════════════════════════════════════════════════════ -->
+<section class="section" id="sec-dir">
+  <div class="sec-hd">
+    <span class="sec-num">05</span>
+    <div>
+      <div class="sec-tag">Core Concept</div>
+      <div class="sec-title">Directives</div>
+      <div class="sec-intro">Directives are special HTML attributes starting with <code>ng-</code> that give HTML new powers. They are AngularJS's way of extending HTML syntax. Every built-in Angular behaviour comes from a directive.</div>
+    </div>
+  </div>
+
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="ref-table" style="margin:0">
+      <thead><tr><th>Directive</th><th>Purpose</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>ng-app</td>      <td style="color:var(--sub)">Marks root of AngularJS application</td>        <td style="color:var(--sub)"><code>&lt;html ng-app="myApp"&gt;</code></td></tr>
+        <tr><td>ng-controller</td><td style="color:var(--sub)">Attaches a controller to HTML section</td>     <td style="color:var(--sub)"><code>&lt;div ng-controller="MyCtrl"&gt;</code></td></tr>
+        <tr><td>ng-model</td>    <td style="color:var(--sub)">Two-way binds input to $scope variable</td>     <td style="color:var(--sub)"><code>&lt;input ng-model="name"&gt;</code></td></tr>
+        <tr><td>ng-repeat</td>   <td style="color:var(--sub)">Loops over array, repeats element</td>          <td style="color:var(--sub)"><code>&lt;li ng-repeat="s in students"&gt;</code></td></tr>
+        <tr><td>ng-if</td>       <td style="color:var(--sub)">Add/remove element from DOM</td>                <td style="color:var(--sub)"><code>&lt;p ng-if="isLoggedIn"&gt;</code></td></tr>
+        <tr><td>ng-show</td>     <td style="color:var(--sub)">Show/hide element (stays in DOM)</td>           <td style="color:var(--sub)"><code>&lt;div ng-show="isActive"&gt;</code></td></tr>
+        <tr><td>ng-hide</td>     <td style="color:var(--sub)">Opposite of ng-show</td>                        <td style="color:var(--sub)"><code>&lt;div ng-hide="isActive"&gt;</code></td></tr>
+        <tr><td>ng-click</td>    <td style="color:var(--sub)">Calls a function on click</td>                  <td style="color:var(--sub)"><code>&lt;button ng-click="save()"&gt;</code></td></tr>
+        <tr><td>ng-submit</td>   <td style="color:var(--sub)">Handles form submit, prevents reload</td>       <td style="color:var(--sub)"><code>&lt;form ng-submit="login()"&gt;</code></td></tr>
+        <tr><td>ng-class</td>    <td style="color:var(--sub)">Conditionally applies CSS classes</td>          <td style="color:var(--sub)"><code>ng-class="{'active':isOn}"</code></td></tr>
+        <tr><td>ng-style</td>    <td style="color:var(--sub)">Dynamically sets inline CSS</td>                <td style="color:var(--sub)"><code>ng-style="{'color':col}"</code></td></tr>
+        <tr><td>ng-bind</td>     <td style="color:var(--sub)">One-way bind, alternative to {{ }}</td>         <td style="color:var(--sub)"><code>&lt;p ng-bind="name"&gt;</code></td></tr>
+        <tr><td>ng-include</td>  <td style="color:var(--sub)">Includes external HTML template</td>            <td style="color:var(--sub)"><code>ng-include="'nav.html'"</code></td></tr>
+        <tr><td>ng-init</td>     <td style="color:var(--sub)">Initialises scope variable inline</td>          <td style="color:var(--sub)"><code>ng-init="count=0"</code></td></tr>
+        <tr><td>ng-disabled</td> <td style="color:var(--sub)">Disables element based on condition</td>        <td style="color:var(--sub)"><code>ng-disabled="!isValid"</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Live demo: directives -->
+  <div class="live-demo" ng-app="dirDemo" ng-controller="DirCtrl">
+    <div class="demo-bar">
+      <div class="demo-label"><span class="demo-dot"></span>Live — ng-if, ng-show, ng-class, ng-repeat</div>
+      <span class="demo-tag">directives</span>
+    </div>
+    <div class="demo-body">
+      <div style="display:flex;flex-direction:column;gap:10px">
+
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <span style="font-size:13px;color:var(--sub);font-weight:600">ng-model:</span>
+          <input class="demo-input" ng-model="uName" placeholder="Type a name…" style="flex:1;min-width:140px">
+          <span style="font-size:13px;color:var(--sub);font-weight:600">Active?</span>
+          <input type="checkbox" ng-model="isActive" style="width:18px;height:18px;accent-color:var(--red)">
+        </div>
+
+        <!-- ng-if: completely added/removed from DOM -->
+        <div style="font-size:12.5px;color:var(--muted);font-family:var(--mono)">ng-if="uName" — only exists in DOM when name has a value:</div>
+        <div ng-if="uName" style="padding:8px 12px;background:var(--grn-lt);border:1px solid var(--grn-bd);border-radius:var(--r);font-size:13.5px;color:var(--green)">
+          ✓ ng-if is TRUE — Hello, {{ uName }}!
+        </div>
+
+        <!-- ng-show / ng-hide -->
+        <div style="font-size:12.5px;color:var(--muted);font-family:var(--mono)">ng-show="isActive" and ng-hide="isActive" (toggle checkbox above):</div>
+        <div style="display:flex;gap:8px">
+          <div ng-show="isActive" style="flex:1;padding:7px 12px;background:var(--blu-lt);border:1px solid var(--blu-bd);border-radius:var(--r);font-size:13px;color:var(--blue)">ng-show ✓ visible</div>
+          <div ng-hide="isActive" style="flex:1;padding:7px 12px;background:var(--amb-lt);border:1px solid var(--amb-bd);border-radius:var(--r);font-size:13px;color:var(--amber)">ng-hide ✓ visible</div>
+        </div>
+
+        <!-- ng-class -->
+        <div style="font-size:12.5px;color:var(--muted);font-family:var(--mono)">ng-class — changes CSS based on isActive:</div>
+        <div ng-class="{'active-box': isActive, 'inactive-box': !isActive}"
+             style="padding:9px 14px;border-radius:var(--r);font-size:13.5px;font-weight:600;transition:all .3s"
+             ng-style="{'background': isActive ? 'var(--grn-lt)' : 'var(--surf)', 'color': isActive ? 'var(--green)' : 'var(--muted)', 'border': isActive ? '1px solid var(--grn-bd)' : '1px solid var(--border)'}">
+          Status: {{ isActive ? 'ACTIVE' : 'INACTIVE' }}
+        </div>
+
+        <!-- ng-repeat -->
+        <div style="font-size:12.5px;color:var(--muted);font-family:var(--mono)">ng-repeat="item in items":</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span ng-repeat="item in items" style="padding:4px 12px;background:var(--red-lt);color:var(--red);border:1px solid var(--red-bd);border-radius:20px;font-size:13px">
+            {{ $index + 1 }}. {{ item }}
+          </span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="yt-section" style="margin-top:14px">
+    <div class="yt-header">
+      <span class="yt-logo">▶</span>
+      <div>
+        <div class="yt-header-title">Watch: Introduction to Directives + ng-repeat</div>
+        <div class="yt-header-text">The Net Ninja · Tutorials #5 and #7</div>
+      </div>
+    </div>
+    <div style="padding:14px 18px;display:flex;gap:10px;flex-wrap:wrap">
+      <a href="https://www.youtube.com/watch?v=Wm1Zj_VLbpk" target="_blank" style="display:inline-flex;align-items:center;gap:7px;background:var(--yt);color:#fff;padding:7px 16px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700">
+        ▶ #5 — Introduction to Directives
+      </a>
+      <a href="https://www.youtube.com/watch?v=ybnw5JwBk8g" target="_blank" style="display:inline-flex;align-items:center;gap:7px;background:var(--yt);color:#fff;padding:7px 16px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700">
+        ▶ #7 — ng-repeat Directive
+      </a>
+    </div>
+    <p style="padding:0 18px 14px;font-size:13px;color:var(--muted)">Tutorial #5 covers what directives are and how they work. Tutorial #7 is dedicated to ng-repeat — the most commonly used directive for lists and tables.</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     §6 — EXPRESSIONS
+     ════════════════════════════════════════════════════════════ -->
+<section class="section" id="sec-expr">
+  <div class="sec-hd">
+    <span class="sec-num">06</span>
+    <div>
+      <div class="sec-tag">Core Concept</div>
+      <div class="sec-title">Expressions</div>
+      <div class="sec-intro">Expressions are snippets of code written inside double curly braces <code>{{ }}</code> in the HTML. AngularJS evaluates them against the <code>$scope</code> and replaces them with the result. They are like a mini JavaScript engine in your HTML.</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-h">What expressions can contain</div>
+      <div class="card-b">
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:7px;font-size:13.5px">
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--green)">✓</span> Variables from $scope: <code>{{ name }}</code></li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--green)">✓</span> Arithmetic: <code>{{ 5 + 3 }}</code> → 8</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--green)">✓</span> String concat: <code>{{ 'Hello ' + name }}</code></li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--green)">✓</span> Comparisons: <code>{{ gpa > 7 }}</code> → true/false</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--green)">✓</span> Ternary: <code>{{ pass ? 'Pass' : 'Fail' }}</code></li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--green)">✓</span> Function calls: <code>{{ getGrade() }}</code></li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--green)">✓</span> Object properties: <code>{{ student.name }}</code></li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--green)">✓</span> Array elements: <code>{{ items[0] }}</code></li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h">What expressions CANNOT contain</div>
+      <div class="card-b">
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:7px;font-size:13.5px">
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">✗</span> No <code>if</code> statements (use ternary instead)</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">✗</span> No <code>for</code> or <code>while</code> loops</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">✗</span> No <code>var</code>, <code>let</code>, <code>const</code> declarations</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">✗</span> No <code>new</code> keyword</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">✗</span> No access to global objects like <code>window</code> or <code>document</code></li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--red)">✗</span> No throw exceptions</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="cb-bar"><span class="cbd cbd-r"></span><span class="cbd cbd-y"></span><span class="cbd cbd-g"></span><span class="cb-fn">expressions.html — all expression types</span></div>
+    <pre><span class="tg">&lt;div</span> <span class="ng">ng-app</span>=<span class="str">"myApp"</span> <span class="ng">ng-controller</span>=<span class="str">"ExprCtrl"</span><span class="tg">&gt;</span>
+
+  <span class="cm">&lt;!-- Variable from $scope --&gt;</span>
+  <span class="tg">&lt;p&gt;</span>Name: {{ name }}<span class="tg">&lt;/p&gt;</span>
+
+  <span class="cm">&lt;!-- Arithmetic --&gt;</span>
+  <span class="tg">&lt;p&gt;</span>Sum: {{ 10 + 20 }}<span class="tg">&lt;/p&gt;</span>                    → 30
+  <span class="tg">&lt;p&gt;</span>GPA * 10: {{ gpa * 10 }}<span class="tg">&lt;/p&gt;</span>             → 87
+
+  <span class="cm">&lt;!-- Ternary (if-else in one line) --&gt;</span>
+  <span class="tg">&lt;p&gt;</span>Result: {{ gpa >= 7 ? 'Pass' : 'Fail' }}<span class="tg">&lt;/p&gt;</span>  → Pass
+
+  <span class="cm">&lt;!-- Object property --&gt;</span>
+  <span class="tg">&lt;p&gt;</span>{{ student.name }} — {{ student.course }}<span class="tg">&lt;/p&gt;</span>
+
+  <span class="cm">&lt;!-- Array element --&gt;</span>
+  <span class="tg">&lt;p&gt;</span>First course: {{ courses[0] }}<span class="tg">&lt;/p&gt;</span>
+
+  <span class="cm">&lt;!-- Function call --&gt;</span>
+  <span class="tg">&lt;p&gt;</span>Grade: {{ getGrade(gpa) }}<span class="tg">&lt;/p&gt;</span>
+
+  <span class="cm">&lt;!-- With filter (pipe | ) --&gt;</span>
+  <span class="tg">&lt;p&gt;</span>{{ name | uppercase }}<span class="tg">&lt;/p&gt;</span>              → ARJUN
+<span class="tg">&lt;/div&gt;</span></pre>
+  </div>
+
+  <!-- Live Expressions demo -->
+  <div class="live-demo" ng-app="exprDemo" ng-controller="ExprCtrl">
+    <div class="demo-bar">
+      <div class="demo-label"><span class="demo-dot"></span>Live — AngularJS Expressions</div>
+      <span class="demo-tag">{{ expressions }}</span>
+    </div>
+    <div class="demo-body">
+      <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+        <div style="flex:1;min-width:160px">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Your name</div>
+          <input class="demo-input" ng-model="eName" placeholder="Type name…">
+        </div>
+        <div style="flex:1;min-width:120px">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:4px">GPA (0–10)</div>
+          <input class="demo-input" type="number" ng-model="eGpa" placeholder="e.g. 8.5" min="0" max="10" step="0.1">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="demo-preview"><code style="font-size:11px">{{ eName | uppercase }}</code><br><strong>{{ eName | uppercase }}</strong></div>
+        <div class="demo-preview"><code style="font-size:11px">{{ eGpa * 10 }}</code><br><strong>{{ eGpa * 10 || '—' }}</strong></div>
+        <div class="demo-preview"><code style="font-size:11px">{{ eGpa >= 7 ? 'Pass' : 'Fail' }}</code><br><strong ng-style="{'color': eGpa >= 7 ? 'var(--green)' : 'var(--red)'}">{{ eGpa ? (eGpa >= 7 ? 'Pass' : 'Fail') : '—' }}</strong></div>
+        <div class="demo-preview"><code style="font-size:11px">{{ 'Hello ' + eName }}</code><br><strong>{{ eName ? 'Hello ' + eName + '!' : '—' }}</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="yt-section" style="margin-top:14px">
+    <div class="yt-header">
+      <span class="yt-logo">▶</span>
+      <div>
+        <div class="yt-header-title">Watch: AngularJS Expressions</div>
+        <div class="yt-header-text">The Net Ninja · Tutorial #6</div>
+      </div>
+    </div>
+    <div style="padding:14px 18px">
+      <a href="https://www.youtube.com/watch?v=kn6fPYK_3a0" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:var(--yt);color:#fff;padding:8px 18px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700">
+        ▶ Watch on YouTube — AngularJS Tutorial #6: Expressions
+      </a>
+      <p style="margin-top:10px;font-size:13px;color:var(--muted)">What expressions are, arithmetic and string operations in templates, comparing AngularJS expressions with JavaScript code, and limitations.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     §7 — FILTERS
+     ════════════════════════════════════════════════════════════ -->
+<section class="section" id="sec-filter">
+  <div class="sec-hd">
+    <span class="sec-num">07</span>
+    <div>
+      <div class="sec-tag">Core Concept</div>
+      <div class="sec-title">Filters</div>
+      <div class="sec-intro">Filters format the value of an expression for display to the user. They are applied using the pipe <code>|</code> character inside <code>{{ }}</code> expressions or inside directives like <code>ng-repeat</code>.</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-h">Built-in filters</div>
+      <table class="ref-table" style="margin:0">
+        <tr><th>Filter</th><th>What it does</th></tr>
+        <tr><td>uppercase</td>  <td style="color:var(--sub)">Converts to UPPERCASE</td></tr>
+        <tr><td>lowercase</td>  <td style="color:var(--sub)">Converts to lowercase</td></tr>
+        <tr><td>number:n</td>   <td style="color:var(--sub)">Formats to n decimal places</td></tr>
+        <tr><td>currency:"₹"</td><td style="color:var(--sub)">Formats as currency</td></tr>
+        <tr><td>date:'dd/MM/yy'</td><td style="color:var(--sub)">Formats a date object</td></tr>
+        <tr><td>filter:term</td><td style="color:var(--sub)">Searches array for matching items</td></tr>
+        <tr><td>orderBy:'field'</td><td style="color:var(--sub)">Sorts array by a property</td></tr>
+        <tr><td>limitTo:n</td>  <td style="color:var(--sub)">Takes first n items from array</td></tr>
+        <tr><td>json</td>       <td style="color:var(--sub)">Formats object as JSON string</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-h">Filter syntax reference</div>
+      <div class="code-block" style="margin:0">
+        <pre style="padding:10px 14px;font-size:12px"><span class="cm">&lt;!-- In expressions --&gt;</span>
+{{ name | uppercase }}
+{{ gpa | number:2 }}
+{{ fee | currency:"₹" }}
+{{ today | date:'dd MMM yyyy' }}
+
+<span class="cm">&lt;!-- Chaining filters --&gt;</span>
+{{ name | uppercase | limitTo:5 }}
+
+<span class="cm">&lt;!-- In ng-repeat --&gt;</span>
+<span class="tg">&lt;tr</span> <span class="ng">ng-repeat</span>=<span class="str">"s in students
+  | filter:searchText
+  | orderBy:'name'
+  | limitTo:10"</span><span class="tg">&gt;</span>
+
+<span class="cm">// Custom filter in JavaScript</span>
+app.<span class="fn">filter</span>(<span class="str">'grade'</span>, <span class="kw">function</span>() {
+  <span class="kw">return function</span>(gpa) {
+    <span class="kw">return</span> gpa >= <span class="num">9</span> ? <span class="str">'A+'</span>
+         : gpa >= <span class="num">8</span> ? <span class="str">'A'</span>
+         : gpa >= <span class="num">7</span> ? <span class="str">'B'</span>
+         : <span class="str">'C'</span>;
+  };
+});</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live filters demo -->
+  <div class="live-demo" ng-app="filterDemo" ng-controller="FilterCtrl">
+    <div class="demo-bar">
+      <div class="demo-label"><span class="demo-dot"></span>Live — Built-in filters + search + custom filter</div>
+      <span class="demo-tag">| filters</span>
+    </div>
+    <div class="demo-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div class="demo-preview">
+          <code style="font-size:11px">{{ 'hello world' | uppercase }}</code><br>
+          <strong>{{ 'hello world' | uppercase }}</strong>
+        </div>
+        <div class="demo-preview">
+          <code style="font-size:11px">{{ 8.765 | number:2 }}</code><br>
+          <strong>{{ 8.765 | number:2 }}</strong>
+        </div>
+        <div class="demo-preview">
+          <code style="font-size:11px">{{ 9876.50 | currency:"₹" }}</code><br>
+          <strong>{{ 9876.50 | currency:"₹" }}</strong>
+        </div>
+        <div class="demo-preview">
+          <code style="font-size:11px">{{ 9.1 | grade }}</code> (custom filter)<br>
+          <strong>{{ 9.1 | grade }}</strong>
+        </div>
+      </div>
+
+      <div style="font-size:12.5px;font-weight:700;color:var(--sub);margin-bottom:7px">filter:searchText on ng-repeat — type to search:</div>
+      <input class="demo-input" ng-model="fSearch" placeholder="Search students…" style="margin-bottom:8px">
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span ng-repeat="s in fStudents | filter:fSearch | orderBy:'name'"
+              style="padding:5px 12px;background:var(--red-lt);color:var(--red);border:1px solid var(--red-bd);border-radius:20px;font-size:13px">
+          {{ s.name }} — {{ s.gpa | number:1 }}
+        </span>
+        <span ng-show="(fStudents | filter:fSearch).length == 0" style="font-size:13px;color:var(--muted);font-style:italic">No matches found</span>
+      </div>
+      <div style="margin-top:8px;font-size:12.5px;color:var(--muted)">
+        Showing {{ (fStudents | filter:fSearch).length }} of {{ fStudents.length }} students
+      </div>
+    </div>
+  </div>
+
+  <div class="yt-section" style="margin-top:14px">
+    <div class="yt-header">
+      <span class="yt-logo">▶</span>
+      <div>
+        <div class="yt-header-title">Watch: AngularJS Filters</div>
+        <div class="yt-header-text">The Net Ninja · Tutorial #10</div>
+      </div>
+    </div>
+    <div style="padding:14px 18px">
+      <a href="https://www.youtube.com/watch?v=mhR4hOFHU94" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:var(--yt);color:#fff;padding:8px 18px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700">
+        ▶ Watch on YouTube — AngularJS Tutorial #10: Filters
+      </a>
+      <p style="margin-top:10px;font-size:13px;color:var(--muted)">Built-in filters (uppercase, number, currency, date, filter, orderBy), chaining filters, and building a custom filter function.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     §8 — ALL YOUTUBE VIDEOS
+     ════════════════════════════════════════════════════════════ -->
+<section class="section" id="sec-videos">
+  <div class="sec-hd">
+    <span class="sec-num">08</span>
+    <div>
+      <div class="sec-tag">Learning Resources</div>
+      <div class="sec-title">YouTube Videos — Complete Playlist</div>
+      <div class="sec-intro">The Net Ninja's AngularJS series is the best free resource for your syllabus. 25 episodes, all free on YouTube, covering exactly what VTU requires.</div>
+    </div>
+  </div>
+
+  <!-- Full playlist link -->
+  <div style="background:var(--ink);border-radius:var(--r-lg);padding:18px 22px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+    <div>
+      <div style="font-size:15px;font-weight:600;color:#fff;margin-bottom:4px">The Net Ninja — AngularJS Tutorial Series</div>
+      <div style="font-size:13px;color:rgba(255,255,255,.45);font-family:var(--mono)">youtube.com · 25 episodes · Free · Best for VTU MCA</div>
+    </div>
+    <a href="https://www.youtube.com/playlist?list=PL4cUxeGkcC9gsJS5QgFT2IvWIX78dV3_v" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:var(--yt);color:#fff;padding:10px 22px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:700;flex-shrink:0">
+      ▶ Open Full Playlist
+    </a>
+  </div>
+
+  <div class="yt-section">
+    <div class="yt-header">
+      <span class="yt-logo">▶</span>
+      <div>
+        <div class="yt-header-title">Episode Guide — VTU Syllabus Mapped</div>
+        <div class="yt-header-text">Episodes sorted by VTU topic · click any card to watch</div>
+      </div>
+    </div>
+    <div class="yt-grid">
+      <a href="https://www.youtube.com/watch?v=FlUCU13dJyo" target="_blank" class="yt-card">
+        <div class="yt-ep">#1 — Introduction</div>
+        <div class="yt-card-title">Introduction to AngularJS</div>
+        <div class="yt-card-desc">What AngularJS is, why it exists, and your first app</div>
+        <div class="yt-play-icon">▶ Watch</div>
+      </a>
+      <a href="https://www.youtube.com/watch?v=wbcJfg-d5nI" target="_blank" class="yt-card">
+        <div class="yt-ep">#2 — MVC</div>
+        <div class="yt-card-title">MVC Architecture</div>
+        <div class="yt-card-desc">Model-View-Controller pattern explained simply</div>
+        <div class="yt-play-icon">▶ Watch</div>
+      </a>
+      <a href="https://www.youtube.com/watch?v=OqNzmFnQcqs" target="_blank" class="yt-card">
+        <div class="yt-ep">#4 — Data Binding</div>
+        <div class="yt-card-title">Two-Way Data Binding</div>
+        <div class="yt-card-desc">How ng-model keeps HTML and JS in sync automatically</div>
+        <div class="yt-play-icon">▶ Watch</div>
+      </a>
+      <a href="https://www.youtube.com/watch?v=Wm1Zj_VLbpk" target="_blank" class="yt-card">
+        <div class="yt-ep">#5 — Directives</div>
+        <div class="yt-card-title">Introduction to Directives</div>
+        <div class="yt-card-desc">What directives are and the ng-* attribute system</div>
+        <div class="yt-play-icon">▶ Watch</div>
+      </a>
+      <a href="https://www.youtube.com/watch?v=kn6fPYK_3a0" target="_blank" class="yt-card">
+        <div class="yt-ep">#6 — Expressions</div>
+        <div class="yt-card-title">Expressions</div>
+        <div class="yt-card-desc">{{ }} syntax, arithmetic, ternary, function calls</div>
+        <div class="yt-play-icon">▶ Watch</div>
+      </a>
+      <a href="https://www.youtube.com/watch?v=2hN93CanBqg" target="_blank" class="yt-card">
+        <div class="yt-ep">#7 — ng-repeat</div>
+        <div class="yt-card-title">ng-repeat Directive</div>
+        <div class="yt-card-desc">Looping arrays, $index, filtering and ordering lists</div>
+        <div class="yt-play-icon">▶ Watch</div>
+      </a>
+      <a href="https://www.youtube.com/watch?v=ybnw5JwBk8g" target="_blank" class="yt-card">
+        <div class="yt-ep">#8 — Modules</div>
+        <div class="yt-card-title">Modules</div>
+        <div class="yt-card-desc">Creating modules, splitting files, dependency array</div>
+        <div class="yt-play-icon">▶ Watch</div>
+      </a>
+      <a href="https://www.youtube.com/watch?v=QAUjWaQrY4A" target="_blank" class="yt-card">
+        <div class="yt-ep">#9 — Controllers</div>
+        <div class="yt-card-title">Controllers</div>
+        <div class="yt-card-desc">Creating controllers, $scope, multiple controllers</div>
+        <div class="yt-play-icon">▶ Watch</div>
+      </a>
+      <a href="https://www.youtube.com/watch?v=mhR4hOFHU94" target="_blank" class="yt-card">
+        <div class="yt-ep">#10 — Filters</div>
+        <div class="yt-card-title">Filters</div>
+        <div class="yt-card-desc">uppercase, number, currency, filter, orderBy, custom</div>
+        <div class="yt-play-icon">▶ Watch</div>
+      </a>
+      <a href="https://www.youtube.com/watch?v=dBwoEsNMxEQ" target="_blank" class="yt-card">
+        <div class="yt-ep">#12 — ng-show</div>
+        <div class="yt-card-title">ng-show / ng-hide</div>
+        <div class="yt-card-desc">Show and hide elements based on conditions</div>
+        <div class="yt-play-icon">▶ Watch</div>
+      </a>
+      <a href="https://www.youtube.com/watch?v=5LfHK_WTAkg" target="_blank" class="yt-card">
+        <div class="yt-ep">#13 — ng-click</div>
+        <div class="yt-card-title">ng-click Directive</div>
+        <div class="yt-card-desc">Handling button clicks and calling controller functions</div>
+        <div class="yt-play-icon">▶ Watch</div>
+      </a>
+      <a href="https://www.youtube.com/watch?v=xYQfJiAC0F8" target="_blank" class="yt-card">
+        <div class="yt-ep">#14 — ng-submit</div>
+        <div class="yt-card-title">ng-submit + Forms</div>
+        <div class="yt-card-desc">Form submission without page reload, validation</div>
+        <div class="yt-play-icon">▶ Watch</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Other resources -->
+  <div class="two-col" style="margin-top:14px">
+    <div class="card">
+      <div class="card-h">📖 W3Schools AngularJS Tutorial</div>
+      <div class="card-b" style="margin-bottom:12px;font-size:13.5px">The simplest written tutorial — short chapters with try-it-yourself examples. Covers all VTU topics with runnable code.</div>
+      <a href="https://www.w3schools.com/angular/" target="_blank" style="display:inline-flex;align-items:center;gap:7px;background:var(--grn-lt);color:var(--green);border:1px solid var(--grn-bd);padding:7px 16px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700">
+        → w3schools.com/angular
+      </a>
+    </div>
+    <div class="card">
+      <div class="card-h">📖 Official AngularJS Docs</div>
+      <div class="card-b" style="margin-bottom:12px;font-size:13.5px">The complete API reference. Use it to look up any directive, service, or filter. Search for <code>ng-repeat</code>, <code>$http</code> etc.</div>
+      <a href="https://docs.angularjs.org/api" target="_blank" style="display:inline-flex;align-items:center;gap:7px;background:var(--red-lt);color:var(--red);border:1px solid var(--red-bd);padding:7px 16px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700">
+        → docs.angularjs.org/api
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     §9 — QUICK REFERENCE
+     ════════════════════════════════════════════════════════════ -->
+<section class="section" id="sec-qr">
+  <div class="sec-hd">
+    <span class="sec-num">✦</span>
+    <div>
+      <div class="sec-tag">Exam Prep</div>
+      <div class="sec-title">VTU Quick Reference</div>
+    </div>
+  </div>
+
+  <div class="qr-grid">
+    <div class="qr-card"><span class="qr-m">ng-app</span><span class="qr-d">Bootstraps AngularJS on a page. Value must match the module name in angular.module().</span></div>
+    <div class="qr-card"><span class="qr-m">angular.module(name,[])</span><span class="qr-d">Creates the Angular module. [] = dependency array. No [] = retrieves existing module.</span></div>
+    <div class="qr-card"><span class="qr-m">app.controller(name,fn)</span><span class="qr-d">Creates a controller. fn receives $scope via Dependency Injection automatically.</span></div>
+    <div class="qr-card"><span class="qr-m">$scope</span><span class="qr-d">The bridge between controller and view. Variables and functions on $scope are accessible in HTML.</span></div>
+    <div class="qr-card"><span class="qr-m">$rootScope</span><span class="qr-d">Global scope — accessible by ALL controllers. Use sparingly to avoid tight coupling.</span></div>
+    <div class="qr-card"><span class="qr-m">ng-model</span><span class="qr-d">Two-way binding on inputs. User types → $scope updates. $scope updates → input updates.</span></div>
+    <div class="qr-card"><span class="qr-m">ng-repeat</span><span class="qr-d">Loops over an array. Creates one element per item. Use $index for position number.</span></div>
+    <div class="qr-card"><span class="qr-m">ng-if vs ng-show</span><span class="qr-d">ng-if adds/removes from DOM. ng-show keeps in DOM but toggles visibility (display:none).</span></div>
+    <div class="qr-card"><span class="qr-m">{{ expression }}</span><span class="qr-d">Displays $scope value. Supports arithmetic, ternary, function calls, object properties.</span></div>
+    <div class="qr-card"><span class="qr-m">| filter</span><span class="qr-d">Pipe character applies a filter. Formats value for display. Can be chained: | uppercase | limitTo:5</span></div>
+    <div class="qr-card"><span class="qr-m">Digest cycle</span><span class="qr-d">AngularJS change detection — loops all watchers after events, updates DOM for changed values. Called dirty checking.</span></div>
+    <div class="qr-card"><span class="qr-m">Dependency Injection</span><span class="qr-d">AngularJS reads parameter names and injects matching services. Add $http to get HTTP service automatically.</span></div>
+  </div>
+
+  <div class="callout c-red" style="margin-top:20px">
+    <strong>5 most likely VTU exam questions on AngularJS:</strong><br>
+    (1) Explain AngularJS modules with syntax and example.<br>
+    (2) What is $scope? Explain with a controller example.<br>
+    (3) List and explain any 6 AngularJS directives with syntax.<br>
+    (4) What are AngularJS expressions? Give examples of what they can and cannot contain.<br>
+    (5) Explain built-in filters in AngularJS — write a code example using filter and orderBy on ng-repeat.
+  </div>
+</section>
+
+</main>
+
+<footer class="page-foot">
+  VTU MCA — Web Technologies · Module 5 · AngularJS Basics &nbsp;·&nbsp; Reference: AngularJS by Krishna Rungta (Packt) · The Net Ninja YouTube Series
+</footer>
+
+<!-- ══ AngularJS controller definitions for all live demos ══ -->
+<script>
+/* Controller demo */
+angular.module('ctrlDemo', [])
+  .controller('CtrlDemoCtrl', function($scope) {
+    $scope.sName = '';
+    $scope.sGpa  = null;
+    $scope.sList = [];
+    $scope.addToList = function() {
+      if ($scope.sName) {
+        $scope.sList.push({ name: $scope.sName, gpa: $scope.sGpa || '—' });
+        $scope.sName = '';
+        $scope.sGpa  = null;
+      }
+    };
+  });
+
+/* Directives demo */
+angular.module('dirDemo', [])
+  .controller('DirCtrl', function($scope) {
+    $scope.uName    = '';
+    $scope.isActive = false;
+    $scope.items    = ['HTML5', 'CSS3', 'JavaScript', 'AngularJS', 'Bootstrap'];
+  });
+
+/* Expressions demo */
+angular.module('exprDemo', [])
+  .controller('ExprCtrl', function($scope) {
+    $scope.eName = '';
+    $scope.eGpa  = null;
+  });
+
+/* Filters demo */
+angular.module('filterDemo', [])
+  .filter('grade', function() {
+    return function(gpa) {
+      return gpa >= 9 ? 'A+' : gpa >= 8 ? 'A' : gpa >= 7 ? 'B' : 'C';
+    };
+  })
+  .controller('FilterCtrl', function($scope) {
+    $scope.fSearch = '';
+    $scope.fStudents = [
+      { name: 'Arjun',   gpa: 8.7 },
+      { name: 'Priya',   gpa: 9.1 },
+      { name: 'Ravi',    gpa: 7.5 },
+      { name: 'Anjali',  gpa: 8.2 },
+      { name: 'Karthik', gpa: 6.9 },
+    ];
+  });
+</script>
+</body>
+</html>

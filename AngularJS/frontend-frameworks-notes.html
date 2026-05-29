@@ -1,0 +1,1590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Front-End Frameworks — VTU MCA Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Karla:wght@300;400;500;600;700&family=Inconsolata:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ══════════════════════════════════════════════════════
+   BASE & TOKENS
+   ══════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+
+:root {
+  /* page */
+  --page   : #faf8f4;
+  --white  : #ffffff;
+  --surf   : #f5f2ec;
+  --surf2  : #edeae3;
+  --border : #ddd9d0;
+  --border2: #c8c3b8;
+
+  /* text */
+  --ink    : #1a1814;
+  --ink2   : #3d3a34;
+  --sub    : #5a5650;
+  --muted  : #8a8680;
+
+  /* accents */
+  --react  : #087ea4;   /* React cyan  */
+  --react-lt: #e8f6fb;
+  --angular: #dd0031;   /* Angular red */
+  --ang-lt : #fef0f2;
+  --vue    : #42b883;   /* Vue green   */
+  --vue-lt : #edfaf4;
+  --ng     : #dd0031;   /* AngularJS = Angular */
+  --blue   : #1d4ed8;
+  --blue-lt: #eff6ff;
+  --amber  : #b45309;
+  --amb-lt : #fffbeb;
+  --green  : #15803d;
+  --grn-lt : #f0fdf4;
+
+  --mono   : 'Inconsolata', monospace;
+  --serif  : 'Fraunces', serif;
+  --body   : 'Karla', sans-serif;
+  --r      : 8px;
+  --r-lg   : 14px;
+}
+
+body {
+  font-family: var(--body);
+  background: var(--page);
+  color: var(--ink);
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+/* ══════════════════════════════════════════════════════
+   HEADER
+   ══════════════════════════════════════════════════════ */
+.page-header {
+  background: var(--ink);
+  color: #fff;
+  padding: 40px 40px 30px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* subtle dot-grid texture */
+.page-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.hdr-inner { position: relative; z-index: 1; max-width: 1000px; margin: 0 auto; }
+
+.hdr-kicker {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.45);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hdr-kicker::before {
+  content: '';
+  width: 22px;
+  height: 2px;
+  background: rgba(255,255,255,.35);
+  border-radius: 2px;
+}
+
+.page-header h1 {
+  font-family: var(--serif);
+  font-size: clamp(28px, 3.5vw, 44px);
+  font-weight: 600;
+  line-height: 1.1;
+  margin-bottom: 10px;
+  letter-spacing: -.02em;
+}
+
+.page-header h1 em {
+  font-style: italic;
+  font-weight: 300;
+  color: rgba(255,255,255,.7);
+}
+
+.hdr-desc {
+  font-size: 14px;
+  color: rgba(255,255,255,.45);
+  max-width: 560px;
+  line-height: 1.75;
+  margin-bottom: 22px;
+}
+
+/* framework colour chips in header */
+.fw-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.fw-chip {
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .04em;
+}
+
+.chip-react   { background: rgba(8,126,164,.3);  color: #7dd3fc; border: 1px solid rgba(8,126,164,.4); }
+.chip-angular { background: rgba(221,0,49,.25);  color: #fca5a5; border: 1px solid rgba(221,0,49,.35); }
+.chip-vue     { background: rgba(66,184,131,.25);color: #86efac; border: 1px solid rgba(66,184,131,.35); }
+.chip-ng      { background: rgba(221,0,49,.2);   color: #fca5a5; border: 1px solid rgba(221,0,49,.3); }
+
+/* ══════════════════════════════════════════════════════
+   TOC BAR
+   ══════════════════════════════════════════════════════ */
+.toc-bar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 0 32px;
+  overflow-x: auto;
+  white-space: nowrap;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.toc-a {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--sub);
+  text-decoration: none;
+  padding: 5px 12px;
+  border-radius: var(--r);
+  transition: all .15s;
+  flex-shrink: 0;
+}
+
+.toc-a:hover {
+  background: var(--blue-lt);
+  color: var(--blue);
+}
+
+/* ══════════════════════════════════════════════════════
+   PAGE LAYOUT
+   ══════════════════════════════════════════════════════ */
+.page-wrap {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 48px 28px 80px;
+}
+
+/* ══════════════════════════════════════════════════════
+   SECTION STRUCTURE
+   ══════════════════════════════════════════════════════ */
+.section {
+  margin-bottom: 64px;
+  scroll-margin-top: 56px;
+}
+
+.sec-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--border);
+}
+
+.sec-num {
+  font-family: var(--mono);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--border2);
+  min-width: 48px;
+  line-height: 1;
+  margin-top: 4px;
+}
+
+.sec-tag {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.sec-title {
+  font-family: var(--serif);
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -.01em;
+}
+
+.sec-intro {
+  font-size: 14.5px;
+  color: var(--sub);
+  line-height: 1.75;
+  margin-top: 4px;
+}
+
+/* ══════════════════════════════════════════════════════
+   CARDS & LAYOUTS
+   ══════════════════════════════════════════════════════ */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+.full-w { margin-bottom: 16px; }
+
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 20px 22px;
+  margin-bottom: 14px;
+}
+
+.card-h {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-b {
+  font-size: 14px;
+  color: var(--sub);
+  line-height: 1.75;
+}
+
+/* ══════════════════════════════════════════════════════
+   FRAMEWORK PROFILE CARDS
+   ══════════════════════════════════════════════════════ */
+.fw-profile {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.fwp-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.fwp-logo {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 800;
+  font-family: var(--mono);
+  flex-shrink: 0;
+}
+
+.fwp-meta {}
+.fwp-name {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.fwp-sub {
+  font-size: 12.5px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.fwp-pill {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.fwp-body {
+  padding: 20px 24px;
+}
+
+.fwp-intro {
+  font-size: 14px;
+  color: var(--sub);
+  line-height: 1.75;
+  margin-bottom: 16px;
+}
+
+.fwp-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.fwp-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.feature-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.feature-list li {
+  font-size: 13.5px;
+  color: var(--sub);
+  padding-left: 16px;
+  position: relative;
+  line-height: 1.55;
+}
+
+.feature-list li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* ══════════════════════════════════════════════════════
+   CALLOUT BOXES
+   ══════════════════════════════════════════════════════ */
+.callout {
+  border-left: 3px solid;
+  border-radius: 0 var(--r) var(--r) 0;
+  padding: 12px 16px;
+  font-size: 13.5px;
+  line-height: 1.65;
+  margin: 14px 0;
+}
+
+.callout strong { font-weight: 700; }
+.callout code   { font-family: var(--mono); font-size: 12.5px; }
+
+.c-blue   { border-color: var(--blue);    background: var(--blue-lt); color: #1e3a8a; }
+.c-green  { border-color: var(--green);   background: var(--grn-lt);  color: #14532d; }
+.c-amber  { border-color: var(--amber);   background: var(--amb-lt);  color: #78350f; }
+.c-react  { border-color: var(--react);   background: var(--react-lt);color: #0c4a6e; }
+.c-angular{ border-color: var(--angular); background: var(--ang-lt);  color: #7f1d1d; }
+.c-vue    { border-color: var(--vue);     background: var(--vue-lt);  color: #14532d; }
+
+/* ══════════════════════════════════════════════════════
+   INLINE CODE + CODE BLOCKS
+   ══════════════════════════════════════════════════════ */
+code {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  color: var(--blue);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.code-block {
+  background: #1a1d26;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin: 14px 0;
+}
+
+.cb-bar {
+  background: #12141c;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+.cbd { width: 8px; height: 8px; border-radius: 50%; }
+.cbd-r { background: #ef4444; }
+.cbd-y { background: #f59e0b; }
+.cbd-g { background: #22c55e; }
+.cb-fn { font-family: var(--mono); font-size: 11px; color: #4a5180; margin-left: 4px; }
+
+.code-block pre {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.8;
+  padding: 16px 18px;
+  overflow-x: auto;
+  color: #c9d1d9;
+  white-space: pre;
+  margin: 0;
+}
+
+/* syntax */
+.kw   { color: #ff79c6; }
+.fn   { color: #82aaff; }
+.str  { color: #c3e88d; }
+.tg   { color: #f07178; }
+.at   { color: #ffcb6b; }
+.cm   { color: #4a5180; font-style: italic; }
+.num  { color: #f78c6c; }
+.cls  { color: #f5d547; }
+.op   { color: #89ddff; }
+.dec  { color: #c792ea; }
+
+/* ══════════════════════════════════════════════════════
+   COMPARISON TABLE
+   ══════════════════════════════════════════════════════ */
+.cmp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin: 14px 0;
+}
+
+.cmp-table th {
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  border-bottom: 1px solid var(--border);
+}
+
+.cmp-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #f0ede8;
+  vertical-align: top;
+  line-height: 1.55;
+}
+
+.cmp-table tr:last-child td { border-bottom: none; }
+.cmp-table tr:nth-child(even) td { background: #fafaf7; }
+
+.th-feature  { background: var(--surf); color: var(--muted); }
+.th-react    { background: var(--react-lt);   color: var(--react); }
+.th-angular  { background: var(--ang-lt);     color: var(--angular); }
+.th-vue      { background: var(--vue-lt);     color: var(--vue); }
+
+.td-feature  { font-weight: 700; color: var(--ink); font-size: 13px; }
+.td-react    { color: #0c4a6e; }
+.td-angular  { color: #7f1d1d; }
+.td-vue      { color: #14532d; }
+
+/* ══════════════════════════════════════════════════════
+   REFERENCE TABLE
+   ══════════════════════════════════════════════════════ */
+.ref-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin: 12px 0;
+}
+
+.ref-table th {
+  background: var(--surf);
+  padding: 8px 13px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.ref-table td {
+  padding: 9px 13px;
+  border-bottom: 1px solid #f0ede8;
+  vertical-align: top;
+  line-height: 1.55;
+}
+
+.ref-table tr:last-child td { border-bottom: none; }
+.ref-table tr:nth-child(even) td { background: #fafaf7; }
+.ref-table td:first-child { font-family: var(--mono); font-size: 12px; color: var(--blue); }
+.ref-table td:last-child  { color: var(--sub); }
+
+/* ══════════════════════════════════════════════════════
+   TIMELINE (evolution)
+   ══════════════════════════════════════════════════════ */
+.timeline {
+  position: relative;
+  padding-left: 28px;
+  margin: 14px 0;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--border);
+}
+
+.tl-item {
+  position: relative;
+  margin-bottom: 20px;
+  padding-left: 18px;
+}
+
+.tl-item::before {
+  content: '';
+  position: absolute;
+  left: -17px;
+  top: 8px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--blue);
+  border: 2px solid var(--white);
+  box-shadow: 0 0 0 2px var(--border);
+}
+
+.tl-year {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--blue);
+  margin-bottom: 2px;
+}
+
+.tl-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 3px;
+}
+
+.tl-desc {
+  font-size: 13.5px;
+  color: var(--sub);
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ══════════════════════════════════════════════════════
+   ANGULARJS DEEP SECTION TABS
+   ══════════════════════════════════════════════════════ */
+.tab-set { border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; margin: 16px 0; }
+.tab-set input[type="radio"] { display: none; }
+
+.tab-labels {
+  display: flex;
+  background: var(--surf);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.tab-label {
+  padding: 9px 16px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  border-right: 1px solid var(--border);
+  transition: all .15s;
+  user-select: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tab-label:last-of-type { border-right: none; }
+
+/* Radio-based tab switching — pure CSS */
+#ngt1:checked ~ .tab-labels label[for="ngt1"],
+#ngt2:checked ~ .tab-labels label[for="ngt2"],
+#ngt3:checked ~ .tab-labels label[for="ngt3"],
+#ngt4:checked ~ .tab-labels label[for="ngt4"],
+#ngt5:checked ~ .tab-labels label[for="ngt5"],
+#ngt6:checked ~ .tab-labels label[for="ngt6"] {
+  background: var(--white);
+  color: var(--angular);
+  border-bottom: 2px solid var(--angular);
+}
+
+.tab-panel { display: none; padding: 20px 22px; }
+
+#ngt1:checked ~ .tab-labels ~ .tab-panel:nth-of-type(1) { display: block; }
+#ngt2:checked ~ .tab-labels ~ .tab-panel:nth-of-type(2) { display: block; }
+#ngt3:checked ~ .tab-labels ~ .tab-panel:nth-of-type(3) { display: block; }
+#ngt4:checked ~ .tab-labels ~ .tab-panel:nth-of-type(4) { display: block; }
+#ngt5:checked ~ .tab-labels ~ .tab-panel:nth-of-type(5) { display: block; }
+#ngt6:checked ~ .tab-labels ~ .tab-panel:nth-of-type(6) { display: block; }
+
+/* ══════════════════════════════════════════════════════
+   QUICK REFERENCE GRID
+   ══════════════════════════════════════════════════════ */
+.qr-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.qr-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 14px 16px;
+  transition: border-color .15s;
+}
+
+.qr-card:hover { border-color: var(--angular); }
+.qr-m { font-family: var(--mono); font-size: 12px; color: var(--angular); font-weight: 600; margin-bottom: 5px; display: block; }
+.qr-d { font-size: 12.5px; color: var(--sub); line-height: 1.55; }
+
+/* ══════════════════════════════════════════════════════
+   FOOTER
+   ══════════════════════════════════════════════════════ */
+.page-footer {
+  background: var(--ink);
+  color: rgba(255,255,255,.35);
+  text-align: center;
+  padding: 18px;
+  font-size: 12px;
+}
+
+/* ══════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════ */
+@media (max-width: 760px) {
+  .two-col, .three-col, .fwp-grid { grid-template-columns: 1fr; }
+  .qr-grid { grid-template-columns: 1fr 1fr; }
+  .page-header { padding: 28px 20px 22px; }
+  .page-wrap { padding: 28px 16px 60px; }
+  .toc-bar { padding: 0 16px; }
+}
+
+@media (max-width: 480px) {
+  .qr-grid { grid-template-columns: 1fr; }
+}
+
+@media print {
+  .toc-bar { display: none; }
+  .page-header::before { display: none; }
+  .tab-panel { display: block !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════
+     PAGE HEADER
+     ══════════════════════════════════════════════════════ -->
+<header class="page-header">
+  <div class="hdr-inner">
+    <div class="hdr-kicker">VTU MCA — Web Technologies · Module 5</div>
+    <h1>Front-End Frameworks<br><em>&amp; AngularJS</em></h1>
+    <p class="hdr-desc">Why frameworks exist, how React, Angular, and Vue differ, and a complete deep dive into AngularJS — the framework that changed how we think about single-page applications.</p>
+    <div class="fw-chips">
+      <span class="fw-chip chip-react">⚛ React</span>
+      <span class="fw-chip chip-angular">🅰 Angular</span>
+      <span class="fw-chip chip-vue">🟢 Vue.js</span>
+      <span class="fw-chip chip-ng">Ⓝ AngularJS</span>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════
+     TOC
+     ══════════════════════════════════════════════════════ -->
+<nav class="toc-bar">
+  <a href="#sec-why"       class="toc-a">§1 Why Frameworks?</a>
+  <a href="#sec-evolution" class="toc-a">§2 Evolution</a>
+  <a href="#sec-react"     class="toc-a">§3 React</a>
+  <a href="#sec-angular"   class="toc-a">§4 Angular</a>
+  <a href="#sec-vue"       class="toc-a">§5 Vue.js</a>
+  <a href="#sec-compare"   class="toc-a">§6 Comparison</a>
+  <a href="#sec-angularjs" class="toc-a">§7 AngularJS Deep Dive</a>
+  <a href="#sec-mvvm"      class="toc-a">§8 MVC/MVVM</a>
+  <a href="#sec-qr"        class="toc-a">§9 Quick Ref</a>
+</nav>
+
+<main class="page-wrap">
+
+<!-- ══════════════════════════════════════════════════════
+     §1 — WHY FRAMEWORKS?
+     ══════════════════════════════════════════════════════ -->
+<section class="section" id="sec-why">
+  <div class="sec-head">
+    <span class="sec-num">01</span>
+    <div>
+      <div class="sec-tag">Foundation</div>
+      <div class="sec-title">Why Do Front-End Frameworks Exist?</div>
+      <div class="sec-intro">As web applications became more complex, plain HTML + CSS + JavaScript became difficult to organise and maintain. Frameworks solve structural problems that arise at scale.</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-h">🔴 Problems without a framework</div>
+      <div class="card-b">
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li style="padding-left:20px;position:relative;font-size:13.5px;color:var(--sub)"><span style="position:absolute;left:0;color:var(--angular)">✗</span><strong>DOM spaghetti</strong> — <code>getElementById</code> and <code>innerHTML</code> scattered across thousands of lines</li>
+          <li style="padding-left:20px;position:relative;font-size:13.5px;color:var(--sub)"><span style="position:absolute;left:0;color:var(--angular)">✗</span><strong>State management</strong> — keeping UI in sync with data manually causes bugs</li>
+          <li style="padding-left:20px;position:relative;font-size:13.5px;color:var(--sub)"><span style="position:absolute;left:0;color:var(--angular)">✗</span><strong>No reusability</strong> — copy-pasting HTML blocks instead of components</li>
+          <li style="padding-left:20px;position:relative;font-size:13.5px;color:var(--sub)"><span style="position:absolute;left:0;color:var(--angular)">✗</span><strong>Full page reloads</strong> — every user action requires a server round-trip</li>
+          <li style="padding-left:20px;position:relative;font-size:13.5px;color:var(--sub)"><span style="position:absolute;left:0;color:var(--angular)">✗</span><strong>No routing</strong> — multi-page navigation requires separate HTML files</li>
+          <li style="padding-left:20px;position:relative;font-size:13.5px;color:var(--sub)"><span style="position:absolute;left:0;color:var(--angular)">✗</span><strong>Team scaling</strong> — no conventions mean every developer writes differently</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h">🟢 What frameworks provide</div>
+      <div class="card-b">
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li style="padding-left:20px;position:relative;font-size:13.5px;color:var(--sub)"><span style="position:absolute;left:0;color:var(--green)">✓</span><strong>Component model</strong> — reusable, self-contained UI pieces with their own HTML, CSS, and JS</li>
+          <li style="padding-left:20px;position:relative;font-size:13.5px;color:var(--sub)"><span style="position:absolute;left:0;color:var(--green)">✓</span><strong>Reactive data binding</strong> — UI automatically updates when data changes</li>
+          <li style="padding-left:20px;position:relative;font-size:13.5px;color:var(--sub)"><span style="position:absolute;left:0;color:var(--green)">✓</span><strong>Single Page Apps (SPA)</strong> — page never reloads; router changes views in-browser</li>
+          <li style="padding-left:20px;position:relative;font-size:13.5px;color:var(--sub)"><span style="position:absolute;left:0;color:var(--green)">✓</span><strong>Virtual DOM / Change Detection</strong> — efficient, minimal DOM updates</li>
+          <li style="padding-left:20px;position:relative;font-size:13.5px;color:var(--sub)"><span style="position:absolute;left:0;color:var(--green)">✓</span><strong>Conventions &amp; structure</strong> — enforces consistent code organisation across a team</li>
+          <li style="padding-left:20px;position:relative;font-size:13.5px;color:var(--sub)"><span style="position:absolute;left:0;color:var(--green)">✓</span><strong>Ecosystem</strong> — routing, state management, testing, devtools all included or available</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card full-w">
+    <div class="card-h">📊 The Core Concept — Component-Based Architecture</div>
+    <div class="card-b" style="margin-bottom:14px">Every modern front-end framework is built around the idea that a UI is a tree of <strong>components</strong>. Each component manages its own state and renders its own HTML. When data changes, only that component re-renders — not the whole page.</div>
+    <div style="background:var(--surf);border:1px solid var(--border);border-radius:var(--r);padding:16px;font-family:var(--mono);font-size:12px;line-height:2;color:var(--sub)">
+      <span style="color:var(--angular)">App</span> (root)
+      <br>&nbsp;&nbsp;├── <span style="color:var(--blue)">Navbar</span> component
+      <br>&nbsp;&nbsp;├── <span style="color:var(--blue)">Dashboard</span> component
+      <br>&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── <span style="color:var(--green)">StatsCard</span> component  <span style="color:var(--muted);font-style:italic">← has its own state: { value: 42 }</span>
+      <br>&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── <span style="color:var(--green)">Chart</span> component
+      <br>&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;└── <span style="color:var(--green)">StudentList</span> component
+      <br>&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span style="color:var(--amber)">StudentRow</span> × N  <span style="color:var(--muted);font-style:italic">← reusable, one per student</span>
+      <br>&nbsp;&nbsp;└── <span style="color:var(--blue)">Footer</span> component
+    </div>
+  </div>
+
+  <div class="callout c-blue">
+    <strong>Key definition — Single Page Application (SPA):</strong> A web app that loads one HTML page and dynamically updates content using JavaScript instead of loading new pages from the server. Gmail, Twitter, and Google Maps are SPAs. Front-end frameworks are the primary tool for building SPAs.
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     §2 — EVOLUTION
+     ══════════════════════════════════════════════════════ -->
+<section class="section" id="sec-evolution">
+  <div class="sec-head">
+    <span class="sec-num">02</span>
+    <div>
+      <div class="sec-tag">History</div>
+      <div class="sec-title">Evolution of Front-End Frameworks</div>
+      <div class="sec-intro">The progression from static HTML → jQuery → MVC frameworks → component-based architecture over two decades.</div>
+    </div>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-year">1995–2005 — The Static Era</div>
+      <div class="tl-name">HTML + plain JavaScript</div>
+      <p class="tl-desc">Web pages were mostly static documents. JavaScript was used for simple effects. Every action required a full page reload from the server.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">2006 — jQuery</div>
+      <div class="tl-name">DOM manipulation library</div>
+      <p class="tl-desc">jQuery standardised cross-browser DOM access with <code>$(selector)</code>. It solved browser inconsistency but was still procedural — no structure, no components, callback hell at scale.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">2010 — AngularJS (Angular 1)</div>
+      <div class="tl-name">First major MVC framework — Google</div>
+      <p class="tl-desc">AngularJS introduced two-way data binding, directives, controllers, and dependency injection to the browser. It brought server-side MVC patterns to the front end. Widely adopted in enterprise applications.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">2013 — React</div>
+      <div class="tl-name">Component library — Facebook/Meta</div>
+      <p class="tl-desc">React introduced the Virtual DOM and JSX. It was intentionally a UI library only (not a full framework), letting developers choose their own tools for routing and state. Became the most popular choice by 2016.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">2014 — Vue.js</div>
+      <div class="tl-name">Progressive framework — Evan You</div>
+      <p class="tl-desc">Created by an ex-Googler who combined the best ideas from AngularJS and React. Vue is progressive — you can use just the core view layer, or adopt the full ecosystem gradually.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">2016 — Angular 2+ (TypeScript)</div>
+      <div class="tl-name">Complete rewrite — Google</div>
+      <p class="tl-desc">Angular was completely rewritten from scratch in TypeScript. Note: <strong>AngularJS = Angular 1</strong> (JavaScript). <strong>Angular = Angular 2+</strong> (TypeScript). They are different frameworks despite the name.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">2019–Present — Svelte, Next.js, Nuxt</div>
+      <div class="tl-name">Meta-frameworks and compile-time approaches</div>
+      <p class="tl-desc">Next.js (React-based) and Nuxt (Vue-based) added server-side rendering. Svelte moved framework work to compile time — zero runtime framework overhead. The ecosystem continues to evolve rapidly.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     §3 — REACT
+     ══════════════════════════════════════════════════════ -->
+<section class="section" id="sec-react">
+  <div class="sec-head">
+    <span class="sec-num">03</span>
+    <div>
+      <div class="sec-tag">Framework Overview</div>
+      <div class="sec-title">React — UI Library by Meta</div>
+    </div>
+  </div>
+
+  <div class="fw-profile">
+    <div class="fwp-header" style="border-left: 4px solid var(--react)">
+      <div class="fwp-logo" style="background:var(--react-lt);color:var(--react)">⚛</div>
+      <div class="fwp-meta">
+        <div class="fwp-name" style="color:var(--react)">React</div>
+        <div class="fwp-sub">
+          Created by Jordan Walke at Facebook (2013) &nbsp;·&nbsp; Maintained by Meta
+          <span class="fwp-pill" style="background:var(--react-lt);color:var(--react);border:1px solid rgba(8,126,164,.2)">Library (not a full framework)</span>
+          <span class="fwp-pill" style="background:var(--grn-lt);color:var(--green);border:1px solid rgba(21,128,61,.2)">Most popular · 2024</span>
+        </div>
+      </div>
+    </div>
+    <div class="fwp-body">
+      <p class="fwp-intro">React is technically a <strong>UI library</strong>, not a full framework — it handles only the View layer. You choose your own routing (React Router), state management (Redux, Zustand), and other tools. This flexibility made it the most widely adopted front-end technology.</p>
+      <div class="fwp-grid">
+        <div>
+          <div class="fwp-section-title">Core Concepts</div>
+          <ul class="feature-list">
+            <li><strong>Virtual DOM</strong> — React maintains an in-memory copy of the DOM and computes minimal updates</li>
+            <li><strong>JSX</strong> — JavaScript XML: write HTML-like syntax inside JavaScript</li>
+            <li><strong>Components</strong> — functions that return JSX; reusable, composable</li>
+            <li><strong>Props</strong> — data passed from parent to child (one-way, read-only)</li>
+            <li><strong>State</strong> — <code>useState()</code> hook manages local component data</li>
+            <li><strong>Hooks</strong> — <code>useEffect</code>, <code>useContext</code>, <code>useRef</code> and more</li>
+            <li><strong>One-way data flow</strong> — data flows down; events bubble up</li>
+          </ul>
+        </div>
+        <div>
+          <div class="fwp-section-title">Key Facts</div>
+          <table class="ref-table" style="margin:0">
+            <tr><td>Language</td><td>JavaScript / TypeScript</td></tr>
+            <tr><td>Architecture</td><td>Component-based, one-way binding</td></tr>
+            <tr><td>Rendering</td><td>Virtual DOM diffing</td></tr>
+            <tr><td>Learning curve</td><td>Moderate (JSX takes getting used to)</td></tr>
+            <tr><td>Used by</td><td>Facebook, Instagram, WhatsApp, Netflix</td></tr>
+            <tr><td>Ecosystem</td><td>Next.js, Redux, React Router, React Native</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="cb-bar"><span class="cbd cbd-r"></span><span class="cbd cbd-y"></span><span class="cbd cbd-g"></span><span class="cb-fn">StudentCard.jsx — React component example</span></div>
+    <pre><span class="cm">// React functional component (modern style)</span>
+<span class="kw">import</span> { <span class="fn">useState</span> } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="cm">// Component = a function that returns JSX</span>
+<span class="kw">function</span> <span class="cls">StudentCard</span>({ name, course, gpa }) {
+
+  <span class="cm">// useState hook — local state</span>
+  <span class="kw">const</span> [isVisible, setIsVisible] = <span class="fn">useState</span>(<span class="kw">true</span>);
+
+  <span class="cm">// JSX — looks like HTML inside JavaScript</span>
+  <span class="kw">return</span> (
+    &lt;<span class="tg">div</span> <span class="at">className</span>=<span class="str">"card"</span>&gt;
+      &lt;<span class="tg">h3</span>&gt;{name}&lt;/<span class="tg">h3</span>&gt;                    <span class="cm">// {} = JS expression</span>
+      &lt;<span class="tg">p</span>&gt;Course: {course}&lt;/<span class="tg">p</span>&gt;
+      {isVisible &amp;&amp; &lt;<span class="tg">p</span>&gt;GPA: {gpa}&lt;/<span class="tg">p</span>&gt;}    <span class="cm">// conditional render</span>
+      &lt;<span class="tg">button</span> <span class="at">onClick</span>={() =&gt; <span class="fn">setIsVisible</span>(!isVisible)}&gt;
+        {isVisible ? <span class="str">'Hide GPA'</span> : <span class="str">'Show GPA'</span>}
+      &lt;/<span class="tg">button</span>&gt;
+    &lt;/<span class="tg">div</span>&gt;
+  );
+}
+
+<span class="cm">// Using the component — props passed like HTML attributes</span>
+&lt;<span class="cls">StudentCard</span> <span class="at">name</span>=<span class="str">"Arjun"</span> <span class="at">course</span>=<span class="str">"MCA"</span> <span class="at">gpa</span>={<span class="num">8.7</span>} /&gt;</pre>
+  </div>
+
+  <div class="callout c-react">
+    <strong>Virtual DOM explained:</strong> When state changes, React creates a new Virtual DOM tree, diffs it against the previous one (reconciliation), and applies only the changed parts to the real DOM. This avoids expensive full re-renders. jQuery would update the whole DOM; React updates only exactly what changed.
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     §4 — ANGULAR (2+)
+     ══════════════════════════════════════════════════════ -->
+<section class="section" id="sec-angular">
+  <div class="sec-head">
+    <span class="sec-num">04</span>
+    <div>
+      <div class="sec-tag">Framework Overview</div>
+      <div class="sec-title">Angular — Full Framework by Google</div>
+    </div>
+  </div>
+
+  <div class="fw-profile">
+    <div class="fwp-header" style="border-left: 4px solid var(--angular)">
+      <div class="fwp-logo" style="background:var(--ang-lt);color:var(--angular)">🅰</div>
+      <div class="fwp-meta">
+        <div class="fwp-name" style="color:var(--angular)">Angular</div>
+        <div class="fwp-sub">
+          Complete rewrite of AngularJS by Google (2016) &nbsp;·&nbsp; Written in TypeScript
+          <span class="fwp-pill" style="background:var(--ang-lt);color:var(--angular);border:1px solid rgba(221,0,49,.2)">Full framework</span>
+          <span class="fwp-pill" style="background:#fff7ed;color:#c2410c;border:1px solid #fed7aa">Enterprise choice</span>
+        </div>
+      </div>
+    </div>
+    <div class="fwp-body">
+      <p class="fwp-intro">Angular is a complete, opinionated framework — it includes everything: routing, HTTP client, forms, animations, testing, and CLI tools. It uses <strong>TypeScript</strong> by default and enforces a strict project structure. Preferred in large enterprise applications where conventions and consistency matter more than flexibility.</p>
+      <div class="fwp-grid">
+        <div>
+          <div class="fwp-section-title">Core Concepts</div>
+          <ul class="feature-list">
+            <li><strong>Components</strong> — TypeScript class + HTML template + CSS</li>
+            <li><strong>Modules (NgModule)</strong> — group related components and services</li>
+            <li><strong>Templates</strong> — HTML with Angular directives and binding syntax</li>
+            <li><strong>Data binding</strong> — one-way <code>[property]</code>, event <code>(event)</code>, two-way <code>[(ngModel)]</code></li>
+            <li><strong>Dependency Injection</strong> — services injected into components automatically</li>
+            <li><strong>Decorators</strong> — <code>@Component</code>, <code>@Injectable</code>, <code>@NgModule</code></li>
+            <li><strong>Change detection</strong> — Zone.js tracks async changes automatically</li>
+          </ul>
+        </div>
+        <div>
+          <div class="fwp-section-title">Key Facts</div>
+          <table class="ref-table" style="margin:0">
+            <tr><td>Language</td><td>TypeScript (mandatory)</td></tr>
+            <tr><td>Architecture</td><td>MVC / Component-based</td></tr>
+            <tr><td>Data binding</td><td>Two-way (via ngModel)</td></tr>
+            <tr><td>Learning curve</td><td>Steep (TypeScript + Angular concepts)</td></tr>
+            <tr><td>Used by</td><td>Google, Microsoft, Forbes, Samsung</td></tr>
+            <tr><td>Ecosystem</td><td>Angular CLI, RxJS, Angular Material</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="cb-bar"><span class="cbd cbd-r"></span><span class="cbd cbd-y"></span><span class="cbd cbd-g"></span><span class="cb-fn">student-card.component.ts — Angular component</span></div>
+    <pre><span class="cm">// Angular component — TypeScript decorator + class</span>
+<span class="kw">import</span> { <span class="cls">Component</span>, <span class="cls">Input</span> } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+
+<span class="dec">@Component</span>({
+  selector:    <span class="str">'app-student-card'</span>,    <span class="cm">// HTML tag name</span>
+  templateUrl: <span class="str">'./student-card.html'</span>,
+  styleUrls:   [<span class="str">'./student-card.css'</span>]
+})
+<span class="kw">export class</span> <span class="cls">StudentCardComponent</span> {
+  <span class="dec">@Input</span>() name:   <span class="kw">string</span> = <span class="str">''</span>;  <span class="cm">// receives data from parent</span>
+  <span class="dec">@Input</span>() course: <span class="kw">string</span> = <span class="str">''</span>;
+  <span class="dec">@Input</span>() gpa:    <span class="kw">number</span> = <span class="num">0</span>;
+
+  isVisible = <span class="kw">true</span>;
+
+  <span class="fn">toggleGPA</span>() {
+    <span class="kw">this</span>.isVisible = !<span class="kw">this</span>.isVisible;
+  }
+}
+
+<span class="cm">// student-card.html template</span>
+<span class="cm">&lt;div class="card"&gt;</span>
+<span class="cm">  &lt;h3&gt;{{ name }}&lt;/h3&gt;               &lt;!-- interpolation --&gt;</span>
+<span class="cm">  &lt;p&gt;Course: {{ course }}&lt;/p&gt;</span>
+<span class="cm">  &lt;p *ngIf="isVisible"&gt;GPA: {{ gpa }}&lt;/p&gt; &lt;!-- directive --&gt;</span>
+<span class="cm">  &lt;button (click)="toggleGPA()"&gt;    &lt;!-- event binding --&gt;</span>
+<span class="cm">    {{ isVisible ? 'Hide' : 'Show' }} GPA</span>
+<span class="cm">  &lt;/button&gt;</span>
+<span class="cm">&lt;/div&gt;</span></pre>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     §5 — VUE.JS
+     ══════════════════════════════════════════════════════ -->
+<section class="section" id="sec-vue">
+  <div class="sec-head">
+    <span class="sec-num">05</span>
+    <div>
+      <div class="sec-tag">Framework Overview</div>
+      <div class="sec-title">Vue.js — Progressive Framework</div>
+    </div>
+  </div>
+
+  <div class="fw-profile">
+    <div class="fwp-header" style="border-left: 4px solid var(--vue)">
+      <div class="fwp-logo" style="background:var(--vue-lt);color:var(--vue)">🟢</div>
+      <div class="fwp-meta">
+        <div class="fwp-name" style="color:var(--vue)">Vue.js</div>
+        <div class="fwp-sub">
+          Created by Evan You (ex-Google, 2014) &nbsp;·&nbsp; Community-maintained
+          <span class="fwp-pill" style="background:var(--vue-lt);color:var(--vue);border:1px solid rgba(66,184,131,.2)">Progressive framework</span>
+          <span class="fwp-pill" style="background:#fef9c3;color:#854d0e;border:1px solid #fde047">Easiest to learn</span>
+        </div>
+      </div>
+    </div>
+    <div class="fwp-body">
+      <p class="fwp-intro">Vue is called "progressive" because you can adopt it incrementally — use just the core view layer for a small project, or add Vue Router, Pinia, and Nuxt for a full-scale app. It combines React's component model with AngularJS's template directives into a gentler learning curve.</p>
+      <div class="fwp-grid">
+        <div>
+          <div class="fwp-section-title">Core Concepts</div>
+          <ul class="feature-list">
+            <li><strong>Single File Components (.vue)</strong> — template, script, and style in one file</li>
+            <li><strong>Reactive data</strong> — <code>ref()</code> and <code>reactive()</code> make variables reactive</li>
+            <li><strong>Directives</strong> — <code>v-if</code>, <code>v-for</code>, <code>v-bind</code>, <code>v-on</code>, <code>v-model</code></li>
+            <li><strong>Two-way binding</strong> — <code>v-model</code> binds input to data automatically</li>
+            <li><strong>Computed properties</strong> — cached derived values based on reactive data</li>
+            <li><strong>Composition API</strong> — modern Vue 3 way (similar to React hooks)</li>
+            <li><strong>Props and Emits</strong> — parent-child communication</li>
+          </ul>
+        </div>
+        <div>
+          <div class="fwp-section-title">Key Facts</div>
+          <table class="ref-table" style="margin:0">
+            <tr><td>Language</td><td>JavaScript or TypeScript</td></tr>
+            <tr><td>Architecture</td><td>MVVM / Component-based</td></tr>
+            <tr><td>Data binding</td><td>Reactive (two-way via v-model)</td></tr>
+            <tr><td>Learning curve</td><td>Low — gentlest of the three</td></tr>
+            <tr><td>Used by</td><td>Alibaba, Xiaomi, GitLab, Nintendo</td></tr>
+            <tr><td>Ecosystem</td><td>Nuxt.js, Pinia, Vue Router, Vite</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="cb-bar"><span class="cbd cbd-r"></span><span class="cbd cbd-y"></span><span class="cbd cbd-g"></span><span class="cb-fn">StudentCard.vue — Vue Single File Component</span></div>
+    <pre><span class="cm">&lt;!-- Vue Single File Component (.vue) --&gt;</span>
+<span class="cm">&lt;!-- Three sections: template + script + style --&gt;</span>
+
+<span class="tg">&lt;template&gt;</span>
+  <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="str">"card"</span><span class="tg">&gt;</span>
+    <span class="tg">&lt;h3&gt;</span>{{ name }}<span class="tg">&lt;/h3&gt;</span>               <span class="cm">&lt;!-- interpolation --&gt;</span>
+    <span class="tg">&lt;p&gt;</span>Course: {{ course }}<span class="tg">&lt;/p&gt;</span>
+    <span class="tg">&lt;p</span> <span class="at">v-if</span>=<span class="str">"isVisible"</span><span class="tg">&gt;</span>GPA: {{ gpa }}<span class="tg">&lt;/p&gt;</span>  <span class="cm">&lt;!-- directive --&gt;</span>
+    <span class="tg">&lt;button</span> <span class="at">@click</span>=<span class="str">"toggleGPA"</span><span class="tg">&gt;</span>         <span class="cm">&lt;!-- event --&gt;</span>
+      {{ isVisible ? 'Hide' : 'Show' }} GPA
+    <span class="tg">&lt;/button&gt;</span>
+  <span class="tg">&lt;/div&gt;</span>
+<span class="tg">&lt;/template&gt;</span>
+
+<span class="tg">&lt;script</span> <span class="at">setup</span><span class="tg">&gt;</span>        <span class="cm">// Composition API (Vue 3)</span>
+<span class="kw">import</span> { <span class="fn">ref</span>, <span class="fn">defineProps</span> } <span class="kw">from</span> <span class="str">'vue'</span>;
+
+<span class="kw">const</span> props = <span class="fn">defineProps</span>(['name', 'course', 'gpa']);
+<span class="kw">const</span> isVisible = <span class="fn">ref</span>(<span class="kw">true</span>);   <span class="cm">// reactive variable</span>
+
+<span class="kw">function</span> <span class="fn">toggleGPA</span>() {
+  isVisible.<span class="fn">value</span> = !isVisible.<span class="fn">value</span>;
+}
+<span class="tg">&lt;/script&gt;</span>
+
+<span class="tg">&lt;style</span> <span class="at">scoped</span><span class="tg">&gt;</span>        <span class="cm">/* scoped = styles apply only to this component */</span>
+.card { padding: 1rem; border-radius: 8px; }
+<span class="tg">&lt;/style&gt;</span></pre>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     §6 — COMPARISON
+     ══════════════════════════════════════════════════════ -->
+<section class="section" id="sec-compare">
+  <div class="sec-head">
+    <span class="sec-num">06</span>
+    <div>
+      <div class="sec-tag">Analysis</div>
+      <div class="sec-title">React vs Angular vs Vue — Side by Side</div>
+    </div>
+  </div>
+
+  <div class="card full-w" style="padding:0;overflow:hidden">
+    <table class="cmp-table" style="margin:0">
+      <thead>
+        <tr>
+          <th class="th-feature">Feature</th>
+          <th class="th-react">⚛ React</th>
+          <th class="th-angular">🅰 Angular</th>
+          <th class="th-vue">🟢 Vue.js</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="td-feature">Type</td><td class="td-react">Library (view only)</td><td class="td-angular">Full framework</td><td class="td-vue">Progressive framework</td></tr>
+        <tr><td class="td-feature">Language</td><td class="td-react">JavaScript / TypeScript</td><td class="td-angular">TypeScript (required)</td><td class="td-vue">JavaScript / TypeScript</td></tr>
+        <tr><td class="td-feature">Data binding</td><td class="td-react">One-way (top-down)</td><td class="td-angular">Two-way (ngModel)</td><td class="td-vue">Two-way (v-model)</td></tr>
+        <tr><td class="td-feature">DOM strategy</td><td class="td-react">Virtual DOM</td><td class="td-angular">Real DOM + Change Detection</td><td class="td-vue">Virtual DOM</td></tr>
+        <tr><td class="td-feature">Template syntax</td><td class="td-react">JSX (JS + HTML)</td><td class="td-angular">HTML + Angular directives</td><td class="td-vue">HTML + Vue directives</td></tr>
+        <tr><td class="td-feature">State management</td><td class="td-react">External (Redux/Zustand)</td><td class="td-angular">Services + RxJS</td><td class="td-vue">Pinia (built-in option)</td></tr>
+        <tr><td class="td-feature">Routing</td><td class="td-react">External (React Router)</td><td class="td-angular">Built-in</td><td class="td-vue">Built-in (Vue Router)</td></tr>
+        <tr><td class="td-feature">Learning curve</td><td class="td-react">Moderate</td><td class="td-angular">Steep</td><td class="td-vue">Low (easiest)</td></tr>
+        <tr><td class="td-feature">Architecture</td><td class="td-react">Flexible (you choose)</td><td class="td-angular">Opinionated (enforced)</td><td class="td-vue">Flexible + opinionated options</td></tr>
+        <tr><td class="td-feature">Best for</td><td class="td-react">Flexible SPAs, startups</td><td class="td-angular">Large enterprise apps</td><td class="td-vue">Beginners, rapid prototyping</td></tr>
+        <tr><td class="td-feature">Market position (2024)</td><td class="td-react">#1 most used</td><td class="td-angular">#2 (enterprise)</td><td class="td-vue">#3 (growing fast)</td></tr>
+        <tr><td class="td-feature">Mobile</td><td class="td-react">React Native</td><td class="td-angular">Ionic</td><td class="td-vue">NativeScript-Vue</td></tr>
+        <tr><td class="td-feature">Creator</td><td class="td-react">Meta (Facebook)</td><td class="td-angular">Google</td><td class="td-vue">Evan You (community)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout c-amber">
+    <strong>VTU Exam tip — "Opinionated vs Flexible":</strong> Angular is <em>opinionated</em> — it tells you exactly how to structure your app, what language to use, and which tools to use. React is <em>flexible</em> — it handles only the view, and you make all other choices. Vue sits in between.
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     §7 — ANGULARJS DEEP DIVE
+     ══════════════════════════════════════════════════════ -->
+<section class="section" id="sec-angularjs">
+  <div class="sec-head">
+    <span class="sec-num">07</span>
+    <div>
+      <div class="sec-tag">VTU Core Topic — AngularJS</div>
+      <div class="sec-title">AngularJS (Angular 1) — Deep Dive</div>
+      <div class="sec-intro">AngularJS is Angular 1, written in plain JavaScript (not TypeScript). It was the first major front-end MVC framework and is the subject specified in your VTU syllabus. Note it is different from modern Angular 2+.</div>
+    </div>
+  </div>
+
+  <div class="callout c-angular">
+    <strong>Important:</strong> Your textbook references <em>AngularJS by Krishna Rungta</em> which covers Angular 1 (AngularJS). <strong>AngularJS ≠ Angular</strong>. AngularJS (2010) uses JavaScript and the MVC pattern with controllers and <code>$scope</code>. Angular 2+ (2016) uses TypeScript and a completely different architecture.
+  </div>
+
+  <div class="tab-set">
+    <input type="radio" name="ng-tabs" id="ngt1" checked>
+    <input type="radio" name="ng-tabs" id="ngt2">
+    <input type="radio" name="ng-tabs" id="ngt3">
+    <input type="radio" name="ng-tabs" id="ngt4">
+    <input type="radio" name="ng-tabs" id="ngt5">
+    <input type="radio" name="ng-tabs" id="ngt6">
+
+    <div class="tab-labels">
+      <label class="tab-label" for="ngt1">Overview</label>
+      <label class="tab-label" for="ngt2">Directives</label>
+      <label class="tab-label" for="ngt3">Controllers</label>
+      <label class="tab-label" for="ngt4">Data Binding</label>
+      <label class="tab-label" for="ngt5">Filters &amp; Services</label>
+      <label class="tab-label" for="ngt6">Full Example</label>
+    </div>
+
+    <!-- Panel 1: Overview -->
+    <div class="tab-panel">
+      <div class="two-col">
+        <div>
+          <div class="card-h">How AngularJS works</div>
+          <p class="card-b" style="margin-bottom:12px">AngularJS extends HTML with special attributes (directives). You link a JavaScript controller to an HTML section. The controller exposes a <code>$scope</code> object. Every property on <code>$scope</code> automatically appears in the HTML, and vice versa.</p>
+          <div class="code-block" style="margin-top:8px">
+            <div class="cb-bar"><span class="cbd cbd-r"></span><span class="cbd cbd-y"></span><span class="cbd cbd-g"></span><span class="cb-fn">Minimal AngularJS setup</span></div>
+            <pre><span class="cm">&lt;!-- Step 1: load AngularJS --&gt;</span>
+<span class="tg">&lt;script</span> <span class="at">src</span>=<span class="str">"angular.min.js"</span><span class="tg">&gt;&lt;/script&gt;</span>
+
+<span class="cm">&lt;!-- Step 2: ng-app marks the Angular boundary --&gt;</span>
+<span class="tg">&lt;div</span> <span class="at">ng-app</span>=<span class="str">"myApp"</span>
+     <span class="at">ng-controller</span>=<span class="str">"MyCtrl"</span><span class="tg">&gt;</span>
+  <span class="tg">&lt;input</span> <span class="at">ng-model</span>=<span class="str">"name"</span><span class="tg">&gt;</span>
+  <span class="tg">&lt;p&gt;</span>Hello, {{ name }}!<span class="tg">&lt;/p&gt;</span>
+<span class="tg">&lt;/div&gt;</span>
+
+<span class="cm">// Step 3: create the app and controller</span>
+<span class="kw">var</span> app = angular.<span class="fn">module</span>(<span class="str">'myApp'</span>, []);
+
+app.<span class="fn">controller</span>(<span class="str">'MyCtrl'</span>, <span class="kw">function</span>($scope) {
+  $scope.name = <span class="str">'VTU Student'</span>;
+});</pre>
+          </div>
+        </div>
+        <div>
+          <div class="card-h">Core building blocks</div>
+          <table class="ref-table">
+            <tr><th>Block</th><th>Description</th></tr>
+            <tr><td>Module</td><td>Container for the app — <code>angular.module()</code></td></tr>
+            <tr><td>Controller</td><td>Manages a section of the UI via <code>$scope</code></td></tr>
+            <tr><td>$scope</td><td>Shared object between controller and template</td></tr>
+            <tr><td>Directive</td><td>Special HTML attributes (ng-*) that add behaviour</td></tr>
+            <tr><td>Service</td><td>Reusable singleton logic (e.g. <code>$http</code>)</td></tr>
+            <tr><td>Filter</td><td>Formats displayed data (e.g. <code>| uppercase</code>)</td></tr>
+            <tr><td>Dependency Injection</td><td>Services passed into controllers automatically</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 2: Directives -->
+    <div class="tab-panel">
+      <p style="font-size:14px;color:var(--sub);margin-bottom:14px">Directives are special HTML attributes (prefixed with <code>ng-</code>) that extend HTML with new behaviour. They are the core mechanism of AngularJS.</p>
+      <table class="cmp-table">
+        <thead><tr><th class="th-feature">Directive</th><th class="th-angular">Purpose</th><th class="th-feature">Example</th></tr></thead>
+        <tbody>
+          <tr><td class="td-feature">ng-app</td><td>Marks the root of the AngularJS application</td><td><code style="font-size:11.5px">&lt;html ng-app="myApp"&gt;</code></td></tr>
+          <tr><td class="td-feature">ng-controller</td><td>Binds a controller to an HTML section</td><td><code style="font-size:11.5px">&lt;div ng-controller="MyCtrl"&gt;</code></td></tr>
+          <tr><td class="td-feature">ng-model</td><td>Two-way binds an input to a scope variable</td><td><code style="font-size:11.5px">&lt;input ng-model="name"&gt;</code></td></tr>
+          <tr><td class="td-feature">ng-bind</td><td>One-way binding (alternative to {{ }})</td><td><code style="font-size:11.5px">&lt;p ng-bind="name"&gt;&lt;/p&gt;</code></td></tr>
+          <tr><td class="td-feature">ng-if</td><td>Adds/removes element based on condition</td><td><code style="font-size:11.5px">&lt;p ng-if="isLoggedIn"&gt;</code></td></tr>
+          <tr><td class="td-feature">ng-show / ng-hide</td><td>Shows/hides element (keeps in DOM)</td><td><code style="font-size:11.5px">&lt;div ng-show="isActive"&gt;</code></td></tr>
+          <tr><td class="td-feature">ng-repeat</td><td>Loops over an array to repeat elements</td><td><code style="font-size:11.5px">&lt;li ng-repeat="s in students"&gt;</code></td></tr>
+          <tr><td class="td-feature">ng-click</td><td>Attaches a click event handler</td><td><code style="font-size:11.5px">&lt;button ng-click="save()"&gt;</code></td></tr>
+          <tr><td class="td-feature">ng-submit</td><td>Handles form submission</td><td><code style="font-size:11.5px">&lt;form ng-submit="doLogin()"&gt;</code></td></tr>
+          <tr><td class="td-feature">ng-class</td><td>Conditionally applies CSS classes</td><td><code style="font-size:11.5px">&lt;div ng-class="{'active': isOn}"&gt;</code></td></tr>
+          <tr><td class="td-feature">ng-style</td><td>Dynamically sets inline styles</td><td><code style="font-size:11.5px">&lt;p ng-style="{'color': col}"&gt;</code></td></tr>
+          <tr><td class="td-feature">ng-include</td><td>Includes an external HTML template</td><td><code style="font-size:11.5px">&lt;div ng-include="'nav.html'"&gt;</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Panel 3: Controllers -->
+    <div class="tab-panel">
+      <p style="font-size:14px;color:var(--sub);margin-bottom:14px">A controller is a JavaScript function that sets up the <code>$scope</code> — the shared data model between the HTML and the JavaScript logic.</p>
+      <div class="code-block">
+        <div class="cb-bar"><span class="cbd cbd-r"></span><span class="cbd cbd-y"></span><span class="cbd cbd-g"></span><span class="cb-fn">controllers.js — complete controller example</span></div>
+        <pre><span class="kw">var</span> app = angular.<span class="fn">module</span>(<span class="str">'studentApp'</span>, []);
+
+<span class="cm">// Controller — exposes data and functions via $scope</span>
+app.<span class="fn">controller</span>(<span class="str">'StudentCtrl'</span>, <span class="kw">function</span>($scope) {
+
+  <span class="cm">// Data on $scope is available in HTML</span>
+  $scope.students = [
+    { name: <span class="str">'Arjun'</span>,  course: <span class="str">'MCA'</span>, gpa: <span class="num">8.7</span> },
+    { name: <span class="str">'Priya'</span>,  course: <span class="str">'MCA'</span>, gpa: <span class="num">9.1</span> },
+    { name: <span class="str">'Ravi'</span>,   course: <span class="str">'BCA'</span>, gpa: <span class="num">7.8</span> },
+  ];
+
+  $scope.newStudent = { name: <span class="str">''</span>, course: <span class="str">''</span>, gpa: <span class="num">0</span> };
+
+  <span class="cm">// Functions on $scope are callable from HTML</span>
+  $scope.<span class="fn">addStudent</span> = <span class="kw">function</span>() {
+    <span class="kw">if</span> ($scope.newStudent.name) {
+      $scope.students.<span class="fn">push</span>({...$scope.newStudent});
+      $scope.newStudent = {};  <span class="cm">// clear form</span>
+    }
+  };
+
+  $scope.<span class="fn">removeStudent</span> = <span class="kw">function</span>(index) {
+    $scope.students.<span class="fn">splice</span>(index, <span class="num">1</span>);
+  };
+
+  $scope.<span class="fn">getAvgGPA</span> = <span class="kw">function</span>() {
+    <span class="kw">const</span> total = $scope.students.<span class="fn">reduce</span>(
+      (s, st) => s + st.gpa, <span class="num">0</span>
+    );
+    <span class="kw">return</span> (total / $scope.students.length).<span class="fn">toFixed</span>(<span class="num">2</span>);
+  };
+});</pre>
+      </div>
+    </div>
+
+    <!-- Panel 4: Data Binding -->
+    <div class="tab-panel">
+      <div class="two-col">
+        <div>
+          <div class="card-h">Two-Way Data Binding</div>
+          <p class="card-b" style="margin-bottom:12px">AngularJS's most celebrated feature. The HTML and JavaScript model stay in sync <em>automatically</em>. Change the input — the variable updates. Change the variable — the HTML updates. No event listeners needed.</p>
+          <div class="code-block">
+            <div class="cb-bar"><span class="cbd cbd-r"></span><span class="cbd cbd-y"></span><span class="cbd cbd-g"></span><span class="cb-fn">two-way-binding.html</span></div>
+            <pre><span class="tg">&lt;div</span> <span class="at">ng-app</span>=<span class="str">"app"</span>
+     <span class="at">ng-controller</span>=<span class="str">"Ctrl"</span><span class="tg">&gt;</span>
+
+  <span class="cm">&lt;!-- ng-model creates two-way binding --&gt;</span>
+  <span class="tg">&lt;input</span> <span class="at">ng-model</span>=<span class="str">"username"</span>
+         <span class="at">placeholder</span>=<span class="str">"Enter name"</span><span class="tg">&gt;</span>
+
+  <span class="cm">&lt;!-- Automatically shows updated value --&gt;</span>
+  <span class="tg">&lt;p&gt;</span>Hello, {{ username }}!<span class="tg">&lt;/p&gt;</span>
+
+  <span class="cm">&lt;!-- Also works on select and checkbox --&gt;</span>
+  <span class="tg">&lt;input</span> <span class="at">type</span>=<span class="str">"checkbox"</span>
+         <span class="at">ng-model</span>=<span class="str">"agreed"</span><span class="tg">&gt;</span> Agree
+  <span class="tg">&lt;p&gt;</span>Agreed: {{ agreed }}<span class="tg">&lt;/p&gt;</span>
+<span class="tg">&lt;/div&gt;</span></pre>
+          </div>
+        </div>
+        <div>
+          <div class="card-h">Binding types in AngularJS</div>
+          <table class="ref-table">
+            <tr><th>Type</th><th>Syntax</th><th>Direction</th></tr>
+            <tr><td>Interpolation</td><td><code>{{ expr }}</code></td><td>Scope → View</td></tr>
+            <tr><td>ng-model</td><td><code>ng-model="var"</code></td><td>Both ways ↔</td></tr>
+            <tr><td>ng-bind</td><td><code>ng-bind="expr"</code></td><td>Scope → View</td></tr>
+            <tr><td>ng-click</td><td><code>ng-click="fn()"</code></td><td>View → Scope</td></tr>
+            <tr><td>ng-href</td><td><code>ng-href="url"</code></td><td>Scope → View</td></tr>
+            <tr><td>ng-src</td><td><code>ng-src="img"</code></td><td>Scope → View</td></tr>
+          </table>
+          <div class="callout c-angular" style="margin-top:10px;font-size:12.5px">
+            <strong>How it works internally:</strong> AngularJS uses a <em>digest cycle</em> — it watches all <code>$scope</code> variables in a loop. When any value changes, it re-evaluates all watchers and updates the DOM. This is called <strong>dirty checking</strong>.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 5: Filters & Services -->
+    <div class="tab-panel">
+      <div class="two-col">
+        <div>
+          <div class="card-h">Filters — format output in templates</div>
+          <p style="font-size:13.5px;color:var(--sub);margin-bottom:10px">Filters format the value of an expression for display using the pipe <code>|</code> character.</p>
+          <div class="code-block">
+            <div class="cb-bar"><span class="cbd cbd-r"></span><span class="cbd cbd-y"></span><span class="cbd cbd-g"></span><span class="cb-fn">filters.html</span></div>
+            <pre><span class="cm">&lt;!-- Built-in filters --&gt;</span>
+{{ name | uppercase }}
+{{ name | lowercase }}
+{{ gpa  | number:2 }}      <span class="cm">2 decimal places</span>
+{{ fee  | currency:"₹" }}  <span class="cm">currency symbol</span>
+{{ date | date:'dd/MM/yy'}}<span class="cm">format date</span>
+
+<span class="cm">&lt;!-- filter on ng-repeat --&gt;</span>
+<span class="tg">&lt;li</span> <span class="at">ng-repeat</span>=<span class="str">"s in students</span>
+<span class="str">           | filter:searchText</span>
+<span class="str">           | orderBy:'name'"</span><span class="tg">&gt;</span>
+  {{ s.name }}
+<span class="tg">&lt;/li&gt;</span>
+
+<span class="cm">// Custom filter in JS</span>
+app.<span class="fn">filter</span>(<span class="str">'grade'</span>, <span class="kw">function</span>() {
+  <span class="kw">return function</span>(score) {
+    <span class="kw">return</span> score >= <span class="num">75</span> ? <span class="str">'A'</span> : <span class="str">'B'</span>;
+  };
+});</pre>
+          </div>
+        </div>
+        <div>
+          <div class="card-h">Services — reusable singletons</div>
+          <p style="font-size:13.5px;color:var(--sub);margin-bottom:10px">Services hold shared logic or data. AngularJS has built-in services (prefixed with <code>$</code>). You can create custom ones.</p>
+          <div class="code-block">
+            <div class="cb-bar"><span class="cbd cbd-r"></span><span class="cbd cbd-y"></span><span class="cbd cbd-g"></span><span class="cb-fn">services.js</span></div>
+            <pre><span class="cm">// Built-in services</span>
+<span class="cm">// $http — AJAX requests</span>
+app.<span class="fn">controller</span>(<span class="str">'Ctrl'</span>,
+  <span class="kw">function</span>($scope, $http) {
+
+  $http.<span class="fn">get</span>(<span class="str">'/api/students'</span>)
+    .<span class="fn">then</span>(<span class="kw">function</span>(res) {
+      $scope.students = res.data;
+    });
+});
+
+<span class="cm">// Custom service</span>
+app.<span class="fn">service</span>(<span class="str">'StudentService'</span>,
+  <span class="kw">function</span>() {
+    <span class="kw">this</span>.getGrade = <span class="kw">function</span>(gpa) {
+      <span class="kw">return</span> gpa >= <span class="num">8</span> ? <span class="str">'A'</span> : <span class="str">'B'</span>;
+    };
+});
+
+<span class="cm">// Inject into controller</span>
+app.<span class="fn">controller</span>(<span class="str">'Ctrl'</span>,
+  <span class="kw">function</span>($scope, <span class="cls">StudentService</span>) {
+    $scope.grade =
+      StudentService.<span class="fn">getGrade</span>(<span class="num">8.7</span>);
+});</pre>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:0">
+        <div class="card-h">Important built-in services</div>
+        <table class="ref-table" style="margin:0">
+          <tr><th>Service</th><th>Purpose</th></tr>
+          <tr><td>$http</td><td>Makes AJAX GET/POST/PUT/DELETE requests. Returns a Promise. Replaces jQuery $.ajax().</td></tr>
+          <tr><td>$scope</td><td>The shared model between controller and view. All bindings are properties of $scope.</td></tr>
+          <tr><td>$rootScope</td><td>Global scope accessible by all controllers. Use sparingly — can cause coupling.</td></tr>
+          <tr><td>$location</td><td>Reads and writes the browser URL. Used for navigation within the SPA.</td></tr>
+          <tr><td>$timeout</td><td>Angular-aware version of setTimeout. Triggers a digest cycle after execution.</td></tr>
+          <tr><td>$filter</td><td>Applies a filter function programmatically inside controller code.</td></tr>
+          <tr><td>$routeProvider</td><td>Maps URLs to controllers and templates (requires ngRoute module).</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Panel 6: Full Working Example -->
+    <div class="tab-panel">
+      <p style="font-size:14px;color:var(--sub);margin-bottom:14px">A complete AngularJS student list application demonstrating all major concepts together.</p>
+      <div class="code-block">
+        <div class="cb-bar"><span class="cbd cbd-r"></span><span class="cbd cbd-y"></span><span class="cbd cbd-g"></span><span class="cb-fn">student-app.html — complete AngularJS application</span></div>
+        <pre><span class="cm">&lt;!DOCTYPE html&gt;</span>
+<span class="tg">&lt;html</span> <span class="at">ng-app</span>=<span class="str">"studentApp"</span><span class="tg">&gt;</span>   <span class="cm">&lt;!-- ng-app bootstraps Angular --&gt;</span>
+<span class="tg">&lt;head&gt;</span>
+  <span class="tg">&lt;script</span> <span class="at">src</span>=<span class="str">"https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"</span><span class="tg">&gt;&lt;/script&gt;</span>
+<span class="tg">&lt;/head&gt;</span>
+<span class="tg">&lt;body</span> <span class="at">ng-controller</span>=<span class="str">"StudentCtrl"</span><span class="tg">&gt;</span>
+
+  <span class="tg">&lt;h2&gt;</span>VTU Student List<span class="tg">&lt;/h2&gt;</span>
+
+  <span class="cm">&lt;!-- Search filter --&gt;</span>
+  <span class="tg">&lt;input</span> <span class="at">ng-model</span>=<span class="str">"searchText"</span> <span class="at">placeholder</span>=<span class="str">"Search students..."</span><span class="tg">&gt;</span>
+
+  <span class="cm">&lt;!-- ng-repeat with filter and orderBy --&gt;</span>
+  <span class="tg">&lt;table&gt;</span>
+    <span class="tg">&lt;tr</span> <span class="at">ng-repeat</span>=<span class="str">"student in students | filter:searchText | orderBy:'name'"</span><span class="tg">&gt;</span>
+      <span class="tg">&lt;td&gt;</span>{{ student.name }}<span class="tg">&lt;/td&gt;</span>
+      <span class="tg">&lt;td&gt;</span>{{ student.gpa | number:1 }}<span class="tg">&lt;/td&gt;</span>      <span class="cm">&lt;!-- filter --&gt;</span>
+      <span class="tg">&lt;td&gt;</span>{{ student.gpa | grade }}<span class="tg">&lt;/td&gt;</span>          <span class="cm">&lt;!-- custom filter --&gt;</span>
+      <span class="tg">&lt;td&gt;</span>
+        <span class="tg">&lt;button</span> <span class="at">ng-click</span>=<span class="str">"remove($index)"</span><span class="tg">&gt;</span>Remove<span class="tg">&lt;/button&gt;</span>
+      <span class="tg">&lt;/td&gt;</span>
+    <span class="tg">&lt;/tr&gt;</span>
+  <span class="tg">&lt;/table&gt;</span>
+
+  <span class="cm">&lt;!-- Add form --&gt;</span>
+  <span class="tg">&lt;form</span> <span class="at">ng-submit</span>=<span class="str">"add()"</span><span class="tg">&gt;</span>
+    <span class="tg">&lt;input</span> <span class="at">ng-model</span>=<span class="str">"newName"</span>  <span class="at">placeholder</span>=<span class="str">"Name"</span><span class="tg">&gt;</span>
+    <span class="tg">&lt;input</span> <span class="at">ng-model</span>=<span class="str">"newGpa"</span>   <span class="at">placeholder</span>=<span class="str">"GPA"</span>  <span class="at">type</span>=<span class="str">"number"</span><span class="tg">&gt;</span>
+    <span class="tg">&lt;button</span> <span class="at">type</span>=<span class="str">"submit"</span><span class="tg">&gt;</span>Add Student<span class="tg">&lt;/button&gt;</span>
+  <span class="tg">&lt;/form&gt;</span>
+
+  <span class="tg">&lt;p&gt;</span>Total: {{ students.length }} | Avg GPA: {{ avgGPA() }}<span class="tg">&lt;/p&gt;</span>
+<span class="tg">&lt;/body&gt;</span><span class="tg">&lt;/html&gt;</span>
+
+<span class="tg">&lt;script&gt;</span>
+<span class="kw">var</span> app = angular.<span class="fn">module</span>(<span class="str">'studentApp'</span>, []);
+
+<span class="cm">// Custom filter</span>
+app.<span class="fn">filter</span>(<span class="str">'grade'</span>, <span class="kw">function</span>() {
+  <span class="kw">return function</span>(gpa) {
+    <span class="kw">return</span> gpa >= <span class="num">9</span> ? <span class="str">'A+'</span> : gpa >= <span class="num">8</span> ? <span class="str">'A'</span> :
+           gpa >= <span class="num">7</span> ? <span class="str">'B'</span>  : <span class="str">'C'</span>;
+  };
+});
+
+app.<span class="fn">controller</span>(<span class="str">'StudentCtrl'</span>, <span class="kw">function</span>($scope) {
+  $scope.students = [
+    { name: <span class="str">'Arjun'</span>, gpa: <span class="num">8.7</span> },
+    { name: <span class="str">'Priya'</span>, gpa: <span class="num">9.2</span> },
+    { name: <span class="str">'Ravi'</span>,  gpa: <span class="num">7.5</span> },
+  ];
+
+  $scope.<span class="fn">add</span> = <span class="kw">function</span>() {
+    <span class="kw">if</span> ($scope.newName) {
+      $scope.students.<span class="fn">push</span>({
+        name: $scope.newName,
+        gpa:  <span class="fn">parseFloat</span>($scope.newGpa)
+      });
+      $scope.newName = $scope.newGpa = <span class="str">''</span>;
+    }
+  };
+
+  $scope.<span class="fn">remove</span> = <span class="kw">function</span>(i) {
+    $scope.students.<span class="fn">splice</span>(i, <span class="num">1</span>);
+  };
+
+  $scope.<span class="fn">avgGPA</span> = <span class="kw">function</span>() {
+    <span class="kw">var</span> sum = $scope.students.<span class="fn">reduce</span>(
+      <span class="kw">function</span>(a, s) { <span class="kw">return</span> a + s.gpa; }, <span class="num">0</span>
+    );
+    <span class="kw">return</span> (sum / $scope.students.length).<span class="fn">toFixed</span>(<span class="num">2</span>);
+  };
+});
+<span class="tg">&lt;/script&gt;</span></pre>
+      </div>
+    </div>
+  </div><!-- /tab-set -->
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     §8 — MVC / MVVM
+     ══════════════════════════════════════════════════════ -->
+<section class="section" id="sec-mvvm">
+  <div class="sec-head">
+    <span class="sec-num">08</span>
+    <div>
+      <div class="sec-tag">Architecture Pattern</div>
+      <div class="sec-title">MVC and MVVM Patterns in Front-End Frameworks</div>
+      <div class="sec-intro">Understanding the architectural patterns that frameworks implement helps you understand how data flows through the application.</div>
+    </div>
+  </div>
+
+  <div class="three-col">
+    <div class="card">
+      <div class="card-h" style="color:var(--blue)">M — Model</div>
+      <div class="card-b">The data and business logic. In AngularJS: the <code>$scope</code> object and services. In React: state and props. In Vue: reactive data. The Model knows nothing about the UI.</div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--green)">V — View</div>
+      <div class="card-b">The HTML template that the user sees. In AngularJS: HTML with directives. In React: JSX returned from a component. In Vue: the <code>&lt;template&gt;</code> section. The View displays data, fires events.</div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--angular)">C/VM — Controller/ViewModel</div>
+      <div class="card-b">Mediates between Model and View. MVC uses a Controller (AngularJS). MVVM uses a ViewModel that is auto-synced via data binding (Vue, Angular). React uses component functions as the mediator.</div>
+    </div>
+  </div>
+
+  <div class="card full-w">
+    <div class="card-h">AngularJS follows MVC — data flow diagram</div>
+    <div style="font-family:var(--mono);font-size:12.5px;line-height:2.2;background:var(--surf);border-radius:var(--r);padding:16px;color:var(--sub)">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <div style="background:var(--blue-lt);border:1px solid var(--blue);border-radius:6px;padding:8px 16px;color:var(--blue);font-weight:600">Model<br><span style="font-size:10.5px;font-weight:400">$scope.students = [...]</span></div>
+        <div style="color:var(--muted);font-size:18px">⇄</div>
+        <div style="background:var(--ang-lt);border:1px solid var(--angular);border-radius:6px;padding:8px 16px;color:var(--angular);font-weight:600">Controller<br><span style="font-size:10.5px;font-weight:400">app.controller('Ctrl', fn)</span></div>
+        <div style="color:var(--muted);font-size:18px">⇄</div>
+        <div style="background:var(--grn-lt);border:1px solid var(--green);border-radius:6px;padding:8px 16px;color:var(--green);font-weight:600">View<br><span style="font-size:10.5px;font-weight:400">HTML + ng-directives</span></div>
+      </div>
+      <div style="margin-top:12px;font-size:12px;color:var(--muted)">
+        User types in input → ng-model updates $scope → Controller logic runs → $scope data updates → View re-renders automatically (digest cycle)
+      </div>
+    </div>
+  </div>
+
+  <div class="callout c-green">
+    <strong>MVVM (Model–View–ViewModel):</strong> Used by Vue and Angular 2+. The ViewModel is automatically synchronised with the View through data binding — you don't manually update the DOM. AngularJS is technically an MVC framework, but its two-way binding gives it MVVM-like behaviour, which is why it's often called MV* (Model-View-Whatever).
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     §9 — QUICK REFERENCE
+     ══════════════════════════════════════════════════════ -->
+<section class="section" id="sec-qr">
+  <div class="sec-head">
+    <span class="sec-num">✦</span>
+    <div>
+      <div class="sec-tag">Exam Prep</div>
+      <div class="sec-title">VTU Quick Reference — AngularJS Directives</div>
+    </div>
+  </div>
+
+  <div class="qr-grid">
+    <div class="qr-card"><span class="qr-m">ng-app</span><span class="qr-d">Bootstraps the AngularJS application. Must be on the root HTML element.</span></div>
+    <div class="qr-card"><span class="qr-m">ng-controller</span><span class="qr-d">Binds a controller function to an HTML section. The controller manages $scope for that section.</span></div>
+    <div class="qr-card"><span class="qr-m">ng-model</span><span class="qr-d">Two-way binds an input/select/textarea to a $scope variable. Changes in either direction propagate automatically.</span></div>
+    <div class="qr-card"><span class="qr-m">ng-repeat</span><span class="qr-d">Repeats an element for each item in an array. Use $index for position. Supports filter and orderBy.</span></div>
+    <div class="qr-card"><span class="qr-m">ng-if</span><span class="qr-d">Adds or removes element from DOM based on condition. ng-show/ng-hide keep element in DOM but toggle visibility.</span></div>
+    <div class="qr-card"><span class="qr-m">ng-click</span><span class="qr-d">Binds a click handler. Calls a $scope function. e.g. ng-click="save()"</span></div>
+    <div class="qr-card"><span class="qr-m">{{ expression }}</span><span class="qr-d">Interpolation — displays the value of a $scope expression. Updates automatically when data changes.</span></div>
+    <div class="qr-card"><span class="qr-m">$scope</span><span class="qr-d">The glue between controller and view. All data and functions attached to $scope are accessible in the template.</span></div>
+    <div class="qr-card"><span class="qr-m">$http</span><span class="qr-d">Built-in service for AJAX calls. $http.get(url).then(fn). Angular-aware — triggers digest after response.</span></div>
+    <div class="qr-card"><span class="qr-m">filter | orderBy</span><span class="qr-d">Built-in filters for ng-repeat. filter:searchText narrows results. orderBy:'field' sorts the array.</span></div>
+    <div class="qr-card"><span class="qr-m">Dependency Injection</span><span class="qr-d">Services passed as named parameters to controllers. Angular resolves them automatically. e.g. function($scope, $http)</span></div>
+    <div class="qr-card"><span class="qr-m">Digest cycle</span><span class="qr-d">AngularJS's change detection — loops through all watchers, detects changes, and updates DOM. Called dirty checking.</span></div>
+  </div>
+
+  <div class="callout c-amber" style="margin-top:20px">
+    <strong>Key VTU exam distinctions to remember:</strong> (1) AngularJS ≠ Angular — they are completely different. (2) React is a library, not a full framework. (3) Two-way data binding is a key AngularJS feature — change input, model updates; change model, view updates. (4) ng-repeat is AngularJS's loop directive (React uses .map(), Vue uses v-for). (5) $scope is AngularJS-specific — modern frameworks don't use it.
+  </div>
+</section>
+
+</main>
+
+<footer class="page-footer">
+  VTU MCA — Web Technologies · Module 5 · Front-End Frameworks &amp; AngularJS &nbsp;·&nbsp; Reference: AngularJS by Krishna Rungta (Packt)
+</footer>
+
+</body>
+</html>

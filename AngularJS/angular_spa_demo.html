@@ -1,0 +1,254 @@
+
+<style>
+h2.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+.app{display:flex;flex-direction:column;min-height:520px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;font-size:14px}
+.nav{display:flex;align-items:center;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);padding:0 16px;height:48px;gap:4px}
+.nav-brand{font-size:15px;font-weight:500;color:var(--color-text-primary);margin-right:16px;display:flex;align-items:center;gap:7px}
+.brand-chip{background:var(--color-background-danger);color:var(--color-text-danger);font-size:10px;font-weight:500;padding:2px 7px;border-radius:4px;border:0.5px solid var(--color-border-danger)}
+.nav-link{padding:6px 12px;border-radius:var(--border-radius-md);font-size:13px;font-weight:500;color:var(--color-text-secondary);cursor:pointer;border:none;background:transparent;transition:all .15s}
+.nav-link:hover{background:var(--color-background-tertiary);color:var(--color-text-primary)}
+.nav-link.active{background:var(--color-background-info);color:var(--color-text-info)}
+.url-bar{margin-left:auto;font-size:11px;font-family:var(--font-mono);color:var(--color-text-tertiary);background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:3px 10px}
+.view{flex:1;padding:20px}
+.view-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.view-title{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.badge{font-size:11px;padding:3px 9px;border-radius:var(--border-radius-md);font-weight:500}
+.badge-info{background:var(--color-background-info);color:var(--color-text-info);border:0.5px solid var(--color-border-info)}
+.badge-success{background:var(--color-background-success);color:var(--color-text-success);border:0.5px solid var(--color-border-success)}
+.badge-warn{background:var(--color-background-warning);color:var(--color-text-warning);border:0.5px solid var(--color-border-warning)}
+.badge-danger{background:var(--color-background-danger);color:var(--color-text-danger);border:0.5px solid var(--color-border-danger)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.stat{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px}
+.stat-label{font-size:12px;color:var(--color-text-secondary);margin-bottom:4px}
+.stat-val{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:10px}
+.s-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px}
+.s-card-name{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
+.s-card-course{font-size:12px;color:var(--color-text-secondary);margin-bottom:8px}
+.s-card-gpa{font-size:20px;font-weight:500;color:var(--color-text-primary)}
+.s-card-gpa-label{font-size:11px;color:var(--color-text-tertiary)}
+.form-row{display:flex;flex-direction:column;gap:10px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:12px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em}
+.field input,.field select{width:100%}
+.binding-demo{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px;margin-top:14px;border:0.5px solid var(--color-border-tertiary)}
+.binding-label{font-size:11px;color:var(--color-text-tertiary);margin-bottom:4px;font-family:var(--font-mono)}
+.binding-val{font-size:15px;font-weight:500;color:var(--color-text-primary)}
+.btn-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.detail-hero{display:flex;align-items:center;gap:14px;margin-bottom:18px;padding:16px;background:var(--color-background-secondary);border-radius:var(--border-radius-lg)}
+.avatar{width:52px;height:52px;border-radius:50%;background:var(--color-background-info);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:500;color:var(--color-text-info);flex-shrink:0}
+.detail-meta{display:flex;flex-direction:column;gap:3px}
+.detail-name{font-size:17px;font-weight:500;color:var(--color-text-primary)}
+.detail-sub{font-size:13px;color:var(--color-text-secondary)}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.detail-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px 14px}
+.dc-label{font-size:11px;color:var(--color-text-tertiary);margin-bottom:3px}
+.dc-val{font-size:15px;font-weight:500;color:var(--color-text-primary)}
+.subject-list{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.subj-row{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);font-size:13px}
+.subj-name{color:var(--color-text-primary)}
+.subj-marks{font-family:var(--font-mono);font-size:13px;font-weight:500}
+.code-peek{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 14px;font-family:var(--font-mono);font-size:11.5px;line-height:1.75;color:var(--color-text-secondary);margin-top:14px}
+.ck{color:var(--color-text-info)} .cs{color:var(--color-text-success)} .cd{color:var(--color-text-danger)} .cm{color:var(--color-text-tertiary)} .co{color:var(--color-text-warning)}
+.empty-state{text-align:center;padding:40px 20px;color:var(--color-text-tertiary);font-size:14px}
+</style>
+
+<div class="app">
+<h2 class="sr">Angular SPA demo — a simulated single page application showing routing between Home, Students, Add Student, and Detail views without any page reload</h2>
+
+<nav class="nav">
+  <div class="nav-brand">
+    <i class="ti ti-brand-angular" style="font-size:18px;color:var(--color-text-danger)" aria-hidden="true"></i>
+    VTU Portal
+    <span class="brand-chip">Angular SPA</span>
+  </div>
+  <button class="nav-link active" id="nav-home" onclick="goto('home')">
+    <i class="ti ti-home" style="font-size:14px;vertical-align:-2px;margin-right:4px" aria-hidden="true"></i>Home
+  </button>
+  <button class="nav-link" id="nav-students" onclick="goto('students')">
+    <i class="ti ti-users" style="font-size:14px;vertical-align:-2px;margin-right:4px" aria-hidden="true"></i>Students
+  </button>
+  <button class="nav-link" id="nav-add" onclick="goto('add')">
+    <i class="ti ti-plus" style="font-size:14px;vertical-align:-2px;margin-right:4px" aria-hidden="true"></i>Add
+  </button>
+  <span class="url-bar" id="url-bar">/home</span>
+</nav>
+
+<div class="view" id="view-root"></div>
+</div>
+
+<script>
+const students = [
+  {id:1,name:'Arjun Sharma',  roll:'4MCA001',course:'MCA',sem:2,gpa:8.7,city:'Bengaluru',
+   subjects:[{n:'Web Technologies',m:88},{n:'DBMS',m:82},{n:'OS',m:79},{n:'Algorithms',m:91}]},
+  {id:2,name:'Priya Nair',    roll:'4MCA002',course:'MCA',sem:2,gpa:9.1,city:'Kochi',
+   subjects:[{n:'Web Technologies',m:94},{n:'DBMS',m:90},{n:'OS',m:88},{n:'Algorithms',m:86}]},
+  {id:3,name:'Ravi Kumar',    roll:'4MCA003',course:'MCA',sem:2,gpa:7.8,city:'Mysuru',
+   subjects:[{n:'Web Technologies',m:75},{n:'DBMS',m:80},{n:'OS',m:77},{n:'Algorithms',m:72}]},
+];
+
+let bindVal = 'Type here…';
+let currentRoute = 'home';
+let detailId = null;
+
+function gpaColor(g){ return g>=9?'badge-success':g>=8?'badge-info':g>=7?'badge-warn':'badge-danger'; }
+function gpaLabel(g){ return g>=9?'Distinction':g>=8?'First Class':g>=7?'Second Class':'Pass'; }
+function initials(n){ return n.split(' ').map(w=>w[0]).slice(0,2).join(''); }
+
+function goto(route, id){
+  currentRoute=route; detailId=id||null;
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+  const nid = route==='detail'?'nav-students':('nav-'+route);
+  const el = document.getElementById(nid);
+  if(el) el.classList.add('active');
+  const urls={home:'/home',students:'/students',add:'/students/add',detail:'/students/'+id};
+  document.getElementById('url-bar').textContent = urls[route]||('/'+route);
+  render();
+}
+
+function render(){
+  const root = document.getElementById('view-root');
+  if(currentRoute==='home') root.innerHTML = homeView();
+  else if(currentRoute==='students') root.innerHTML = studentsView();
+  else if(currentRoute==='add') root.innerHTML = addView();
+  else if(currentRoute==='detail') root.innerHTML = detailView(detailId);
+
+  if(currentRoute==='add'){
+    document.getElementById('ng-input').addEventListener('input',function(){
+      bindVal=this.value;
+      document.getElementById('ng-output').textContent = this.value || '(empty)';
+    });
+    document.getElementById('add-form').addEventListener('submit',function(e){
+      e.preventDefault();
+      const n=document.getElementById('f-name').value.trim();
+      const g=parseFloat(document.getElementById('f-gpa').value);
+      const c=document.getElementById('f-city').value.trim();
+      if(!n||!g) return;
+      students.push({
+        id:students.length+1,
+        name:n, roll:'4MCA00'+(students.length+1),
+        course:'MCA',sem:2,gpa:g,city:c||'—',
+        subjects:[]
+      });
+      goto('students');
+    });
+  }
+}
+
+function homeView(){
+  const avg = (students.reduce((a,s)=>a+s.gpa,0)/students.length).toFixed(1);
+  return `<div class="view-header"><div class="view-title">Dashboard</div><span class="badge badge-info">Angular Component</span></div>
+  <div class="stats">
+    <div class="stat"><div class="stat-label">Total students</div><div class="stat-val">${students.length}</div></div>
+    <div class="stat"><div class="stat-label">Average GPA</div><div class="stat-val">${avg}</div></div>
+    <div class="stat"><div class="stat-label">Semester</div><div class="stat-val">2</div></div>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <button onclick="goto('students')" style="flex:1;min-width:120px">
+      <i class="ti ti-users" style="font-size:15px;vertical-align:-2px;margin-right:6px" aria-hidden="true"></i>View students
+    </button>
+    <button onclick="goto('add')" style="flex:1;min-width:120px">
+      <i class="ti ti-plus" style="font-size:15px;vertical-align:-2px;margin-right:6px" aria-hidden="true"></i>Add student
+    </button>
+  </div>
+  <div class="code-peek" style="margin-top:18px">
+<span class="cm">// Angular route config (app-routing.module.ts)</span>
+<span class="ck">const</span> routes: Routes = [
+  { path: <span class="cs">'home'</span>,        component: <span class="co">HomeComponent</span> },
+  { path: <span class="cs">'students'</span>,    component: <span class="co">StudentListComponent</span> },
+  { path: <span class="cs">'students/add'</span>, component: <span class="co">AddStudentComponent</span> },
+  { path: <span class="cs">'students/:id'</span>, component: <span class="co">StudentDetailComponent</span> },
+];
+<span class="cm">// ↑ No page reload — Angular Router swaps components</span></div>`;
+}
+
+function studentsView(){
+  return `<div class="view-header"><div class="view-title">All students</div><span class="badge badge-success">*ngFor directive</span></div>
+  <div class="card-grid">
+    ${students.map(s=>`
+    <div class="s-card" onclick="goto('detail',${s.id})" style="cursor:pointer">
+      <div class="s-card-name">${s.name}</div>
+      <div class="s-card-course">${s.roll} · ${s.city}</div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-top:8px">
+        <div><div class="s-card-gpa">${s.gpa}</div><div class="s-card-gpa-label">GPA</div></div>
+        <span class="badge ${gpaColor(s.gpa)}">${gpaLabel(s.gpa)}</span>
+      </div>
+    </div>`).join('')}
+  </div>
+  <div class="code-peek">
+<span class="cm">&lt;!-- *ngFor loops over the array — re-renders automatically --&gt;</span>
+<span class="cd">&lt;div</span> <span class="ck">*ngFor</span>=<span class="cs">"let student of students"</span>
+     (click)=<span class="cs">"viewDetail(student.id)"</span><span class="cd">&gt;</span>
+  {{ student.name }} — GPA: {{ student.gpa }}
+<span class="cd">&lt;/div&gt;</span></div>`;
+}
+
+function addView(){
+  return `<div class="view-header"><div class="view-title">Add student</div><span class="badge badge-warn">Two-way binding [(ngModel)]</span></div>
+  <form id="add-form" class="form-row">
+    <div class="field"><label for="f-name">Full name</label><input id="f-name" type="text" placeholder="e.g. Anjali Singh" required></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="field"><label for="f-gpa">GPA</label><input id="f-gpa" type="number" min="0" max="10" step="0.1" placeholder="0.0 – 10.0" required></div>
+      <div class="field"><label for="f-city">City</label><input id="f-city" type="text" placeholder="e.g. Belagavi"></div>
+    </div>
+    <button type="submit" style="width:100%">
+      <i class="ti ti-check" style="font-size:15px;vertical-align:-2px;margin-right:6px" aria-hidden="true"></i>Save student
+    </button>
+  </form>
+  <div class="binding-demo">
+    <div class="binding-label">Live demo — two-way binding [(ngModel)]</div>
+    <div style="margin-top:8px"><input id="ng-input" type="text" placeholder="Type anything…" value="${bindVal==='Type here…'?'':bindVal}" style="width:100%"></div>
+    <div style="margin-top:8px">
+      <div style="font-size:11px;color:var(--color-text-tertiary);margin-bottom:3px">Model value (auto-updated):</div>
+      <div class="binding-val" id="ng-output">${bindVal==='Type here…'?'(empty)':bindVal}</div>
+    </div>
+  </div>
+  <div class="code-peek">
+<span class="cm">&lt;!-- [(ngModel)] = two-way binding: view ↔ component --&gt;</span>
+<span class="cd">&lt;input</span> <span class="ck">[(ngModel)]</span>=<span class="cs">"newStudent.name"</span> <span class="cd">/&gt;</span>
+<span class="cd">&lt;p&gt;</span>Preview: {{ newStudent.name }}<span class="cd">&lt;/p&gt;</span>
+<span class="cm">// TypeScript component class</span>
+<span class="ck">newStudent</span>: Student = { name: <span class="cs">''</span>, gpa: <span class="ck">0</span> };</div>`;
+}
+
+function detailView(id){
+  const s = students.find(x=>x.id===id);
+  if(!s) return `<div class="empty-state">Student not found.</div>`;
+  return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <button onclick="goto('students')" style="padding:5px 11px;font-size:12px">
+      <i class="ti ti-arrow-left" style="font-size:13px;vertical-align:-2px;margin-right:4px" aria-hidden="true"></i>Back
+    </button>
+    <span class="badge badge-info">:id route param</span>
+  </div>
+  <div class="detail-hero">
+    <div class="avatar">${initials(s.name)}</div>
+    <div class="detail-meta">
+      <div class="detail-name">${s.name}</div>
+      <div class="detail-sub">${s.roll} · MCA Semester ${s.sem} · ${s.city}</div>
+      <div style="margin-top:5px"><span class="badge ${gpaColor(s.gpa)}">${gpaLabel(s.gpa)} — ${s.gpa} GPA</span></div>
+    </div>
+  </div>
+  <div class="detail-grid">
+    <div class="detail-card"><div class="dc-label">Roll number</div><div class="dc-val" style="font-family:var(--font-mono)">${s.roll}</div></div>
+    <div class="detail-card"><div class="dc-label">Course</div><div class="dc-val">${s.course}</div></div>
+    <div class="detail-card"><div class="dc-label">Semester</div><div class="dc-val">${s.sem}</div></div>
+    <div class="detail-card"><div class="dc-label">City</div><div class="dc-val">${s.city}</div></div>
+  </div>
+  ${s.subjects.length?`<div style="margin-top:14px;font-size:13px;font-weight:500;color:var(--color-text-secondary);margin-bottom:6px">Subject marks</div>
+  <div class="subject-list">${s.subjects.map(sub=>`
+    <div class="subj-row">
+      <span class="subj-name">${sub.n}</span>
+      <span class="subj-marks" style="color:${sub.m>=85?'var(--color-text-success)':sub.m>=75?'var(--color-text-info)':'var(--color-text-warning)'}">${sub.m}/100</span>
+    </div>`).join('')}
+  </div>`:''}
+  <div class="code-peek">
+<span class="cm">// Angular reads :id from the URL</span>
+<span class="ck">constructor</span>(<span class="ck">private</span> route: ActivatedRoute) {}
+<span class="ck">ngOnInit</span>() {
+  <span class="ck">const</span> id = <span class="ck">this</span>.route.snapshot.paramMap.<span class="co">get</span>(<span class="cs">'id'</span>);
+  <span class="ck">this</span>.student = <span class="ck">this</span>.studentService.<span class="co">getById</span>(id);
+}</div>`;
+}
+
+goto('home');
+</script>
