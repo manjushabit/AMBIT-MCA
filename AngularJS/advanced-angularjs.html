@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced AngularJS — VTU MCA Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-route/1.8.3/angular-route.min.js"></script>
+
+<style>
+/* ═══════════════════════ TOKENS ══════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+:root{
+  --bg    :#f9f7f3;
+  --white :#fff;
+  --s1    :#f2efe9;
+  --s2    :#e8e4dc;
+  --bdr   :#d9d4c8;
+  --bdr2  :#c4bfb2;
+  --ink   :#18160f;
+  --ink2  :#3a3828;
+  --muted :#7a7768;
+  /* accent per topic */
+  --t1    :#c44b1e;  /* Services — burnt orange */
+  --t1l   :#fdf2ee;
+  --t2    :#1a6e4a;  /* Routing  — forest green */
+  --t2l   :#edf7f2;
+  --t3    :#1c4f9e;  /* Binding  — navy */
+  --t3l   :#eef3fc;
+  --t4    :#6b2fa0;  /* Directives — purple */
+  --t4l   :#f5eeff;
+  --gold  :#c09800;
+  --serif :'Instrument Serif',serif;
+  --mono  :'DM Mono',monospace;
+  --body  :'Outfit',sans-serif;
+}
+
+body{font-family:var(--body);background:var(--bg);color:var(--ink);line-height:1.68;font-size:15px}
+
+/* ═══════════════════════ HERO ════════════════════════════ */
+.hero{
+  background:var(--ink);
+  color:#fff;
+  padding:48px 40px 36px;
+  position:relative;
+  overflow:hidden;
+}
+.hero::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    repeating-linear-gradient(0deg,transparent,transparent 47px,rgba(255,255,255,.04) 48px),
+    repeating-linear-gradient(90deg,transparent,transparent 47px,rgba(255,255,255,.04) 48px);
+}
+.hero-in{position:relative;z-index:1;max-width:1020px;margin:0 auto}
+.hero-eyebrow{
+  font-family:var(--mono);
+  font-size:10.5px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.38);
+  margin-bottom:12px;
+}
+.hero h1{
+  font-family:var(--serif);
+  font-size:clamp(30px,4vw,52px);
+  font-weight:400;
+  line-height:1.08;
+  letter-spacing:-.02em;
+  margin-bottom:12px;
+}
+.hero h1 em{font-style:italic;color:rgba(255,255,255,.55)}
+.hero-desc{font-size:14.5px;color:rgba(255,255,255,.42);max-width:520px;line-height:1.75;margin-bottom:24px}
+.topic-pills{display:flex;gap:8px;flex-wrap:wrap}
+.tp{font-size:11px;font-weight:700;padding:5px 13px;border-radius:20px;letter-spacing:.04em}
+.tp1{background:rgba(196,75,30,.35);  color:#fbbf9a;border:1px solid rgba(196,75,30,.4)}
+.tp2{background:rgba(26,110,74,.3);   color:#6ee7b7;border:1px solid rgba(26,110,74,.35)}
+.tp3{background:rgba(28,79,158,.3);   color:#93c5fd;border:1px solid rgba(28,79,158,.35)}
+.tp4{background:rgba(107,47,160,.3);  color:#d8b4fe;border:1px solid rgba(107,47,160,.35)}
+
+/* ═══════════════════════ NAV BAR ═════════════════════════ */
+.sticky-nav{
+  background:var(--white);
+  border-bottom:1px solid var(--bdr);
+  position:sticky;top:0;z-index:200;
+  height:46px;
+  display:flex;align-items:center;
+  padding:0 28px;
+  gap:4px;
+  overflow-x:auto;
+  white-space:nowrap;
+}
+.snav-a{
+  font-size:12.5px;font-weight:500;
+  color:var(--muted);
+  text-decoration:none;
+  padding:5px 11px;
+  border-radius:6px;
+  transition:all .15s;
+  flex-shrink:0;
+}
+.snav-a:hover{background:var(--s1);color:var(--ink)}
+
+/* ═══════════════════════ LAYOUT ══════════════════════════ */
+.wrap{max-width:1020px;margin:0 auto;padding:44px 24px 80px}
+
+/* ═══════════════════════ SECTION ═════════════════════════ */
+.section{margin-bottom:72px;scroll-margin-top:58px}
+.sec-hd{display:flex;align-items:flex-start;gap:18px;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid var(--bdr)}
+.sec-badge{
+  font-family:var(--mono);
+  font-size:11px;
+  font-weight:500;
+  padding:5px 13px;
+  border-radius:20px;
+  flex-shrink:0;
+  margin-top:3px;
+}
+.b1{background:var(--t1l);color:var(--t1);border:1px solid rgba(196,75,30,.2)}
+.b2{background:var(--t2l);color:var(--t2);border:1px solid rgba(26,110,74,.2)}
+.b3{background:var(--t3l);color:var(--t3);border:1px solid rgba(28,79,158,.2)}
+.b4{background:var(--t4l);color:var(--t4);border:1px solid rgba(107,47,160,.2)}
+.b5{background:#fafaf7;color:var(--muted);border:1px solid var(--bdr)}
+
+.sec-tag{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.sec-title{font-family:var(--serif);font-size:24px;font-weight:400;letter-spacing:-.01em;margin-bottom:3px}
+.sec-intro{font-size:14px;color:var(--ink2);line-height:1.75}
+
+/* ═══════════════════════ GRID / CARDS ════════════════════ */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.card{background:var(--white);border:1px solid var(--bdr);border-radius:12px;padding:18px 20px;margin-bottom:14px}
+.card-h{font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.card-b{font-size:13.5px;color:var(--ink2);line-height:1.75}
+code{font-family:var(--mono);font-size:12px;background:var(--s2);border:1px solid var(--bdr);color:var(--t3);padding:1px 6px;border-radius:4px}
+
+/* ═══════════════════════ CALLOUTS ════════════════════════ */
+.callout{border-left:3px solid;border-radius:0 8px 8px 0;padding:11px 16px;font-size:13px;line-height:1.65;margin:12px 0}
+.callout strong{font-weight:700}
+.c1{border-color:var(--t1);background:var(--t1l);color:#7c2a0e}
+.c2{border-color:var(--t2);background:var(--t2l);color:#0f4530}
+.c3{border-color:var(--t3);background:var(--t3l);color:#12336b}
+.c4{border-color:var(--t4);background:var(--t4l);color:#42196a}
+.cg{border-color:var(--gold);background:#fdfbea;color:#7a5a00}
+
+/* ═══════════════════════ CODE BLOCKS ═════════════════════ */
+.cb{background:#0e1018;border-radius:12px;overflow:hidden;margin:12px 0}
+.cb-bar{background:#171b26;padding:7px 14px;display:flex;align-items:center;gap:7px;border-bottom:1px solid rgba(255,255,255,.06)}
+.cbd{width:8px;height:8px;border-radius:50%}
+.cr{background:#ef4444}.cy{background:#f59e0b}.cg2{background:#22c55e}
+.cb-fn{font-family:var(--mono);font-size:11px;color:#3a4060;margin-left:4px}
+.cb pre{font-family:var(--mono);font-size:12.5px;line-height:1.85;padding:15px 18px;overflow-x:auto;color:#c9d1d9;white-space:pre;margin:0}
+.kw{color:#ff79c6}.fn{color:#82aaff}.st{color:#c3e88d}
+.tg{color:#f07178}.at{color:#ffcb6b}.cm{color:#4a5070;font-style:italic}
+.ng{color:#89dceb}.nm{color:#f78c6c}
+
+/* ═══════════════════════ REFERENCE TABLE ═════════════════ */
+.ref{width:100%;border-collapse:collapse;font-size:13px;border:1px solid var(--bdr);border-radius:10px;overflow:hidden;margin:12px 0}
+.ref th{background:var(--s1);padding:8px 13px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--bdr)}
+.ref td{padding:9px 13px;border-bottom:1px solid #f0ece4;vertical-align:top;line-height:1.55}
+.ref tr:last-child td{border-bottom:none}
+.ref tr:nth-child(even) td{background:#fafaf6}
+.ref td:first-child{font-family:var(--mono);font-size:12px;color:var(--t1)}
+.ref td:last-child{color:var(--ink2)}
+
+/* ═══════════════════════ STEP GUIDE ══════════════════════ */
+.step-grid{display:flex;flex-direction:column;gap:0}
+.step{display:flex;gap:0;position:relative}
+.step-num-col{display:flex;flex-direction:column;align-items:center;width:44px;flex-shrink:0}
+.step-circle{
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:13px;font-weight:600;
+  color:#fff;flex-shrink:0;margin-top:2px;
+  position:relative;z-index:1;
+}
+.step-line{width:2px;flex:1;background:var(--bdr);margin-top:4px;margin-bottom:0}
+.step:last-child .step-line{display:none}
+.step-body{padding-bottom:28px;padding-left:14px;flex:1}
+.step-title{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:6px;margin-top:4px}
+.step-desc{font-size:13.5px;color:var(--ink2);line-height:1.7}
+.step-filename{
+  font-family:var(--mono);font-size:10.5px;
+  background:var(--s2);border:1px solid var(--bdr);
+  color:var(--muted);padding:3px 9px;border-radius:20px;
+  margin-bottom:8px;display:inline-block;
+}
+
+/* ═══════════════════════ LIVE DEMO WRAPPER ═══════════════ */
+.demo-wrap{border:1.5px solid var(--bdr);border-radius:12px;overflow:hidden;margin:14px 0}
+.demo-topbar{background:var(--s1);border-bottom:1px solid var(--bdr);padding:9px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.demo-lbl{font-family:var(--mono);font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:7px}
+.demo-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.demo-tag{font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:20px}
+.dt1{background:var(--t1l);color:var(--t1);border:1px solid rgba(196,75,30,.25)}
+.dt2{background:var(--t2l);color:var(--t2);border:1px solid rgba(26,110,74,.25)}
+.dt3{background:var(--t3l);color:var(--t3);border:1px solid rgba(28,79,158,.25)}
+.dt4{background:var(--t4l);color:var(--t4);border:1px solid rgba(107,47,160,.25)}
+.demo-body{padding:18px 20px;background:var(--white)}
+
+/* Demo UI elements */
+.di{width:100%;padding:9px 12px;border:1.5px solid var(--bdr);border-radius:8px;font-family:var(--body);font-size:14px;color:var(--ink);background:var(--s1);outline:none;transition:border-color .18s}
+.di:focus{border-color:var(--t3)}
+.dbtn{padding:8px 18px;border-radius:8px;border:none;font-family:var(--body);font-size:13.5px;font-weight:700;cursor:pointer;transition:all .15s}
+.dbtn:active{transform:scale(.97)}
+.dbtn-1{background:var(--t1);color:#fff}.dbtn-1:hover{background:#a83c16}
+.dbtn-2{background:var(--t2);color:#fff}.dbtn-2:hover{background:#145837}
+.dbtn-3{background:var(--t3);color:#fff}.dbtn-3:hover{background:#163f85}
+.dbtn-4{background:var(--t4);color:#fff}.dbtn-4:hover{background:#53237c}
+
+/* SPA shell */
+.spa-shell{border:1px solid var(--bdr);border-radius:10px;overflow:hidden}
+.spa-nav{display:flex;align-items:center;background:var(--ink);padding:0 16px;height:44px;gap:4px}
+.spa-nav-title{font-size:14px;font-weight:700;color:#fff;margin-right:14px}
+.spa-link{font-size:12.5px;font-weight:600;color:rgba(255,255,255,.5);padding:5px 11px;border-radius:6px;cursor:pointer;border:none;background:transparent;transition:all .15s}
+.spa-link:hover,.spa-link.active{background:rgba(255,255,255,.12);color:#fff}
+.spa-url{margin-left:auto;font-family:var(--mono);font-size:10.5px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.45);padding:3px 10px;border-radius:4px}
+.spa-view{padding:16px;min-height:140px;background:var(--white)}
+
+/* Student card */
+.stu-card{background:var(--s1);border:1px solid var(--bdr);border-radius:8px;padding:11px 14px;margin-bottom:7px;display:flex;align-items:center;justify-content:space-between}
+.stu-name{font-size:14px;font-weight:600;color:var(--ink)}
+.stu-roll{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.gpa-pill{font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px}
+.gpa-a{background:#ecfdf5;color:#15803d;border:1px solid #bbf7d0}
+.gpa-b{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
+.gpa-c{background:#fffbeb;color:#b45309;border:1px solid #fde68a}
+
+/* Custom directive demo */
+.rating-star{font-size:22px;cursor:pointer;transition:transform .15s;display:inline-block}
+.rating-star:hover{transform:scale(1.25)}
+
+/* ═══════════════════════ QUICK REF GRID ══════════════════ */
+.qr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.qr-card{background:var(--white);border:1px solid var(--bdr);border-radius:12px;padding:13px 15px;transition:border-color .15s}
+.qr-m{font-family:var(--mono);font-size:12px;color:var(--t1);font-weight:500;margin-bottom:4px;display:block}
+.qr-d{font-size:12.5px;color:var(--ink2);line-height:1.5}
+
+/* ═══════════════════════ TASK CARDS ══════════════════════ */
+.task-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.task-card{background:var(--white);border:1.5px solid var(--bdr);border-radius:12px;padding:16px 18px;position:relative}
+.task-card::before{content:attr(data-num);position:absolute;top:14px;right:16px;font-family:var(--mono);font-size:28px;font-weight:700;color:var(--s2);line-height:1}
+.task-level{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px}
+.lv-easy{color:var(--t2)}.lv-med{color:var(--t3)}.lv-hard{color:var(--t1)}
+.task-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:5px}
+.task-desc{font-size:13px;color:var(--ink2);line-height:1.6}
+
+/* ═══════════════════════ FOOTER ══════════════════════════ */
+.pg-foot{background:var(--ink);color:rgba(255,255,255,.28);text-align:center;padding:18px;font-size:12px}
+
+/* ═══════════════════════ RESPONSIVE ══════════════════════ */
+@media(max-width:740px){
+  .two-col,.three-col,.task-grid,.qr-grid{grid-template-columns:1fr}
+  .hero{padding:28px 18px 24px}
+  .wrap{padding:24px 14px 60px}
+  .sticky-nav{padding:0 14px}
+  .spa-nav{flex-wrap:wrap;height:auto;padding:8px 12px;gap:6px}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════
+     HERO
+     ════════════════════════════════════════════════════════ -->
+<header class="hero">
+  <div class="hero-in">
+    <div class="hero-eyebrow">VTU MCA — Web Technologies · Module 5 · Advanced</div>
+    <h1>Advanced AngularJS<br><em>Build, Learn, Implement</em></h1>
+    <p class="hero-desc">Services, routing, data binding, and custom directives — each concept explained, demonstrated live, and then handed to you as a coding task.</p>
+    <div class="topic-pills">
+      <span class="tp tp1">§1 Services &amp; DI</span>
+      <span class="tp tp2">§2 Routing &amp; SPA</span>
+      <span class="tp tp3">§3 Data Binding &amp; Forms</span>
+      <span class="tp tp4">§4 Custom Directives</span>
+      <span class="tp" style="background:rgba(192,152,0,.2);color:#f5d547;border:1px solid rgba(192,152,0,.3)">§5 Full Project Guide</span>
+    </div>
+  </div>
+</header>
+
+<nav class="sticky-nav">
+  <a href="#sec-service"  class="snav-a">§1 Services &amp; DI</a>
+  <a href="#sec-routing"  class="snav-a">§2 Routing</a>
+  <a href="#sec-binding"  class="snav-a">§3 Data Binding</a>
+  <a href="#sec-directives" class="snav-a">§4 Custom Directives</a>
+  <a href="#sec-project"  class="snav-a">§5 Project Guide</a>
+  <a href="#sec-tasks"    class="snav-a">§6 Your Tasks</a>
+</nav>
+
+<main class="wrap">
+
+<!-- ════════════════════════════════════════════════════════
+     §1 — SERVICES & DEPENDENCY INJECTION
+     ════════════════════════════════════════════════════════ -->
+<section class="section" id="sec-service">
+  <div class="sec-hd">
+    <span class="sec-badge b1">§1</span>
+    <div>
+      <div class="sec-tag">Advanced AngularJS</div>
+      <div class="sec-title">Services &amp; Dependency Injection</div>
+      <div class="sec-intro">A <strong>service</strong> is a reusable singleton object that holds shared logic or data. Instead of duplicating code across controllers, you put it in a service and <em>inject</em> it wherever needed. AngularJS handles the injection automatically — this is called <strong>Dependency Injection (DI)</strong>.</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-h" style="color:var(--t1)">Why services exist</div>
+      <div class="card-b">
+        <p style="margin-bottom:10px">Without services, you would copy-paste the same array or function into every controller that needs it. If the data changes, you update it in ten places instead of one.</p>
+        <p>A service solves this — it is created <strong>once</strong> (singleton) and shared across all controllers. It is the <em>Model</em> layer in AngularJS MVC.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--t1)">Three ways to create services</div>
+      <div class="card-b">
+        <table class="ref" style="margin:0">
+          <tr><th>Method</th><th>Use when</th></tr>
+          <tr><td>.service()</td><td style="color:var(--ink2)">Class with methods — <code>this.method = fn</code></td></tr>
+          <tr><td>.factory()</td><td style="color:var(--ink2)">Returns an object or function — more flexible</td></tr>
+          <tr><td>.provider()</td><td style="color:var(--ink2)">Configurable before app starts — advanced</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="cb">
+    <div class="cb-bar"><span class="cbd cr"></span><span class="cbd cy"></span><span class="cbd cg2"></span><span class="cb-fn">services.js — service vs factory + $http</span></div>
+    <pre><span class="cm">// ── Method 1: .service() — uses 'this' ──────────────────</span>
+app.<span class="fn">service</span>(<span class="st">'StudentService'</span>, <span class="kw">function</span>() {
+
+  <span class="cm">// Private data — only accessible via the methods below</span>
+  <span class="kw">var</span> students = [
+    { name: <span class="st">'Arjun'</span>, gpa: <span class="nm">8.7</span>, course: <span class="st">'MCA'</span> },
+    { name: <span class="st">'Priya'</span>, gpa: <span class="nm">9.1</span>, course: <span class="st">'MCA'</span> },
+  ];
+
+  <span class="cm">// Public methods attached to 'this'</span>
+  <span class="kw">this</span>.<span class="fn">getAll</span> = <span class="kw">function</span>() { <span class="kw">return</span> students; };
+
+  <span class="kw">this</span>.<span class="fn">add</span> = <span class="kw">function</span>(s) { students.<span class="fn">push</span>(s); };
+
+  <span class="kw">this</span>.<span class="fn">remove</span> = <span class="kw">function</span>(i) { students.<span class="fn">splice</span>(i, <span class="nm">1</span>); };
+
+  <span class="kw">this</span>.<span class="fn">getAvgGPA</span> = <span class="kw">function</span>() {
+    <span class="kw">var</span> sum = students.<span class="fn">reduce</span>(<span class="kw">function</span>(a,s){ <span class="kw">return</span> a+s.gpa; }, <span class="nm">0</span>);
+    <span class="kw">return</span> (sum / students.length).<span class="fn">toFixed</span>(<span class="nm">1</span>);
+  };
+});
+
+<span class="cm">// ── Method 2: .factory() — returns an object ─────────────</span>
+app.<span class="fn">factory</span>(<span class="st">'MathFactory'</span>, <span class="kw">function</span>() {
+  <span class="kw">return</span> {
+    <span class="fn">grade</span>: <span class="kw">function</span>(gpa) {
+      <span class="kw">return</span> gpa >= <span class="nm">9</span> ? <span class="st">'A+'</span> : gpa >= <span class="nm">8</span> ? <span class="st">'A'</span> : gpa >= <span class="nm">7</span> ? <span class="st">'B'</span> : <span class="st">'C'</span>;
+    },
+    <span class="fn">percentage</span>: <span class="kw">function</span>(gpa) { <span class="kw">return</span> ((gpa / <span class="nm">10</span>) * <span class="nm">100</span>).<span class="fn">toFixed</span>(<span class="nm">0</span>) + <span class="st">'%'</span>; }
+  };
+});
+
+<span class="cm">// ── Built-in $http service — AJAX calls ──────────────────</span>
+app.<span class="fn">controller</span>(<span class="st">'DataCtrl'</span>, <span class="kw">function</span>($scope, $http) {
+  $http.<span class="fn">get</span>(<span class="st">'https://jsonplaceholder.typicode.com/users'</span>)
+    .<span class="fn">then</span>(<span class="kw">function</span>(response) {
+      $scope.users = response.data;   <span class="cm">// data auto-updates the view</span>
+    })
+    .<span class="fn">catch</span>(<span class="kw">function</span>(err) {
+      $scope.error = <span class="st">'Failed to load data'</span>;
+    });
+});
+
+<span class="cm">// ── Inject custom service into controller ────────────────</span>
+<span class="cm">// AngularJS reads parameter NAMES and injects matching services</span>
+app.<span class="fn">controller</span>(<span class="st">'HomeCtrl'</span>, <span class="kw">function</span>($scope, StudentService, MathFactory) {
+  $scope.students = StudentService.<span class="fn">getAll</span>();
+  $scope.avgGPA   = StudentService.<span class="fn">getAvgGPA</span>();
+
+  $scope.<span class="fn">getGrade</span> = <span class="kw">function</span>(gpa) {
+    <span class="kw">return</span> MathFactory.<span class="fn">grade</span>(gpa);
+  };
+});</pre>
+  </div>
+
+  <!-- Live demo: service -->
+  <div class="demo-wrap" id="demo-svc" ng-controller="SvcCtrl">
+    <div class="demo-topbar">
+      <div class="demo-lbl"><span class="demo-dot"></span>Live — StudentService singleton shared across two controllers</div>
+      <span class="demo-tag dt1">service + DI</span>
+    </div>
+    <div class="demo-body">
+      <div class="two-col">
+        <div>
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">Controller A — reads &amp; writes</div>
+          <input class="di" ng-model="newName" placeholder="Name" style="margin-bottom:6px">
+          <input class="di" type="number" ng-model="newGpa" placeholder="GPA" min="0" max="10" step="0.1" style="margin-bottom:6px">
+          <button class="dbtn dbtn-1" ng-click="addStudent()" style="width:100%">Add via Service</button>
+          <div style="margin-top:10px;font-size:13px;color:var(--muted)">Service has <strong style="color:var(--t1)">{{ allStudents().length }}</strong> students · Avg GPA: <strong style="color:var(--t1)">{{ avgGPA() }}</strong></div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">Controller B — reads same service</div>
+          <div ng-repeat="s in allStudents()" class="stu-card">
+            <div>
+              <div class="stu-name">{{ s.name }}</div>
+              <div class="stu-roll">{{ getGrade(s.gpa) }}</div>
+            </div>
+            <span class="gpa-pill" ng-class="{'gpa-a': s.gpa>=8.5, 'gpa-b': s.gpa>=7 && s.gpa<8.5, 'gpa-c': s.gpa<7}">{{ s.gpa }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout c1">
+    <strong>Dependency Injection in one sentence:</strong> AngularJS reads the <em>name</em> of each parameter in your controller function and automatically finds and passes in the matching service. That is why <code>function($scope, StudentService)</code> works — AngularJS injects <code>$scope</code> and your custom <code>StudentService</code> automatically.
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════
+     §2 — ROUTING & SPA
+     ════════════════════════════════════════════════════════ -->
+<section class="section" id="sec-routing">
+  <div class="sec-hd">
+    <span class="sec-badge b2">§2</span>
+    <div>
+      <div class="sec-tag">Advanced AngularJS</div>
+      <div class="sec-title">Routing &amp; Single Page Applications</div>
+      <div class="sec-intro">AngularJS routing (via <code>ngRoute</code>) lets you build a <strong>Single Page Application</strong> — the URL changes, different views appear, but the browser <em>never reloads the page</em>. Each URL maps to a controller and an HTML template.</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-h" style="color:var(--t2)">How routing works</div>
+      <div class="card-b">
+        <ol style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:13.5px">
+          <li style="padding-left:22px;position:relative"><span style="position:absolute;left:0;font-weight:700;color:var(--t2)">1.</span> User clicks a link</li>
+          <li style="padding-left:22px;position:relative"><span style="position:absolute;left:0;font-weight:700;color:var(--t2)">2.</span> URL changes to <code>#!/home</code> (hash-based)</li>
+          <li style="padding-left:22px;position:relative"><span style="position:absolute;left:0;font-weight:700;color:var(--t2)">3.</span> <code>$routeProvider</code> matches the path</li>
+          <li style="padding-left:22px;position:relative"><span style="position:absolute;left:0;font-weight:700;color:var(--t2)">4.</span> Loads the matched controller + template</li>
+          <li style="padding-left:22px;position:relative"><span style="position:absolute;left:0;font-weight:700;color:var(--t2)">5.</span> <code>&lt;div ng-view&gt;</code> is replaced with the template</li>
+          <li style="padding-left:22px;position:relative"><span style="position:absolute;left:0;font-weight:700;color:var(--t2)">6.</span> No page reload — just DOM swap</li>
+        </ol>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--t2)">Setup requirements</div>
+      <div class="card-b">
+        <div class="cb" style="margin:0">
+          <pre style="padding:10px 14px;font-size:12px"><span class="cm">&lt;!-- 1. Load ngRoute (separate script) --&gt;</span>
+<span class="tg">&lt;script</span> <span class="at">src</span>=<span class="st">"angular-route.min.js"</span><span class="tg">&gt;&lt;/script&gt;</span>
+
+<span class="cm">// 2. Declare dependency on ngRoute</span>
+<span class="kw">var</span> app = angular.<span class="fn">module</span>(<span class="st">'myApp'</span>, [<span class="st">'ngRoute'</span>]);
+<span class="cm">//                                  ↑ required</span>
+
+<span class="cm">&lt;!-- 3. Outlet in HTML --&gt;</span>
+<span class="tg">&lt;div</span> <span class="ng">ng-view</span><span class="tg">&gt;&lt;/div&gt;</span>
+<span class="cm">&lt;!-- ↑ views swap here --&gt;</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cb">
+    <div class="cb-bar"><span class="cbd cr"></span><span class="cbd cy"></span><span class="cbd cg2"></span><span class="cb-fn">routing.js — complete $routeProvider config</span></div>
+    <pre><span class="kw">var</span> app = angular.<span class="fn">module</span>(<span class="st">'studentApp'</span>, [<span class="st">'ngRoute'</span>]);
+
+<span class="cm">// ── Configure routes using app.config() ──────────────────</span>
+<span class="cm">// app.config runs BEFORE controllers — used for route setup</span>
+app.<span class="fn">config</span>(<span class="kw">function</span>($routeProvider) {
+
+  $routeProvider
+
+    .<span class="fn">when</span>(<span class="st">'/home'</span>, {
+      templateUrl: <span class="st">'views/home.html'</span>,
+      controller:  <span class="st">'HomeCtrl'</span>
+    })
+
+    .<span class="fn">when</span>(<span class="st">'/students'</span>, {
+      templateUrl: <span class="st">'views/students.html'</span>,
+      controller:  <span class="st">'StudentCtrl'</span>
+    })
+
+    .<span class="fn">when</span>(<span class="st">'/students/:id'</span>, {
+      <span class="cm">// :id is a route parameter — accessible via $routeParams</span>
+      templateUrl: <span class="st">'views/detail.html'</span>,
+      controller:  <span class="st">'DetailCtrl'</span>
+    })
+
+    .<span class="fn">otherwise</span>({ redirectTo: <span class="st">'/home'</span> });  <span class="cm">// catch-all</span>
+});
+
+<span class="cm">// ── Read route params in a controller ────────────────────</span>
+app.<span class="fn">controller</span>(<span class="st">'DetailCtrl'</span>, <span class="kw">function</span>($scope, $routeParams, StudentService) {
+  <span class="kw">var</span> id = $routeParams.id;    <span class="cm">// reads :id from URL</span>
+  $scope.student = StudentService.<span class="fn">getById</span>(id);
+});
+
+<span class="cm">&lt;!-- Navigate using href="#/students" or ng-href ──────── --&gt;</span>
+<span class="tg">&lt;a</span> <span class="at">href</span>=<span class="st">"#!/home"</span><span class="tg">&gt;</span>Home<span class="tg">&lt;/a&gt;</span>
+<span class="tg">&lt;a</span> <span class="ng">ng-href</span>=<span class="st">"#!/students/{{ student.id }}"</span><span class="tg">&gt;</span>View<span class="tg">&lt;/a&gt;</span></pre>
+  </div>
+
+  <!-- Live SPA Demo -->
+  <div class="demo-wrap" id="demo-spa" ng-controller="SpaDemoCtrl">
+    <div class="demo-topbar">
+      <div class="demo-lbl"><span class="demo-dot"></span>Simulated SPA — click nav links, content swaps, no page reload</div>
+      <span class="demo-tag dt2">routing simulation</span>
+    </div>
+    <div class="demo-body" style="padding:0">
+      <div class="spa-shell">
+        <div class="spa-nav">
+          <span class="spa-nav-title">VTU App</span>
+          <button class="spa-link" ng-class="{'active': spaView=='home'}"     ng-click="spaGoto('home')">Home</button>
+          <button class="spa-link" ng-class="{'active': spaView=='students'}" ng-click="spaGoto('students')">Students</button>
+          <button class="spa-link" ng-class="{'active': spaView=='about'}"    ng-click="spaGoto('about')">About</button>
+          <span class="spa-url">#!/{{ spaView }}</span>
+        </div>
+        <div class="spa-view">
+          <!-- Home view -->
+          <div ng-show="spaView=='home'">
+            <div style="font-family:var(--serif);font-size:20px;margin-bottom:8px">Welcome to VTU Student Portal</div>
+            <p style="font-size:13.5px;color:var(--ink2);margin-bottom:12px">This is the <strong>Home component</strong> — loaded at route <code>#!/home</code></p>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+              <div style="background:var(--t1l);border:1px solid rgba(196,75,30,.2);border-radius:8px;padding:12px;text-align:center">
+                <div style="font-family:var(--serif);font-size:24px;color:var(--t1)">{{ spaStudents.length }}</div>
+                <div style="font-size:11.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.07em">Students</div>
+              </div>
+              <div style="background:var(--t2l);border:1px solid rgba(26,110,74,.2);border-radius:8px;padding:12px;text-align:center">
+                <div style="font-family:var(--serif);font-size:24px;color:var(--t2)">{{ spaAvg() }}</div>
+                <div style="font-size:11.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.07em">Avg GPA</div>
+              </div>
+              <div style="background:var(--t3l);border:1px solid rgba(28,79,158,.2);border-radius:8px;padding:12px;text-align:center">
+                <div style="font-family:var(--serif);font-size:24px;color:var(--t3)">2</div>
+                <div style="font-size:11.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.07em">Semester</div>
+              </div>
+            </div>
+          </div>
+          <!-- Students view -->
+          <div ng-show="spaView=='students'">
+            <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:10px">Student List — <code>#!/students</code></div>
+            <div ng-repeat="s in spaStudents" class="stu-card" style="cursor:pointer" ng-click="spaGoto('detail',s)">
+              <div><div class="stu-name">{{ s.name }}</div><div class="stu-roll">{{ s.roll }}</div></div>
+              <span class="gpa-pill" ng-class="{'gpa-a':s.gpa>=8.5,'gpa-b':s.gpa>=7&&s.gpa<8.5,'gpa-c':s.gpa<7}">{{ s.gpa }}</span>
+            </div>
+            <div style="font-size:12px;color:var(--muted);margin-top:6px">Click a student to view detail route #!/students/:id</div>
+          </div>
+          <!-- Detail view -->
+          <div ng-show="spaView=='detail'" ng-if="spaSelected">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+              <button ng-click="spaGoto('students')" style="padding:5px 12px;border-radius:6px;border:1px solid var(--bdr);background:transparent;font-family:var(--body);font-size:12.5px;cursor:pointer">← Back</button>
+              <code style="font-size:11px">#!/students/{{ spaSelected.id }}</code>
+            </div>
+            <div style="font-family:var(--serif);font-size:20px;margin-bottom:8px">{{ spaSelected.name }}</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div style="background:var(--s1);border-radius:6px;padding:10px 12px"><div style="font-size:11px;color:var(--muted);margin-bottom:2px">Roll No</div><div style="font-family:var(--mono);font-size:13px">{{ spaSelected.roll }}</div></div>
+              <div style="background:var(--s1);border-radius:6px;padding:10px 12px"><div style="font-size:11px;color:var(--muted);margin-bottom:2px">GPA</div><div style="font-family:var(--mono);font-size:13px">{{ spaSelected.gpa }}</div></div>
+            </div>
+          </div>
+          <!-- About view -->
+          <div ng-show="spaView=='about'">
+            <div style="font-family:var(--serif);font-size:20px;margin-bottom:8px">About — <code>#!/about</code></div>
+            <p style="font-size:13.5px;color:var(--ink2)">Each view is a separate HTML template loaded into <code>&lt;div ng-view&gt;</code>. The Angular Router swaps the template and runs the matching controller — no page reload.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout c2">
+    <strong>ng-view is the key:</strong> Put one <code>&lt;div ng-view&gt;&lt;/div&gt;</code> anywhere in your page. AngularJS replaces its contents with the matching template every time the URL changes. Everything outside <code>ng-view</code> (navbar, footer) stays unchanged.
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════
+     §3 — DATA BINDING & FORM HANDLING
+     ════════════════════════════════════════════════════════ -->
+<section class="section" id="sec-binding">
+  <div class="sec-hd">
+    <span class="sec-badge b3">§3</span>
+    <div>
+      <div class="sec-tag">Advanced AngularJS</div>
+      <div class="sec-title">Data Binding &amp; Form Handling</div>
+      <div class="sec-intro">AngularJS provides rich two-way data binding via <code>ng-model</code> and a complete form validation system. Every input field can be validated in real time — without writing any event listeners.</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-h" style="color:var(--t3)">One-way vs Two-way binding</div>
+      <table class="ref" style="margin:0">
+        <tr><th>Type</th><th>Syntax</th><th>Direction</th></tr>
+        <tr><td>Interpolation</td><td><code>{{ name }}</code></td><td style="color:var(--ink2)">Scope → View only</td></tr>
+        <tr><td>ng-bind</td>     <td><code>ng-bind="name"</code></td><td style="color:var(--ink2)">Scope → View only</td></tr>
+        <tr><td>ng-model</td>    <td><code>ng-model="name"</code></td><td style="color:var(--ink2)">Scope ↔ View (both ways)</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--t3)">Form validation states</div>
+      <table class="ref" style="margin:0">
+        <tr><th>State</th><th>What it means</th></tr>
+        <tr><td>$valid</td>    <td style="color:var(--ink2)">All validations pass</td></tr>
+        <tr><td>$invalid</td>  <td style="color:var(--ink2)">At least one validation fails</td></tr>
+        <tr><td>$pristine</td> <td style="color:var(--ink2)">User has not touched the field</td></tr>
+        <tr><td>$dirty</td>    <td style="color:var(--ink2)">User has interacted with the field</td></tr>
+        <tr><td>$touched</td>  <td style="color:var(--ink2)">Field has been focused and blurred</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="cb">
+    <div class="cb-bar"><span class="cbd cr"></span><span class="cbd cy"></span><span class="cbd cg2"></span><span class="cb-fn">forms.html — complete form with validation</span></div>
+    <pre><span class="cm">&lt;!-- name="regForm" — gives us $scope.regForm object for validation --&gt;</span>
+<span class="tg">&lt;form</span> <span class="at">name</span>=<span class="st">"regForm"</span> <span class="ng">ng-submit</span>=<span class="st">"submit()"</span> <span class="at">novalidate</span><span class="tg">&gt;</span>
+
+  <span class="cm">&lt;!-- required — field cannot be empty --&gt;</span>
+  <span class="tg">&lt;input</span> <span class="ng">ng-model</span>=<span class="st">"student.name"</span>
+         <span class="at">name</span>=<span class="st">"name"</span>
+         <span class="at">required</span>
+         <span class="at">minlength</span>=<span class="st">"3"</span><span class="tg">&gt;</span>
+
+  <span class="cm">&lt;!-- Show error ONLY when dirty (user touched) AND invalid --&gt;</span>
+  <span class="tg">&lt;p</span> <span class="ng">ng-show</span>=<span class="st">"regForm.name.$dirty && regForm.name.$invalid"</span><span class="tg">&gt;</span>
+    <span class="tg">&lt;span</span> <span class="ng">ng-show</span>=<span class="st">"regForm.name.$error.required"</span><span class="tg">&gt;</span>Name is required<span class="tg">&lt;/span&gt;</span>
+    <span class="tg">&lt;span</span> <span class="ng">ng-show</span>=<span class="st">"regForm.name.$error.minlength"</span><span class="tg">&gt;</span>Min 3 characters<span class="tg">&lt;/span&gt;</span>
+  <span class="tg">&lt;/p&gt;</span>
+
+  <span class="cm">&lt;!-- email type — validates email format automatically --&gt;</span>
+  <span class="tg">&lt;input</span> <span class="ng">ng-model</span>=<span class="st">"student.email"</span>
+         <span class="at">name</span>=<span class="st">"email"</span>
+         <span class="at">type</span>=<span class="st">"email"</span>
+         <span class="at">required</span><span class="tg">&gt;</span>
+
+  <span class="cm">&lt;!-- ng-disabled — prevent submit until form is valid --&gt;</span>
+  <span class="tg">&lt;button</span> <span class="at">type</span>=<span class="st">"submit"</span>
+          <span class="ng">ng-disabled</span>=<span class="st">"regForm.$invalid"</span><span class="tg">&gt;</span>
+    Register
+  <span class="tg">&lt;/button&gt;</span>
+
+<span class="tg">&lt;/form&gt;</span>
+
+<span class="cm">// Controller reads $scope.student (bound by ng-model)</span>
+$scope.<span class="fn">submit</span> = <span class="kw">function</span>() {
+  <span class="kw">if</span> ($scope.regForm.$valid) {
+    StudentService.<span class="fn">add</span>($scope.student);
+    $scope.student = {};           <span class="cm">// clear form</span>
+    $scope.regForm.$setPristine();  <span class="cm">// reset validation state</span>
+  }
+};</pre>
+  </div>
+
+  <!-- Live form validation demo -->
+  <div class="demo-wrap" id="demo-form" ng-controller="FormCtrl">
+    <div class="demo-topbar">
+      <div class="demo-lbl"><span class="demo-dot"></span>Live — Real-time form validation with $valid/$dirty/$error</div>
+      <span class="demo-tag dt3">ng-model + form validation</span>
+    </div>
+    <div class="demo-body">
+      <form name="regForm" ng-submit="submitForm()" novalidate>
+        <div class="two-col" style="margin-bottom:0">
+          <div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:600">Full Name <span style="color:var(--t1)">*</span></div>
+            <input class="di" ng-model="f.name" name="fname" required minlength="3" placeholder="Min 3 characters"
+              ng-style="{'border-color': regForm.fname.$dirty ? (regForm.fname.$valid ? '#15803d' : '#c44b1e') : ''}">
+            <div ng-show="regForm.fname.$dirty && regForm.fname.$invalid" style="font-size:12px;color:var(--t1);margin-top:4px">
+              <span ng-show="regForm.fname.$error.required">✗ Name is required</span>
+              <span ng-show="regForm.fname.$error.minlength">✗ Minimum 3 characters</span>
+            </div>
+            <div ng-show="regForm.fname.$valid && regForm.fname.$dirty" style="font-size:12px;color:var(--t2);margin-top:4px">✓ Looks good</div>
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:600">Email <span style="color:var(--t1)">*</span></div>
+            <input class="di" ng-model="f.email" name="femail" type="email" required placeholder="student@vtu.ac.in"
+              ng-style="{'border-color': regForm.femail.$dirty ? (regForm.femail.$valid ? '#15803d' : '#c44b1e') : ''}">
+            <div ng-show="regForm.femail.$dirty && regForm.femail.$invalid" style="font-size:12px;color:var(--t1);margin-top:4px">
+              <span ng-show="regForm.femail.$error.required">✗ Email is required</span>
+              <span ng-show="regForm.femail.$error.email">✗ Enter a valid email</span>
+            </div>
+            <div ng-show="regForm.femail.$valid && regForm.femail.$dirty" style="font-size:12px;color:var(--t2);margin-top:4px">✓ Valid email</div>
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:600">GPA (0–10) <span style="color:var(--t1)">*</span></div>
+            <input class="di" ng-model="f.gpa" name="fgpa" type="number" required min="0" max="10" step="0.1" placeholder="e.g. 8.5"
+              ng-style="{'border-color': regForm.fgpa.$dirty ? (regForm.fgpa.$valid ? '#15803d' : '#c44b1e') : ''}">
+            <div ng-show="regForm.fgpa.$dirty && regForm.fgpa.$invalid" style="font-size:12px;color:var(--t1);margin-top:4px">✗ Enter GPA between 0 and 10</div>
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:600">Course</div>
+            <select class="di" ng-model="f.course" style="background:var(--s1)">
+              <option value="MCA">MCA</option>
+              <option value="BCA">BCA</option>
+              <option value="M.Tech">M.Tech</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <button type="submit" class="dbtn dbtn-3" ng-disabled="regForm.$invalid">
+            Register Student
+          </button>
+          <span style="font-size:12.5px;color:var(--muted)">
+            Form: <strong ng-style="{'color': regForm.$valid ? 'var(--t2)' : 'var(--t1)'}">{{ regForm.$valid ? '$valid ✓' : '$invalid ✗' }}</strong>
+          </span>
+        </div>
+        <div ng-show="successMsg" style="margin-top:10px;padding:10px 14px;background:var(--t2l);border:1px solid rgba(26,110,74,.2);border-radius:8px;font-size:13.5px;color:var(--t2)">{{ successMsg }}</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════
+     §4 — CUSTOM DIRECTIVES
+     ════════════════════════════════════════════════════════ -->
+<section class="section" id="sec-directives">
+  <div class="sec-hd">
+    <span class="sec-badge b4">§4</span>
+    <div>
+      <div class="sec-tag">Advanced AngularJS</div>
+      <div class="sec-title">Custom Directives &amp; Components</div>
+      <div class="sec-intro">You can create your own HTML tags and attributes that encapsulate behaviour. A custom directive is AngularJS's reusable component system — define it once, use it anywhere as a custom HTML element.</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-h" style="color:var(--t4)">Directive types</div>
+      <table class="ref" style="margin:0">
+        <tr><th>restrict</th><th>Usage</th><th>Example</th></tr>
+        <tr><td>'E'</td><td style="color:var(--ink2)">Element (custom tag)</td><td style="color:var(--ink2)"><code>&lt;student-card&gt;</code></td></tr>
+        <tr><td>'A'</td><td style="color:var(--ink2)">Attribute</td><td style="color:var(--ink2)"><code>&lt;div student-card&gt;</code></td></tr>
+        <tr><td>'C'</td><td style="color:var(--ink2)">Class name</td><td style="color:var(--ink2)"><code>class="student-card"</code></td></tr>
+        <tr><td>'EA'</td><td style="color:var(--ink2)">Element or Attribute</td><td style="color:var(--ink2)">Both work</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--t4)">Directive lifecycle hooks</div>
+      <table class="ref" style="margin:0">
+        <tr><th>Hook</th><th>When it runs</th></tr>
+        <tr><td>link</td>      <td style="color:var(--ink2)">After directive is in DOM — most common</td></tr>
+        <tr><td>compile</td>   <td style="color:var(--ink2)">Before DOM insertion — for template changes</td></tr>
+        <tr><td>controller</td><td style="color:var(--ink2)">Creates an inner controller for the directive</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="cb">
+    <div class="cb-bar"><span class="cbd cr"></span><span class="cbd cy"></span><span class="cbd cg2"></span><span class="cb-fn">custom-directives.js — three patterns</span></div>
+    <pre><span class="cm">// ── Pattern 1: Simple element directive ──────────────────</span>
+app.<span class="fn">directive</span>(<span class="st">'loading'</span>, <span class="kw">function</span>() {
+  <span class="kw">return</span> {
+    restrict:  <span class="st">'E'</span>,                            <span class="cm">// &lt;loading&gt;</span>
+    template:  <span class="st">'&lt;div class="spinner"&gt;Loading…&lt;/div&gt;'</span>
+  };
+});
+<span class="cm">&lt;!-- Usage: &lt;loading&gt;&lt;/loading&gt; --&gt;</span>
+
+<span class="cm">// ── Pattern 2: Directive with isolated scope + props ─────</span>
+app.<span class="fn">directive</span>(<span class="st">'studentCard'</span>, <span class="kw">function</span>() {
+  <span class="kw">return</span> {
+    restrict:  <span class="st">'E'</span>,
+    scope: {
+      name:   <span class="st">'@'</span>,     <span class="cm">// @ = read string attribute</span>
+      gpa:    <span class="st">'='</span>,     <span class="cm">// = = two-way bind to parent scope variable</span>
+      onView: <span class="st">'&'</span>      <span class="cm">// & = call a function from parent scope</span>
+    },
+    template: <span class="st">`
+      &lt;div class="card"&gt;
+        &lt;h3&gt;{{ name }}&lt;/h3&gt;
+        &lt;p&gt;GPA: {{ gpa }}&lt;/p&gt;
+        &lt;button ng-click="onView()"&gt;View Details&lt;/button&gt;
+      &lt;/div&gt;`</span>,
+  };
+});
+<span class="cm">&lt;!-- Usage: &lt;student-card name="Arjun" gpa="student.gpa"
+            on-view="viewStudent()"&gt;&lt;/student-card&gt; --&gt;</span>
+
+<span class="cm">// ── Pattern 3: link function — accesses DOM directly ─────</span>
+app.<span class="fn">directive</span>(<span class="st">'highlight'</span>, <span class="kw">function</span>() {
+  <span class="kw">return</span> {
+    restrict: <span class="st">'A'</span>,              <span class="cm">// attribute: &lt;p highlight&gt;</span>
+    link: <span class="kw">function</span>(scope, element, attrs) {
+      <span class="cm">// 'element' is the DOM element wrapped in jqLite</span>
+      <span class="kw">var</span> color = attrs.highlight || <span class="st">'yellow'</span>;
+      element.<span class="fn">css</span>(<span class="st">'background'</span>, color);
+
+      element.<span class="fn">on</span>(<span class="st">'mouseenter'</span>, <span class="kw">function</span>() {
+        element.<span class="fn">css</span>(<span class="st">'opacity'</span>, <span class="st">'0.7'</span>);
+      });
+      element.<span class="fn">on</span>(<span class="st">'mouseleave'</span>, <span class="kw">function</span>() {
+        element.<span class="fn">css</span>(<span class="st">'opacity'</span>, <span class="st">'1'</span>);
+      });
+    }
+  };
+});</pre>
+  </div>
+
+  <!-- Live custom directive demo -->
+  <div class="demo-wrap" id="demo-dir" ng-controller="DirDemoCtrl">
+    <div class="demo-topbar">
+      <div class="demo-lbl"><span class="demo-dot"></span>Live — custom directives: &lt;student-card&gt;, &lt;gpa-bar&gt;, star-rating</div>
+      <span class="demo-tag dt4">custom directives</span>
+    </div>
+    <div class="demo-body">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px;font-weight:600">Three custom directives defined with app.directive()</div>
+      <div class="three-col">
+        <!-- student-card directive -->
+        <div>
+          <div style="font-family:var(--mono);font-size:10.5px;color:var(--t4);margin-bottom:7px">&lt;student-card&gt; element directive</div>
+          <div ng-repeat="s in dirStudents">
+            <student-card-demo sname="{{s.name}}" sgpa="s.gpa" scourse="{{s.course}}"></student-card-demo>
+          </div>
+        </div>
+        <!-- gpa-bar directive -->
+        <div>
+          <div style="font-family:var(--mono);font-size:10.5px;color:var(--t4);margin-bottom:7px">&lt;gpa-bar&gt; attribute directive</div>
+          <div ng-repeat="s in dirStudents" style="margin-bottom:8px">
+            <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px">{{ s.name }}</div>
+            <gpa-bar gpa="s.gpa"></gpa-bar>
+          </div>
+        </div>
+        <!-- star-rating directive -->
+        <div>
+          <div style="font-family:var(--mono);font-size:10.5px;color:var(--t4);margin-bottom:7px">&lt;star-rating&gt; interactive directive</div>
+          <div ng-repeat="s in dirStudents" style="margin-bottom:10px">
+            <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px">{{ s.name }}</div>
+            <star-rating value="s.stars" max="5"></star-rating>
+            <div style="font-size:11.5px;color:var(--muted);margin-top:2px">{{ s.stars }}/5 stars</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════
+     §5 — PROJECT BUILD GUIDE
+     ════════════════════════════════════════════════════════ -->
+<section class="section" id="sec-project">
+  <div class="sec-hd">
+    <span class="sec-badge b5">§5</span>
+    <div>
+      <div class="sec-tag">Build Guide</div>
+      <div class="sec-title">Build the Project — Step by Step</div>
+      <div class="sec-intro">Follow these steps to build a complete Student Management SPA from scratch. Each step adds one concept. At the end you have a working multi-view application demonstrating all four advanced topics.</div>
+    </div>
+  </div>
+
+  <div class="callout cg">
+    <strong>What you will build:</strong> A Student Management SPA with a Home dashboard, Student List, Add Student form with live validation, Student Detail view, a custom card directive, and a shared service. All in a <strong>single HTML file</strong> to start — no build tools needed.
+  </div>
+
+  <div class="step-grid">
+
+    <div class="step">
+      <div class="step-num-col">
+        <div class="step-circle" style="background:var(--t1)">1</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <div class="step-filename">index.html</div>
+        <div class="step-title">Set up the HTML shell</div>
+        <div class="step-desc" style="margin-bottom:10px">Create the base HTML with AngularJS + ngRoute loaded, <code>ng-app</code>, a navigation bar, and the <code>ng-view</code> outlet.</div>
+        <div class="cb">
+          <div class="cb-bar"><span class="cbd cr"></span><span class="cbd cy"></span><span class="cbd cg2"></span><span class="cb-fn">Step 1 — index.html shell</span></div>
+          <pre><span class="tg">&lt;!DOCTYPE html&gt;</span>
+<span class="tg">&lt;html</span> <span class="ng">ng-app</span>=<span class="st">"studentApp"</span><span class="tg">&gt;</span>
+<span class="tg">&lt;head&gt;</span>
+  <span class="tg">&lt;title&gt;</span>Student Manager<span class="tg">&lt;/title&gt;</span>
+  <span class="tg">&lt;script</span> <span class="at">src</span>=<span class="st">"https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"</span><span class="tg">&gt;&lt;/script&gt;</span>
+  <span class="tg">&lt;script</span> <span class="at">src</span>=<span class="st">"https://cdnjs.cloudflare.com/ajax/libs/angular-route/1.8.3/angular-route.min.js"</span><span class="tg">&gt;&lt;/script&gt;</span>
+<span class="tg">&lt;/head&gt;</span>
+<span class="tg">&lt;body&gt;</span>
+
+  <span class="cm">&lt;!-- Navbar: stays on every page --&gt;</span>
+  <span class="tg">&lt;nav&gt;</span>
+    <span class="tg">&lt;a</span> <span class="at">href</span>=<span class="st">"#!/home"</span><span class="tg">&gt;</span>Home<span class="tg">&lt;/a&gt;</span>
+    <span class="tg">&lt;a</span> <span class="at">href</span>=<span class="st">"#!/students"</span><span class="tg">&gt;</span>Students<span class="tg">&lt;/a&gt;</span>
+    <span class="tg">&lt;a</span> <span class="at">href</span>=<span class="st">"#!/add"</span><span class="tg">&gt;</span>Add Student<span class="tg">&lt;/a&gt;</span>
+  <span class="tg">&lt;/nav&gt;</span>
+
+  <span class="cm">&lt;!-- ng-view: swapped by router --&gt;</span>
+  <span class="tg">&lt;div</span> <span class="ng">ng-view</span><span class="tg">&gt;&lt;/div&gt;</span>
+
+  <span class="tg">&lt;script</span> <span class="at">src</span>=<span class="st">"app.js"</span><span class="tg">&gt;&lt;/script&gt;</span>
+<span class="tg">&lt;/body&gt;</span>
+<span class="tg">&lt;/html&gt;</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-col">
+        <div class="step-circle" style="background:var(--t2)">2</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <div class="step-filename">app.js</div>
+        <div class="step-title">Create module + configure routes</div>
+        <div class="step-desc" style="margin-bottom:10px">Declare the module with <code>ngRoute</code> dependency, then configure all routes using <code>$routeProvider</code>.</div>
+        <div class="cb">
+          <div class="cb-bar"><span class="cbd cr"></span><span class="cbd cy"></span><span class="cbd cg2"></span><span class="cb-fn">Step 2 — app.js</span></div>
+          <pre><span class="kw">var</span> app = angular.<span class="fn">module</span>(<span class="st">'studentApp'</span>, [<span class="st">'ngRoute'</span>]);
+
+app.<span class="fn">config</span>(<span class="kw">function</span>($routeProvider) {
+  $routeProvider
+    .<span class="fn">when</span>(<span class="st">'/home'</span>,     { templateUrl:<span class="st">'home.html'</span>,   controller:<span class="st">'HomeCtrl'</span> })
+    .<span class="fn">when</span>(<span class="st">'/students'</span>,{ templateUrl:<span class="st">'list.html'</span>,   controller:<span class="st">'ListCtrl'</span> })
+    .<span class="fn">when</span>(<span class="st">'/add'</span>,      { templateUrl:<span class="st">'add.html'</span>,    controller:<span class="st">'AddCtrl'</span>  })
+    .<span class="fn">when</span>(<span class="st">'/students/:id'</span>, { templateUrl:<span class="st">'detail.html'</span>, controller:<span class="st">'DetailCtrl'</span> })
+    .<span class="fn">otherwise</span>({ redirectTo: <span class="st">'/home'</span> });
+});</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-col">
+        <div class="step-circle" style="background:var(--t1)">3</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <div class="step-filename">service.js</div>
+        <div class="step-title">Create the StudentService</div>
+        <div class="step-desc" style="margin-bottom:10px">Put all data and business logic in a service so all controllers share the same array. If HomeCtrl and ListCtrl both inject StudentService, they both see the same data.</div>
+        <div class="cb">
+          <div class="cb-bar"><span class="cbd cr"></span><span class="cbd cy"></span><span class="cbd cg2"></span><span class="cb-fn">Step 3 — service.js</span></div>
+          <pre>app.<span class="fn">service</span>(<span class="st">'StudentService'</span>, <span class="kw">function</span>() {
+
+  <span class="kw">var</span> students = [
+    { id:<span class="nm">1</span>, name:<span class="st">'Arjun'</span>, roll:<span class="st">'4MCA001'</span>, gpa:<span class="nm">8.7</span>, course:<span class="st">'MCA'</span> },
+    { id:<span class="nm">2</span>, name:<span class="st">'Priya'</span>, roll:<span class="st">'4MCA002'</span>, gpa:<span class="nm">9.1</span>, course:<span class="st">'MCA'</span> },
+  ];
+  <span class="kw">var</span> nextId = <span class="nm">3</span>;
+
+  <span class="kw">this</span>.<span class="fn">getAll</span>     = <span class="kw">function</span>()    { <span class="kw">return</span> students; };
+  <span class="kw">this</span>.<span class="fn">getById</span>    = <span class="kw">function</span>(id)  { <span class="kw">return</span> students.<span class="fn">find</span>(<span class="kw">function</span>(s){ <span class="kw">return</span> s.id == id; }); };
+  <span class="kw">this</span>.<span class="fn">add</span>        = <span class="kw">function</span>(s)   { s.id = nextId++; students.<span class="fn">push</span>(s); };
+  <span class="kw">this</span>.<span class="fn">remove</span>     = <span class="kw">function</span>(id)  { <span class="kw">var</span> i = students.<span class="fn">findIndex</span>(<span class="kw">function</span>(s){ <span class="kw">return</span> s.id==id; }); students.<span class="fn">splice</span>(i,<span class="nm">1</span>); };
+  <span class="kw">this</span>.<span class="fn">getAvgGPA</span>  = <span class="kw">function</span>()    {
+    <span class="kw">var</span> sum = students.<span class="fn">reduce</span>(<span class="kw">function</span>(a,s){ <span class="kw">return</span> a+s.gpa; },<span class="nm">0</span>);
+    <span class="kw">return</span> (sum/students.length).<span class="fn">toFixed</span>(<span class="nm">1</span>);
+  };
+});</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-col">
+        <div class="step-circle" style="background:var(--t3)">4</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <div class="step-filename">controllers.js</div>
+        <div class="step-title">Write the four controllers</div>
+        <div class="step-desc" style="margin-bottom:10px">Each controller injects StudentService. They never talk to each other directly — the service is the shared data layer.</div>
+        <div class="cb">
+          <div class="cb-bar"><span class="cbd cr"></span><span class="cbd cy"></span><span class="cbd cg2"></span><span class="cb-fn">Step 4 — controllers.js</span></div>
+          <pre><span class="cm">// Home</span>
+app.<span class="fn">controller</span>(<span class="st">'HomeCtrl'</span>, <span class="kw">function</span>($scope, StudentService) {
+  $scope.count  = StudentService.<span class="fn">getAll</span>().length;
+  $scope.avgGPA = StudentService.<span class="fn">getAvgGPA</span>();
+});
+
+<span class="cm">// List</span>
+app.<span class="fn">controller</span>(<span class="st">'ListCtrl'</span>, <span class="kw">function</span>($scope, StudentService) {
+  $scope.students   = StudentService.<span class="fn">getAll</span>();
+  $scope.searchText = <span class="st">''</span>;
+  $scope.<span class="fn">remove</span>     = <span class="kw">function</span>(id) { StudentService.<span class="fn">remove</span>(id); };
+});
+
+<span class="cm">// Add (with form validation)</span>
+app.<span class="fn">controller</span>(<span class="st">'AddCtrl'</span>, <span class="kw">function</span>($scope, $location, StudentService) {
+  $scope.student = { course: <span class="st">'MCA'</span> };
+  $scope.<span class="fn">save</span> = <span class="kw">function</span>() {
+    <span class="kw">if</span> ($scope.addForm.$valid) {
+      StudentService.<span class="fn">add</span>($scope.student);
+      $location.<span class="fn">path</span>(<span class="st">'/students'</span>);  <span class="cm">// redirect after save</span>
+    }
+  };
+});
+
+<span class="cm">// Detail (uses route param)</span>
+app.<span class="fn">controller</span>(<span class="st">'DetailCtrl'</span>, <span class="kw">function</span>($scope, $routeParams, StudentService) {
+  $scope.student = StudentService.<span class="fn">getById</span>($routeParams.id);
+});</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-col">
+        <div class="step-circle" style="background:var(--t4)">5</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <div class="step-filename">directives.js</div>
+        <div class="step-title">Add the custom student-card directive</div>
+        <div class="step-desc" style="margin-bottom:10px">Define a reusable <code>&lt;student-card&gt;</code> element that the list view will use instead of repeating the same HTML block.</div>
+        <div class="cb">
+          <div class="cb-bar"><span class="cbd cr"></span><span class="cbd cy"></span><span class="cbd cg2"></span><span class="cb-fn">Step 5 — directives.js</span></div>
+          <pre>app.<span class="fn">directive</span>(<span class="st">'studentCard'</span>, <span class="kw">function</span>() {
+  <span class="kw">return</span> {
+    restrict: <span class="st">'E'</span>,
+    scope: {
+      student: <span class="st">'='</span>,         <span class="cm">// two-way bind student object</span>
+      onRemove: <span class="st">'&'</span>          <span class="cm">// call parent remove() function</span>
+    },
+    template: <span class="st">`
+      &lt;div class="card"&gt;
+        &lt;h3&gt;{{ student.name }}&lt;/h3&gt;
+        &lt;p&gt;{{ student.roll }} | {{ student.course }}&lt;/p&gt;
+        &lt;p&gt;GPA: {{ student.gpa }}&lt;/p&gt;
+        &lt;a ng-href="#!/students/{{ student.id }}"&gt;View&lt;/a&gt;
+        &lt;button ng-click="onRemove()"&gt;Remove&lt;/button&gt;
+      &lt;/div&gt;`</span>
+  };
+});
+
+<span class="cm">&lt;!-- Usage in list.html: --&gt;</span>
+<span class="tg">&lt;student-card</span>
+  <span class="ng">ng-repeat</span>=<span class="st">"s in students"</span>
+  <span class="at">student</span>=<span class="st">"s"</span>
+  <span class="at">on-remove</span>=<span class="st">"remove(s.id)"</span><span class="tg">&gt;
+&lt;/student-card&gt;</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-col">
+        <div class="step-circle" style="background:var(--gold)">6</div>
+      </div>
+      <div class="step-body">
+        <div class="step-filename">views/*.html</div>
+        <div class="step-title">Create the HTML templates for each route</div>
+        <div class="step-desc">Create <code>home.html</code>, <code>list.html</code>, <code>add.html</code>, and <code>detail.html</code>. Each template uses the controller's <code>$scope</code> variables via <code>{{ }}</code> and <code>ng-*</code> directives. The <code>add.html</code> form uses <code>ng-submit</code> with validation. The <code>list.html</code> uses <code>&lt;student-card&gt;</code>.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════
+     §6 — STUDENT TASKS
+     ════════════════════════════════════════════════════════ -->
+<section class="section" id="sec-tasks">
+  <div class="sec-hd">
+    <span class="sec-badge b5">§6</span>
+    <div>
+      <div class="sec-tag">Implement Now</div>
+      <div class="sec-title">Your Tasks — Implement These</div>
+      <div class="sec-intro">Six tasks of increasing difficulty. Complete them by modifying the project you built in §5. Each task targets one advanced concept.</div>
+    </div>
+  </div>
+
+  <div class="task-grid">
+    <div class="task-card" data-num="01">
+      <div class="task-level lv-easy">★ Easy — Services</div>
+      <div class="task-title">Add a CourseService</div>
+      <div class="task-desc">Create a new service called <code>CourseService</code> that holds a list of available courses. Inject it into the AddCtrl and use it to populate the course <code>&lt;select&gt;</code> dropdown with <code>ng-options</code> instead of hardcoded options.</div>
+    </div>
+    <div class="task-card" data-num="02">
+      <div class="task-level lv-easy">★ Easy — Routing</div>
+      <div class="task-title">Add an About route</div>
+      <div class="task-desc">Add a new route <code>/about</code> that shows a static information page about the portal. Add a nav link. The page should display the total number of students using <code>StudentService.getAll().length</code>.</div>
+    </div>
+    <div class="task-card" data-num="03">
+      <div class="task-level lv-med">★★ Medium — Forms</div>
+      <div class="task-title">Add Edit functionality</div>
+      <div class="task-desc">Create an <code>/edit/:id</code> route and <code>EditCtrl</code>. Pre-populate the form fields with the existing student data from StudentService. On submit, update the record (not add a new one). Add an "Edit" button in the student detail view.</div>
+    </div>
+    <div class="task-card" data-num="04">
+      <div class="task-level lv-med">★★ Medium — Directives</div>
+      <div class="task-title">Build a gpa-bar directive</div>
+      <div class="task-desc">Create an element directive <code>&lt;gpa-bar gpa="8.7"&gt;</code> that renders a horizontal progress bar. The bar width should be <code>gpa * 10%</code>. Bar colour should change — green for ≥8, blue for ≥7, amber for below 7. Use the <code>link</code> function.</div>
+    </div>
+    <div class="task-card" data-num="05">
+      <div class="task-level lv-hard">★★★ Hard — $http Service</div>
+      <div class="task-title">Load students from an API</div>
+      <div class="task-desc">Replace the hardcoded array in StudentService with a call to <code>https://jsonplaceholder.typicode.com/users</code> using <code>$http.get()</code>. Map the API response fields to match your student object shape. Show a loading state while fetching.</div>
+    </div>
+    <div class="task-card" data-num="06">
+      <div class="task-level lv-hard">★★★ Hard — Full Feature</div>
+      <div class="task-title">Add Search + Sort + Pagination</div>
+      <div class="task-desc">In the student list view: (1) add a search input using <code>filter:searchText</code>, (2) add Sort by Name/GPA buttons using <code>orderBy</code>, (3) add simple pagination — show 5 students per page using <code>limitTo</code> and track the current page in <code>$scope</code>.</div>
+    </div>
+  </div>
+
+  <div class="callout cg" style="margin-top:8px">
+    <strong>How to get started:</strong> Take the project built in §5 (the single HTML file). Open it in VS Code or any text editor. Add the scripts at the bottom, save, and refresh in Chrome. Use Chrome DevTools Console to see errors — AngularJS error messages are detailed. Start with Task 01 and work up.
+  </div>
+</section>
+
+<!-- Quick Reference -->
+<section class="section" style="margin-bottom:20px">
+  <div class="sec-hd">
+    <span class="sec-badge b5">✦</span>
+    <div>
+      <div class="sec-tag">Exam Prep</div>
+      <div class="sec-title">Advanced AngularJS — Quick Reference</div>
+    </div>
+  </div>
+  <div class="qr-grid">
+    <div class="qr-card"><span class="qr-m">app.service(name, fn)</span><span class="qr-d">Creates singleton service. Methods defined on <code>this</code>. Shared across all controllers.</span></div>
+    <div class="qr-card"><span class="qr-m">app.factory(name, fn)</span><span class="qr-d">Creates service by returning an object. More flexible than .service().</span></div>
+    <div class="qr-card"><span class="qr-m">Dependency Injection</span><span class="qr-d">Angular reads parameter names and injects matching services automatically. Add service name as parameter to controller function.</span></div>
+    <div class="qr-card"><span class="qr-m">$routeProvider.when()</span><span class="qr-d">Maps a URL path to a templateUrl and controller. Configured inside app.config().</span></div>
+    <div class="qr-card"><span class="qr-m">ng-view</span><span class="qr-d">The outlet where router swaps templates. Place once in the main HTML. Everything outside stays.</span></div>
+    <div class="qr-card"><span class="qr-m">$routeParams</span><span class="qr-d">Inject to read URL parameters. Route /:id → $routeParams.id gives the value.</span></div>
+    <div class="qr-card"><span class="qr-m">$location.path()</span><span class="qr-d">Programmatic navigation. $location.path('/students') navigates without an anchor tag.</span></div>
+    <div class="qr-card"><span class="qr-m">regForm.$valid</span><span class="qr-d">Form object created when name="regForm" on the form element. $valid, $invalid, $dirty, $pristine.</span></div>
+    <div class="qr-card"><span class="qr-m">app.directive(name, fn)</span><span class="qr-d">Creates custom HTML element/attribute. Returns object with restrict, scope, template, link.</span></div>
+    <div class="qr-card"><span class="qr-m">scope: { x: '@' }</span><span class="qr-d">@ = read string. = = two-way bind. & = call expression. Creates isolated scope.</span></div>
+    <div class="qr-card"><span class="qr-m">link: fn(scope,el,attrs)</span><span class="qr-d">Runs after directive is in DOM. Use to access and manipulate the DOM element directly.</span></div>
+    <div class="qr-card"><span class="qr-m">$http.get(url).then()</span><span class="qr-d">Built-in AJAX service. Returns promise. response.data holds parsed JSON from server.</span></div>
+  </div>
+</section>
+
+</main>
+
+<footer class="pg-foot">
+  VTU MCA — Web Technologies · Module 5 · Advanced AngularJS &nbsp;·&nbsp; Reference: AngularJS by Krishna Rungta (Packt) · docs.angularjs.org
+</footer>
+
+<!-- ══ AngularJS App Definitions for all live demos ══════════ -->
+<script>
+/* ─── Services demo ──────────────────────────────────────── */
+angular.module('svcApp', [])
+  .service('DemoStudentSvc', function() {
+    var students = [
+      { name:'Arjun', gpa:8.7 },
+      { name:'Priya', gpa:9.1 },
+      { name:'Ravi',  gpa:7.5 },
+    ];
+    this.getAll    = function()    { return students; };
+    this.add       = function(s)   { if(s.name) students.push({ name:s.name, gpa: parseFloat(s.gpa)||0 }); };
+    this.getAvgGPA = function() {
+      var sum = students.reduce(function(a,s){ return a+s.gpa; },0);
+      return (sum/students.length).toFixed(1);
+    };
+    this.getGrade  = function(g)   { return g>=9?'A+':g>=8?'A':g>=7?'B':'C'; };
+  })
+  .controller('SvcCtrl', function($scope, DemoStudentSvc) {
+    $scope.newName = ''; $scope.newGpa = null;
+    $scope.allStudents = function() { return DemoStudentSvc.getAll(); };
+    $scope.avgGPA = function() { return DemoStudentSvc.getAvgGPA(); };
+    $scope.getGrade = function(g) { return DemoStudentSvc.getGrade(g); };
+    $scope.addStudent = function() {
+      if($scope.newName) {
+        DemoStudentSvc.add({ name:$scope.newName, gpa:$scope.newGpa });
+        $scope.newName=''; $scope.newGpa=null;
+      }
+    };
+  });
+
+/* ─── Routing (SPA simulation) ───────────────────────────── */
+angular.module('spaDemo', [])
+  .controller('SpaDemoCtrl', function($scope) {
+    $scope.spaView = 'home';
+    $scope.spaSelected = null;
+    $scope.spaStudents = [
+      { id:1, name:'Arjun', roll:'4MCA001', gpa:8.7 },
+      { id:2, name:'Priya', roll:'4MCA002', gpa:9.1 },
+      { id:3, name:'Ravi',  roll:'4MCA003', gpa:7.5 },
+    ];
+    $scope.spaGoto = function(view, student) {
+      $scope.spaView = view;
+      $scope.spaSelected = student || null;
+    };
+    $scope.spaAvg = function() {
+      var s = $scope.spaStudents;
+      return (s.reduce(function(a,x){return a+x.gpa;},0)/s.length).toFixed(1);
+    };
+  });
+
+/* ─── Form validation demo ───────────────────────────────── */
+angular.module('formApp', [])
+  .controller('FormCtrl', function($scope) {
+    $scope.f = { course: 'MCA' };
+    $scope.successMsg = '';
+    $scope.submitForm = function() {
+      if($scope.regForm.$valid) {
+        $scope.successMsg = '✓ Registered: ' + $scope.f.name + ' (' + $scope.f.email + ')';
+        $scope.f = { course: 'MCA' };
+        $scope.regForm.$setPristine();
+        $scope.regForm.$setUntouched();
+      }
+    };
+  });
+
+/* ─── Custom directives demo ─────────────────────────────── */
+angular.module('dirApp', [])
+  .directive('studentCardDemo', function() {
+    return {
+      restrict: 'E',
+      scope: { sname:'@', sgpa:'=', scourse:'@' },
+      template: '<div style="background:var(--s1);border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;margin-bottom:7px">' +
+        '<div style="font-size:13.5px;font-weight:700;color:var(--ink)">{{sname}}</div>' +
+        '<div style="font-size:12px;color:var(--muted)">{{scourse}}</div>' +
+        '<div style="font-family:var(--mono);font-size:13px;font-weight:700;margin-top:4px;color:var(--t4)">{{sgpa}} GPA</div>' +
+        '</div>'
+    };
+  })
+  .directive('gpaBar', function() {
+    return {
+      restrict: 'E',
+      scope: { gpa: '=' },
+      template: '<div style="background:var(--s2);border-radius:4px;overflow:hidden;height:8px">' +
+        '<div ng-style="{width: (gpa*10)+\'%\', background: gpa>=8.5?\'var(--t2)\':gpa>=7?\'var(--t3)\':\' var(--t1)\', height:\'8px\', \'border-radius\':\'4px\', transition:\'width .4s\'}">' +
+        '</div></div>'
+    };
+  })
+  .directive('starRating', function() {
+    return {
+      restrict: 'E',
+      scope: { value:'=', max:'@' },
+      link: function(scope, element) {
+        scope.stars = [];
+        var m = parseInt(scope.max) || 5;
+        for(var i=1; i<=m; i++) scope.stars.push(i);
+        scope.setRating = function(n) { scope.value = n; };
+        scope.hovered = 0;
+      },
+      template: '<span ng-repeat="s in stars">' +
+        '<span class="rating-star" ' +
+        'ng-click="setRating(s)" ' +
+        'ng-style="{\'color\': s <= value ? \'#f59e0b\' : \'var(--bdr2)\'}">' +
+        '★</span></span>'
+    };
+  })
+  .controller('DirDemoCtrl', function($scope) {
+    $scope.dirStudents = [
+      { name:'Arjun', gpa:8.7, course:'MCA', stars:4 },
+      { name:'Priya', gpa:9.1, course:'MCA', stars:5 },
+      { name:'Ravi',  gpa:7.5, course:'BCA', stars:3 },
+    ];
+  });
+
+/* ── Manually bootstrap each demo (multiple ng-app fix) ── */
+angular.bootstrap(document.getElementById('demo-svc'),  ['svcApp']);
+angular.bootstrap(document.getElementById('demo-spa'),  ['spaDemo']);
+angular.bootstrap(document.getElementById('demo-form'), ['formApp']);
+angular.bootstrap(document.getElementById('demo-dir'),  ['dirApp']);
+</script>
+</body>
+</html>
