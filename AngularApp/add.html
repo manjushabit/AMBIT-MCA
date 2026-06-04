@@ -1,0 +1,86 @@
+<a href="#!/students" class="back-link">&larr; Back to Students</a>
+<div class="page-title" style="margin-bottom:4px">Add New Student</div>
+<div class="lbl" style="margin-bottom:20px">Fill all required fields &mdash; Save enables when form is valid</div>
+
+<div class="two-col">
+
+  <form name="addForm" ng-submit="save()" novalidate>
+    <div class="acard">
+      <div class="acard-ttl">Student Details</div>
+
+      <div class="fld">
+        <label>Full Name <span class="req">*</span></label>
+        <input type="text" ng-model="student.name" name="sname"
+               required minlength="3" placeholder="e.g. Arjun Sharma">
+        <div class="err" ng-show="addForm.sname.$dirty && addForm.sname.$error.required">&#10007; Name is required</div>
+        <div class="err" ng-show="addForm.sname.$dirty && addForm.sname.$error.minlength">&#10007; Minimum 3 characters</div>
+        <div class="ok"  ng-show="addForm.sname.$valid && addForm.sname.$dirty">&#10003; Looks good</div>
+      </div>
+
+      <div class="fld">
+        <label>Roll Number <span class="req">*</span></label>
+        <input type="text" ng-model="student.roll" name="sroll"
+               required placeholder="e.g. 4MCA003">
+        <div class="err" ng-show="addForm.sroll.$dirty && addForm.sroll.$error.required">&#10007; Roll number is required</div>
+        <div class="ok"  ng-show="addForm.sroll.$valid && addForm.sroll.$dirty">&#10003;</div>
+      </div>
+
+      <div class="fld">
+        <label>Course <span class="req">*</span></label>
+        <select ng-model="student.course" name="scourse" required>
+          <option value="">&#8212; Select &#8212;</option>
+          <option value="MCA">MCA</option>
+          <option value="BCA">BCA</option>
+          <option value="M.Tech">M.Tech</option>
+          <option value="B.Tech">B.Tech</option>
+        </select>
+        <div class="err" ng-show="addForm.scourse.$dirty && addForm.scourse.$error.required">&#10007; Please select a course</div>
+      </div>
+
+      <div class="fld">
+        <label>GPA (0 &ndash; 10) <span class="req">*</span></label>
+        <input type="number" ng-model="student.gpa" name="sgpa"
+               required min="0" max="10" step="0.1" placeholder="e.g. 8.5">
+        <div class="err" ng-show="addForm.sgpa.$dirty && addForm.sgpa.$error.required">&#10007; GPA is required</div>
+        <div class="err" ng-show="addForm.sgpa.$dirty && (addForm.sgpa.$error.min || addForm.sgpa.$error.max)">&#10007; Must be between 0 and 10</div>
+        <div class="ok"  ng-show="addForm.sgpa.$valid && addForm.sgpa.$dirty">&#10003; GPA: {{ student.gpa }}</div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-save" ng-disabled="addForm.$invalid">
+      &#10003; Save Student
+    </button>
+
+    <a href="#!/students"
+       style="display:block;text-align:center;margin-top:8px;padding:9px;border:1.5px solid #ddd9d0;border-radius:8px;font-size:13.5px;font-weight:600;color:#4a4640;text-decoration:none">
+      Cancel
+    </a>
+
+    <div class="form-state">
+      <span ng-style="{'color': addForm.$valid ? '#1a6e4a' : '#dd0031'}">
+        $valid = {{ addForm.$valid }}
+      </span>
+      <span>$dirty = {{ addForm.$dirty }}</span>
+    </div>
+  </form>
+
+  <div>
+    <div class="acard">
+      <div class="acard-ttl">Live Preview &mdash; $scope.student</div>
+      <div class="prev-row"><span class="pkey">student.name</span>  <span class="pval">{{ student.name   || '&mdash;' }}</span></div>
+      <div class="prev-row"><span class="pkey">student.roll</span>  <span class="pval">{{ student.roll   || '&mdash;' }}</span></div>
+      <div class="prev-row"><span class="pkey">student.course</span><span class="pval">{{ student.course }}</span></div>
+      <div class="prev-row"><span class="pkey">student.gpa</span>   <span class="pval">{{ student.gpa    || '&mdash;' }}</span></div>
+    </div>
+    <div class="acard" style="background:#f0ede6">
+      <div class="acard-ttl">What save() does</div>
+      <div style="font-size:13px;color:#4a4640;line-height:1.9;font-family:monospace">
+        1. ng-submit &rarr; <strong>save()</strong><br>
+        2. check <strong>addForm.$valid</strong><br>
+        3. StudentService.<strong>add(student)</strong><br>
+        4. $location.path(<strong>'/students'</strong>)
+      </div>
+    </div>
+  </div>
+
+</div>

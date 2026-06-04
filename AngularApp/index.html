@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html ng-app="studentApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VTU Student Manager</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-route/1.8.3/angular-route.min.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#f7f5f0;--white:#fff;--surf:#f0ede6;--bdr:#ddd9d0;
+      --ink:#1a1714;--ink2:#4a4640;--muted:#8a8070;
+      --red:#dd0031;--redl:#fff0f2;
+      --blue:#1d4ed8;--blul:#eff6ff;
+      --green:#1a6e4a;--grnl:#edf7f2;
+    }
+    body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.65}
+    .navbar{background:var(--ink);padding:0 28px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.25)}
+    .brand{font-size:16px;font-weight:700;color:#fff;text-decoration:none;display:flex;align-items:center;gap:8px}
+    .ng-tag{font-size:10px;font-weight:700;background:var(--red);color:#fff;padding:2px 7px;border-radius:4px}
+    .nav-links{display:flex;gap:4px}
+    .nav-links a{font-size:13.5px;font-weight:600;color:rgba(255,255,255,.5);text-decoration:none;padding:6px 13px;border-radius:7px;transition:all .15s}
+    .nav-links a:hover{background:rgba(255,255,255,.1);color:#fff}
+    .nav-links a.active{background:rgba(255,255,255,.14);color:#fff}
+    .main{max-width:900px;margin:0 auto;padding:32px 22px 64px}
+    .ng-enter{animation:fadeIn .22s ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    /* shared */
+    .btn{padding:8px 18px;border-radius:8px;font-size:13.5px;font-weight:700;text-decoration:none;display:inline-block;border:none;cursor:pointer;transition:all .15s;font-family:inherit}
+    .btn-w  {background:var(--white);color:var(--ink)}
+    .btn-g  {background:transparent;border:1.5px solid rgba(255,255,255,.3);color:#fff}
+    .btn-red{background:var(--red);color:#fff}.btn-red:hover{background:#b5002a}
+    .btn-out{background:var(--surf);border:1.5px solid var(--bdr);color:var(--ink2)}.btn-out:hover{background:#e8e4dc}
+    /* home */
+    .hero{background:var(--ink);color:#fff;border-radius:12px;padding:28px 26px;margin-bottom:22px}
+    .hero h1{font-size:26px;font-weight:700;margin-bottom:6px}
+    .hero p{font-size:14px;color:rgba(255,255,255,.45);margin-bottom:18px}
+    .h-btns{display:flex;gap:10px}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+    .stat{background:var(--white);border:1px solid var(--bdr);border-radius:10px;padding:18px;text-align:center}
+    .stat-n{font-size:36px;font-weight:700;color:var(--ink);line-height:1;margin-bottom:5px}
+    .stat-l{font-size:11.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.07em}
+    .lbl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin-bottom:12px}
+    .note-card{background:var(--white);border:1px solid var(--bdr);border-radius:10px;padding:18px 20px;font-size:13.5px;color:var(--ink2);line-height:1.75}
+    .note-card code{background:var(--surf);border:1px solid var(--bdr);padding:1px 6px;border-radius:4px;font-family:monospace;font-size:12.5px;color:var(--blue)}
+    /* list */
+    .list-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:10px}
+    .page-title{font-size:26px;font-weight:700;color:var(--ink)}
+    .count-txt{font-size:13px;color:var(--muted);margin-bottom:14px}
+    .srch-wrap{position:relative;margin-bottom:14px}
+    .srch{width:100%;padding:10px 13px 10px 37px;border:1.5px solid var(--bdr);border-radius:8px;font-size:14px;background:var(--surf);outline:none;font-family:inherit;color:var(--ink);transition:border-color .18s}
+    .srch:focus{border-color:var(--red);background:#fff}
+    .srch-ico{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--muted);pointer-events:none}
+    /* student-card directive uses .card */
+    .card{background:var(--white);border:1px solid var(--bdr);border-radius:10px;padding:16px 18px;margin-bottom:10px;transition:border-color .18s,box-shadow .18s}
+    .card:hover{border-color:var(--red);box-shadow:0 3px 14px rgba(221,0,49,.08)}
+    .card h3{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:5px}
+    .card p{font-size:13.5px;color:var(--ink2);font-family:monospace;margin-bottom:4px}
+    .card a{font-size:13px;font-weight:600;color:var(--blue);text-decoration:none;margin-right:10px}
+    .card a:hover{text-decoration:underline}
+    .card button{padding:5px 12px;background:var(--redl);color:var(--red);border:1px solid #fca5a5;border-radius:6px;font-size:12.5px;font-weight:700;cursor:pointer}
+    .card button:hover{background:var(--red);color:#fff}
+    .empty{text-align:center;padding:36px 20px;color:var(--muted);font-size:14px}
+    .empty a{color:var(--red);font-weight:700;text-decoration:none}
+    /* add form */
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .acard{background:var(--white);border:1px solid var(--bdr);border-radius:12px;padding:22px 24px;margin-bottom:14px}
+    .acard-ttl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:18px}
+    .fld{margin-bottom:16px}
+    .fld label{display:block;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink2);margin-bottom:6px}
+    .fld label .req{color:var(--red)}
+    .fld input,.fld select{width:100%;padding:10px 13px;border:1.5px solid var(--bdr);border-radius:8px;font-size:14px;color:var(--ink);background:var(--surf);outline:none;transition:border-color .18s,background .18s;font-family:inherit}
+    .fld input:focus,.fld select:focus{border-color:var(--blue);background:var(--blul)}
+    .fld input.ng-valid.ng-dirty  {border-color:var(--green);background:var(--grnl)}
+    .fld input.ng-invalid.ng-dirty{border-color:var(--red);background:var(--redl)}
+    .err{font-size:12.5px;color:var(--red);margin-top:5px}
+    .ok {font-size:12.5px;color:var(--green);margin-top:5px}
+    .btn-save{width:100%;padding:12px;background:var(--ink);color:#fff;border:none;border-radius:8px;font-size:14.5px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+    .btn-save:hover:not([disabled]){background:#2d2a24;transform:translateY(-1px)}
+    .btn-save[disabled]{opacity:.42;cursor:default;transform:none}
+    .form-state{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;padding:9px 13px;background:var(--surf);border-radius:8px;font-family:monospace;font-size:12px;color:var(--muted)}
+    .prev-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #e8e4dc;font-size:13px}
+    .prev-row:last-child{border-bottom:none}
+    .pkey{font-family:monospace;font-size:11.5px;color:var(--muted)}
+    .pval{font-family:monospace;font-size:12.5px;color:var(--blue);font-weight:600}
+    .back-link{font-size:13.5px;color:var(--blue);text-decoration:none;font-weight:600;display:inline-block;margin-bottom:16px}
+    /* detail */
+    .dhero{background:var(--ink);color:#fff;border-radius:12px;padding:24px 26px;margin-bottom:18px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+    .avatar{width:60px;height:60px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#fff;flex-shrink:0}
+    .dcard{background:var(--white);border:1px solid var(--bdr);border-radius:10px;padding:18px 20px;margin-bottom:14px}
+    .dcard-ttl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin-bottom:14px}
+    .drow{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #e8e4dc}
+    .drow:last-child{border-bottom:none}
+    .dl{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+    .dv{font-size:14.5px;font-weight:600;color:var(--ink);font-family:monospace}
+    .bar-bg  {background:#e8e4dc;border-radius:6px;height:10px;overflow:hidden;margin-top:6px}
+    .bar-fill{height:10px;border-radius:6px;transition:width .5s ease}
+    .not-found{text-align:center;padding:48px 20px;color:var(--muted);font-size:14.5px}
+    @media(max-width:640px){
+      .two-col,.stats{grid-template-columns:1fr}
+      .navbar{padding:0 14px}
+      .main{padding:20px 14px 48px}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar — outside ng-view so it stays on every route -->
+  <nav class="navbar" ng-controller="NavCtrl">
+    <a href="#!/home" class="brand">
+      <span class="ng-tag">NG</span> Student Manager
+    </a>
+    <div class="nav-links">
+      <a href="#!/home"     ng-class="{ active: is('/home') }">Home</a>
+      <a href="#!/students" ng-class="{ active: is('/students') }">Students</a>
+      <a href="#!/add"      ng-class="{ active: is('/add') }">+ Add</a>
+    </div>
+  </nav>
+
+  <!-- ng-view: swaps in the matched template -->
+  <div class="main">
+    <div ng-view></div>
+  </div>
+  <script src="app.js"></script>
+  <script src="controller.js"></script>
+  <script src="service.js"></script>
+  <script src="directive.js"></script>
+
+  </body>
+</html>

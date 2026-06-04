@@ -1,0 +1,60 @@
+<a href="#!/students" class="back-link">&larr; All Students</a>
+
+<div ng-if="student">
+  <div class="dhero">
+    <div class="avatar">{{ student.name[0] }}</div>
+    <div>
+      <div style="font-size:24px;font-weight:700;margin-bottom:4px">{{ student.name }}</div>
+      <div style="font-size:13px;color:rgba(255,255,255,.45);font-family:monospace">{{ student.roll }} &middot; {{ student.course }}</div>
+      <div style="margin-top:10px;display:inline-block;font-size:13px;font-weight:700;padding:4px 13px;border-radius:20px;background:rgba(255,255,255,.12);color:#fff">
+        GPA {{ student.gpa }} &mdash;
+        {{ student.gpa >= 9 ? 'A+' : student.gpa >= 8 ? 'A' : student.gpa >= 7 ? 'B' : 'C' }}
+      </div>
+    </div>
+    <div style="margin-left:auto;font-family:monospace;font-size:11px;color:rgba(255,255,255,.25)">
+      #!/students/{{ student.id }}
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="dcard">
+      <div class="dcard-ttl">Student Details</div>
+      <div class="drow"><span class="dl">ID</span>     <span class="dv">{{ student.id }}</span></div>
+      <div class="drow"><span class="dl">Name</span>   <span class="dv">{{ student.name }}</span></div>
+      <div class="drow"><span class="dl">Roll No</span><span class="dv">{{ student.roll }}</span></div>
+      <div class="drow"><span class="dl">Course</span> <span class="dv">{{ student.course }}</span></div>
+    </div>
+    <div class="dcard">
+      <div class="dcard-ttl">Academic Performance</div>
+      <div class="drow"><span class="dl">GPA</span>  <span class="dv">{{ student.gpa }}</span></div>
+      <div class="drow">
+        <span class="dl">Grade</span>
+        <span class="dv">{{ student.gpa >= 9 ? 'A+' : student.gpa >= 8 ? 'A' : student.gpa >= 7 ? 'B' : 'C' }}</span>
+      </div>
+      <div style="margin-top:12px">
+        <div style="font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#8a8070;margin-bottom:6px">
+          Progress ({{ student.gpa }} / 10)
+        </div>
+        <div class="bar-bg">
+          <div class="bar-fill"
+               ng-style="{
+                 'width'     : (student.gpa * 10) + '%',
+                 'background': student.gpa >= 8.5 ? '#1a6e4a' : student.gpa >= 7 ? '#1c4f9e' : '#dd0031'
+               }">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px">
+    <a href="#!/students" class="btn btn-out">&larr; Back to list</a>
+    <a href="#!/home"     class="btn btn-out">Home</a>
+  </div>
+</div>
+
+<div class="not-found" ng-if="!student">
+  <div style="font-size:32px;margin-bottom:10px">&#128269;</div>
+  <div style="font-size:16px;font-weight:700;color:#1a1714;margin-bottom:6px">Student not found</div>
+  <a href="#!/students" style="color:#dd0031;font-weight:700;text-decoration:none">&larr; Back to students</a>
+</div>

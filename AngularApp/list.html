@@ -1,0 +1,36 @@
+<div class="list-hdr">
+  <div>
+    <div class="page-title">All Students</div>
+    <div class="count-txt">
+      Showing {{ (students | filter:searchText).length }} of {{ students.length }} students
+    </div>
+  </div>
+  <a href="#!/add" class="btn btn-red">+ Add Student</a>
+</div>
+
+<div class="srch-wrap">
+  <span class="srch-ico">&#128269;</span>
+  <input type="text"
+         class="srch"
+         ng-model="searchText"
+         placeholder="Search by name, roll, or course...">
+</div>
+
+<student-card
+  ng-repeat="s in students | filter:searchText"
+  student="s"
+  on-remove="remove(s.id)">
+</student-card>
+
+<div class="empty" ng-show="students.length === 0">
+  No students yet. <a href="#!/add">Add the first one &rarr;</a>
+</div>
+
+<div class="empty"
+     ng-show="students.length > 0 && (students | filter:searchText).length === 0">
+  No match for "<strong>{{ searchText }}</strong>".
+  <button ng-click="searchText = ''"
+          style="margin-left:8px;padding:4px 12px;border:1px solid #ddd9d0;border-radius:6px;background:transparent;cursor:pointer;font-size:13px">
+    Clear
+  </button>
+</div>
