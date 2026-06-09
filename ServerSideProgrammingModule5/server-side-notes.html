@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Server-Side Programming — VTU MCA Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+
+:root{
+  /* palette — dark editorial */
+  --page   :#0d0d0f;
+  --surf   :#141417;
+  --surf2  :#1c1c21;
+  --bdr    :#2a2a32;
+  --bdr2   :#3a3a45;
+  --ink    :#eeedf0;
+  --ink2   :#b0afb8;
+  --muted  :#6b6a74;
+
+  /* accent colours per topic */
+  --node   :#68a063;  /* Node.js green  */
+  --node-d :#1a2e1a;
+  --php    :#7b7fb5;  /* PHP violet     */
+  --php-d  :#1a1a2e;
+  --py     :#f7c948;  /* Python yellow  */
+  --py-d   :#2a2210;
+  --rest   :#e05c5c;  /* REST red       */
+  --rest-d :#2e1010;
+  --sql    :#4a9eff;  /* SQL blue       */
+  --sql-d  :#0d1e2e;
+  --nosql  :#48c78e;  /* NoSQL teal     */
+  --nosql-d:#0a2419;
+
+  --mono   :'IBM Plex Mono',monospace;
+  --serif  :'Libre Baskerville',serif;
+  --body   :'IBM Plex Sans',sans-serif;
+}
+
+body{
+  font-family:var(--body);
+  background:var(--page);
+  color:var(--ink);
+  line-height:1.7;
+  font-size:15px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════════════════ */
+.hero{
+  background:var(--surf);
+  border-bottom:1px solid var(--bdr);
+  padding:52px 40px 40px;
+  position:relative;
+  overflow:hidden;
+}
+
+/* grid texture */
+.hero::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background-image:
+    linear-gradient(var(--bdr) 1px, transparent 1px),
+    linear-gradient(90deg, var(--bdr) 1px, transparent 1px);
+  background-size:48px 48px;
+  opacity:.35;
+}
+
+.hero-in{
+  position:relative;
+  z-index:1;
+  max-width:1040px;
+  margin:0 auto;
+}
+
+.hero-eyebrow{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:14px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.hero-eyebrow::before{
+  content:'';
+  width:28px;
+  height:1px;
+  background:var(--bdr2);
+}
+
+.hero h1{
+  font-family:var(--serif);
+  font-size:clamp(32px,4vw,54px);
+  font-weight:700;
+  line-height:1.05;
+  letter-spacing:-.02em;
+  margin-bottom:14px;
+}
+
+.hero h1 em{
+  font-style:italic;
+  font-weight:400;
+  color:var(--ink2);
+}
+
+.hero-desc{
+  font-size:15px;
+  color:var(--ink2);
+  max-width:560px;
+  line-height:1.75;
+  margin-bottom:28px;
+}
+
+.topic-row{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.tp{
+  font-family:var(--mono);
+  font-size:11px;
+  font-weight:600;
+  padding:5px 13px;
+  border-radius:4px;
+  letter-spacing:.06em;
+}
+
+/* ═══════════════════════════════════════════════════════
+   TOC
+═══════════════════════════════════════════════════════ */
+.toc{
+  background:var(--surf);
+  border-bottom:1px solid var(--bdr);
+  position:sticky;
+  top:0;
+  z-index:200;
+  height:46px;
+  display:flex;
+  align-items:center;
+  padding:0 28px;
+  gap:4px;
+  overflow-x:auto;
+  white-space:nowrap;
+}
+
+.toc a{
+  font-size:12.5px;
+  font-weight:500;
+  color:var(--muted);
+  text-decoration:none;
+  padding:5px 11px;
+  border-radius:4px;
+  transition:all .15s;
+  flex-shrink:0;
+}
+
+.toc a:hover{color:var(--ink);background:var(--surf2)}
+
+/* ═══════════════════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════════════════ */
+.wrap{max-width:1040px;margin:0 auto;padding:48px 24px 80px}
+
+.section{margin-bottom:72px;scroll-margin-top:58px}
+
+.sec-hd{
+  display:flex;
+  align-items:flex-start;
+  gap:18px;
+  margin-bottom:26px;
+  padding-bottom:16px;
+  border-bottom:1px solid var(--bdr);
+}
+
+.sec-num{
+  font-family:var(--mono);
+  font-size:11px;
+  font-weight:600;
+  color:var(--muted);
+  padding:4px 10px;
+  border:1px solid var(--bdr2);
+  border-radius:4px;
+  margin-top:4px;
+  flex-shrink:0;
+}
+
+.sec-tag{
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:4px;
+}
+
+.sec-title{
+  font-family:var(--serif);
+  font-size:24px;
+  font-weight:700;
+  color:var(--ink);
+  margin-bottom:4px;
+  line-height:1.2;
+}
+
+.sec-intro{
+  font-size:14px;
+  color:var(--ink2);
+  line-height:1.75;
+}
+
+/* ═══════════════════════════════════════════════════════
+   CARDS
+═══════════════════════════════════════════════════════ */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+
+.card{
+  background:var(--surf);
+  border:1px solid var(--bdr);
+  border-radius:8px;
+  padding:18px 20px;
+  margin-bottom:14px;
+}
+
+.card-h{
+  font-size:13.5px;
+  font-weight:700;
+  color:var(--ink);
+  margin-bottom:10px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.card-b{
+  font-size:13.5px;
+  color:var(--ink2);
+  line-height:1.75;
+}
+
+/* Language profile cards */
+.lang-card{
+  background:var(--surf);
+  border:1px solid var(--bdr);
+  border-radius:8px;
+  overflow:hidden;
+  margin-bottom:20px;
+}
+
+.lc-header{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:18px 22px;
+  border-bottom:1px solid var(--bdr);
+}
+
+.lc-dot{
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  flex-shrink:0;
+}
+
+.lc-name{
+  font-family:var(--serif);
+  font-size:20px;
+  font-weight:700;
+}
+
+.lc-sub{
+  font-size:12.5px;
+  color:var(--muted);
+  margin-top:2px;
+}
+
+.lc-badge{
+  margin-left:auto;
+  font-family:var(--mono);
+  font-size:10.5px;
+  font-weight:600;
+  padding:3px 10px;
+  border-radius:4px;
+}
+
+.lc-body{padding:18px 22px}
+
+/* ═══════════════════════════════════════════════════════
+   CALLOUTS
+═══════════════════════════════════════════════════════ */
+.callout{
+  border-left:3px solid;
+  border-radius:0 6px 6px 0;
+  padding:11px 16px;
+  font-size:13.5px;
+  line-height:1.65;
+  margin:12px 0;
+}
+.callout strong{font-weight:700}
+code{
+  font-family:var(--mono);
+  font-size:12px;
+  background:var(--surf2);
+  border:1px solid var(--bdr);
+  color:var(--node);
+  padding:1px 6px;
+  border-radius:3px;
+}
+.c-node  {border-color:var(--node);background:var(--node-d);color:#9ecf9a}
+.c-php   {border-color:var(--php); background:var(--php-d); color:#aaadd8}
+.c-py    {border-color:var(--py);  background:var(--py-d);  color:#fce08a}
+.c-rest  {border-color:var(--rest);background:var(--rest-d);color:#f09090}
+.c-sql   {border-color:var(--sql); background:var(--sql-d); color:#8ec4ff}
+.c-nosql {border-color:var(--nosql);background:var(--nosql-d);color:#7ddcb6}
+
+/* ═══════════════════════════════════════════════════════
+   CODE BLOCKS
+═══════════════════════════════════════════════════════ */
+.cb{background:#07080a;border:1px solid var(--bdr);border-radius:8px;overflow:hidden;margin:12px 0}
+.cb-bar{
+  background:#0f1014;
+  padding:8px 14px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  border-bottom:1px solid var(--bdr);
+}
+.cbd{width:8px;height:8px;border-radius:50%}
+.cr{background:#ef4444}.cy{background:#f59e0b}.cg{background:#22c55e}
+.cb-fn{font-family:var(--mono);font-size:11px;color:#3a3a50;margin-left:4px}
+.cb pre{
+  font-family:var(--mono);
+  font-size:12.5px;
+  line-height:1.85;
+  padding:15px 18px;
+  overflow-x:auto;
+  color:#c9d1d9;
+  white-space:pre;
+  margin:0;
+}
+.kw{color:#ff79c6}.fn{color:#82aaff}.st{color:#c3e88d}
+.cm{color:#3a4060;font-style:italic}.nm{color:#f78c6c}
+.tg{color:#f07178}.at{color:#ffcb6b}.op{color:#89ddff}
+.dc{color:#c792ea}
+
+/* ═══════════════════════════════════════════════════════
+   COMPARISON TABLE
+═══════════════════════════════════════════════════════ */
+.cmp{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+  border:1px solid var(--bdr);
+  border-radius:8px;
+  overflow:hidden;
+  margin:12px 0;
+}
+.cmp th{
+  background:var(--surf2);
+  padding:9px 13px;
+  text-align:left;
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--muted);
+  border-bottom:1px solid var(--bdr);
+}
+.cmp td{
+  padding:9px 13px;
+  border-bottom:1px solid var(--bdr);
+  vertical-align:top;
+  line-height:1.55;
+  color:var(--ink2);
+}
+.cmp tr:last-child td{border-bottom:none}
+.cmp tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.cmp td:first-child{font-weight:700;color:var(--ink)}
+
+/* HTTP Method badges */
+.http{
+  display:inline-block;
+  font-family:var(--mono);
+  font-size:11px;
+  font-weight:700;
+  padding:3px 9px;
+  border-radius:4px;
+  margin-right:4px;
+}
+.GET   {background:#1a2e1a;color:var(--node);border:1px solid var(--node)}
+.POST  {background:#1a1a2e;color:var(--php); border:1px solid var(--php)}
+.PUT   {background:#2a2210;color:var(--py);  border:1px solid var(--py)}
+.DELETE{background:#2e1010;color:var(--rest);border:1px solid var(--rest)}
+.PATCH {background:#0d1e2e;color:var(--sql); border:1px solid var(--sql)}
+
+/* ═══════════════════════════════════════════════════════
+   FLOW DIAGRAM
+═══════════════════════════════════════════════════════ */
+.flow{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  padding:16px;
+  background:var(--surf2);
+  border-radius:8px;
+  border:1px solid var(--bdr);
+  margin:12px 0;
+}
+.fl-box{
+  padding:9px 14px;
+  border-radius:6px;
+  font-size:13px;
+  font-weight:600;
+  text-align:center;
+  font-family:var(--mono);
+  font-size:12px;
+}
+.fl-arrow{color:var(--bdr2);font-size:18px}
+
+/* ═══════════════════════════════════════════════════════
+   QUICK REF GRID
+═══════════════════════════════════════════════════════ */
+.qr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.qr-card{background:var(--surf);border:1px solid var(--bdr);border-radius:8px;padding:13px 15px;transition:border-color .15s}
+.qr-card:hover{border-color:var(--bdr2)}
+.qr-m{font-family:var(--mono);font-size:12px;color:var(--rest);font-weight:600;margin-bottom:4px;display:block}
+.qr-d{font-size:12.5px;color:var(--ink2);line-height:1.5}
+
+/* ═══════════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════════ */
+.pg-foot{
+  background:var(--surf);
+  border-top:1px solid var(--bdr);
+  color:var(--muted);
+  text-align:center;
+  padding:18px;
+  font-size:12px;
+}
+
+@media(max-width:740px){
+  .two-col,.three-col,.qr-grid{grid-template-columns:1fr}
+  .hero{padding:32px 18px 28px}
+  .wrap{padding:28px 14px 60px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════════════════ -->
+<header class="hero">
+  <div class="hero-in">
+    <div class="hero-eyebrow">VTU MCA — Web Technologies · Module 6</div>
+    <h1>Server-Side Programming<br><em>&amp; Web Services</em></h1>
+    <p class="hero-desc">Introduction to server-side concepts, Node.js, PHP, Python, RESTful APIs, and database integration with SQL and NoSQL — complete notes with code examples.</p>
+    <div class="topic-row">
+      <span class="tp" style="background:var(--node-d);color:var(--node);border:1px solid var(--node)">Node.js</span>
+      <span class="tp" style="background:var(--php-d); color:var(--php); border:1px solid var(--php)">PHP</span>
+      <span class="tp" style="background:var(--py-d);  color:var(--py);  border:1px solid var(--py)">Python</span>
+      <span class="tp" style="background:var(--rest-d);color:var(--rest);border:1px solid var(--rest)">REST APIs</span>
+      <span class="tp" style="background:var(--sql-d); color:var(--sql); border:1px solid var(--sql)">SQL</span>
+      <span class="tp" style="background:var(--nosql-d);color:var(--nosql);border:1px solid var(--nosql)">NoSQL</span>
+    </div>
+  </div>
+</header>
+
+<nav class="toc">
+  <a href="#sec-intro">§1 Introduction</a>
+  <a href="#sec-nodejs">§2 Node.js</a>
+  <a href="#sec-php">§3 PHP</a>
+  <a href="#sec-python">§4 Python</a>
+  <a href="#sec-compare">§5 Comparison</a>
+  <a href="#sec-rest">§6 REST APIs</a>
+  <a href="#sec-sql">§7 SQL</a>
+  <a href="#sec-nosql">§8 NoSQL</a>
+  <a href="#sec-qr">§9 Quick Ref</a>
+</nav>
+
+<main class="wrap">
+
+<!-- ═══════════════════════════════════════════════════
+     §1 — INTRODUCTION TO SERVER-SIDE
+═══════════════════════════════════════════════════════ -->
+<section class="section" id="sec-intro">
+  <div class="sec-hd">
+    <span class="sec-num">§ 01</span>
+    <div>
+      <div class="sec-tag">Foundation</div>
+      <div class="sec-title">Introduction to Server-Side Programming</div>
+      <div class="sec-intro">Client-side code runs in the browser. Server-side code runs on a remote computer (the server) and sends results back to the browser. The server handles business logic, database access, authentication, and file operations — things the browser cannot or should not do.</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-h" style="color:var(--rest)">What client-side CANNOT do</div>
+      <div class="card-b">
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:7px">
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--rest)">✗</span> Access databases directly (SQL, MongoDB)</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--rest)">✗</span> Read/write files on the server</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--rest)">✗</span> Keep secrets (API keys, passwords) hidden</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--rest)">✗</span> Send emails, SMS, push notifications</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--rest)">✗</span> Handle authentication securely</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--rest)">✗</span> Process payments (Razorpay, Stripe)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--node)">What server-side does</div>
+      <div class="card-b">
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:7px">
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--node)">✓</span> Receives HTTP requests from browser</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--node)">✓</span> Queries databases and returns data</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--node)">✓</span> Validates and processes form data</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--node)">✓</span> Authenticates users (login, JWT, sessions)</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--node)">✓</span> Calls third-party APIs with secret keys</li>
+          <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--node)">✓</span> Returns HTML pages or JSON data</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Request-response flow -->
+  <div class="card">
+    <div class="card-h">Request-Response Cycle</div>
+    <div class="flow">
+      <div class="fl-box" style="background:var(--php-d);color:var(--php);border:1px solid var(--php)">Browser<br><span style="font-size:10px;font-weight:400">client</span></div>
+      <span class="fl-arrow">→</span>
+      <div class="fl-box" style="background:var(--surf);color:var(--ink2);border:1px solid var(--bdr)">HTTP Request<br><span style="font-size:10px;font-weight:400">GET /students</span></div>
+      <span class="fl-arrow">→</span>
+      <div class="fl-box" style="background:var(--node-d);color:var(--node);border:1px solid var(--node)">Server<br><span style="font-size:10px;font-weight:400">Node/PHP/Python</span></div>
+      <span class="fl-arrow">→</span>
+      <div class="fl-box" style="background:var(--sql-d);color:var(--sql);border:1px solid var(--sql)">Database<br><span style="font-size:10px;font-weight:400">SQL / MongoDB</span></div>
+      <span class="fl-arrow">←</span>
+      <div class="fl-box" style="background:var(--surf);color:var(--ink2);border:1px solid var(--bdr)">JSON / HTML<br><span style="font-size:10px;font-weight:400">HTTP Response</span></div>
+      <span class="fl-arrow">←</span>
+      <div class="fl-box" style="background:var(--php-d);color:var(--php);border:1px solid var(--php)">Browser<br><span style="font-size:10px;font-weight:400">renders UI</span></div>
+    </div>
+    <div style="font-size:13px;color:var(--muted);margin-top:8px;font-family:var(--mono)">
+      1. Browser sends HTTP request → 2. Server receives it → 3. Server queries DB → 4. DB returns data → 5. Server sends JSON back → 6. Browser renders
+    </div>
+  </div>
+
+  <div class="callout c-node">
+    <strong>Key concept — Dynamic vs Static:</strong> A static website serves the same HTML file to every user (like S3 hosting). A dynamic website runs server-side code that generates different responses based on who is asking, what data is in the database, and what time it is.
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     §2 — NODE.JS
+═══════════════════════════════════════════════════════ -->
+<section class="section" id="sec-nodejs">
+  <div class="sec-hd">
+    <span class="sec-num">§ 02</span>
+    <div>
+      <div class="sec-tag">Server-side Language</div>
+      <div class="sec-title">Node.js</div>
+      <div class="sec-intro">Node.js is a JavaScript runtime built on Chrome's V8 engine. It lets you run JavaScript on the server — the same language you use in the browser. Non-blocking I/O makes it extremely fast for handling many concurrent requests.</div>
+    </div>
+  </div>
+
+  <div class="lang-card">
+    <div class="lc-header" style="border-left:4px solid var(--node)">
+      <div class="lc-dot" style="background:var(--node)"></div>
+      <div>
+        <div class="lc-name" style="color:var(--node)">Node.js</div>
+        <div class="lc-sub">Created by Ryan Dahl · 2009 · JavaScript runtime · V8 engine</div>
+      </div>
+      <span class="lc-badge" style="background:var(--node-d);color:var(--node);border:1px solid var(--node)">Non-blocking I/O</span>
+    </div>
+    <div class="lc-body">
+      <div class="two-col" style="margin-bottom:0">
+        <div>
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:10px">Key features</div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:7px;font-size:13.5px;color:var(--ink2)">
+            <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--node)">→</span> Same language (JS) on front and back end</li>
+            <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--node)">→</span> Event-driven, non-blocking I/O model</li>
+            <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--node)">→</span> NPM — world's largest package registry</li>
+            <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--node)">→</span> Express.js — minimal web framework</li>
+            <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--node)">→</span> Perfect for REST APIs and real-time apps</li>
+            <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--node)">→</span> Used by Netflix, PayPal, LinkedIn, NASA</li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:10px">Non-blocking explained</div>
+          <div style="font-size:13.5px;color:var(--ink2);line-height:1.75">
+            Traditional servers (PHP/Apache) create <strong style="color:var(--ink)">one thread per request</strong> — 1000 users = 1000 threads, high memory.<br><br>
+            Node.js uses <strong style="color:var(--node)">one thread + event loop</strong>. While waiting for DB response, it handles other requests. 1000 users = 1 thread, low memory.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cb">
+    <div class="cb-bar"><span class="cbd cr"></span><span class="cbd cy"></span><span class="cbd cg"></span><span class="cb-fn">server.js — Node.js + Express REST API for Students</span></div>
+    <pre><span class="cm">// Step 1: install → npm install express</span>
+<span class="kw">const</span> express = <span class="fn">require</span>(<span class="st">'express'</span>);
+<span class="kw">const</span> app     = <span class="fn">express</span>();
+app.<span class="fn">use</span>(express.<span class="fn">json</span>());   <span class="cm">// parse JSON request bodies</span>
+
+<span class="cm">// In-memory data (replace with database later)</span>
+<span class="kw">let</span> students = [
+  { id: <span class="nm">1</span>, name: <span class="st">'Arjun'</span>, gpa: <span class="nm">8.7</span>, course: <span class="st">'MCA'</span> },
+  { id: <span class="nm">2</span>, name: <span class="st">'Priya'</span>, gpa: <span class="nm">9.1</span>, course: <span class="st">'MCA'</span> },
+];
+<span class="kw">let</span> nextId = <span class="nm">3</span>;
+
+<span class="cm">// GET all students → curl http://localhost:3000/students</span>
+app.<span class="fn">get</span>(<span class="st">'/students'</span>, (req, res) =&gt; {
+  res.<span class="fn">json</span>(students);
+});
+
+<span class="cm">// GET one student by id → /students/1</span>
+app.<span class="fn">get</span>(<span class="st">'/students/:id'</span>, (req, res) =&gt; {
+  <span class="kw">const</span> student = students.<span class="fn">find</span>(s =&gt; s.id == req.params.id);
+  <span class="kw">if</span> (!student) <span class="kw">return</span> res.<span class="fn">status</span>(<span class="nm">404</span>).<span class="fn">json</span>({ error: <span class="st">'Not found'</span> });
+  res.<span class="fn">json</span>(student);
+});
+
+<span class="cm">// POST add new student → body: { name, gpa, course }</span>
+app.<span class="fn">post</span>(<span class="st">'/students'</span>, (req, res) =&gt; {
+  <span class="kw">const</span> { name, gpa, course } = req.body;
+  <span class="kw">if</span> (!name) <span class="kw">return</span> res.<span class="fn">status</span>(<span class="nm">400</span>).<span class="fn">json</span>({ error: <span class="st">'Name required'</span> });
+  <span class="kw">const</span> newStudent = { id: nextId++, name, gpa, course };
+  students.<span class="fn">push</span>(newStudent);
+  res.<span class="fn">status</span>(<span class="nm">201</span>).<span class="fn">json</span>(newStudent);   <span class="cm">// 201 = Created</span>
+});
+
+<span class="cm">// PUT update student</span>
+app.<span class="fn">put</span>(<span class="st">'/students/:id'</span>, (req, res) =&gt; {
+  <span class="kw">const</span> index = students.<span class="fn">findIndex</span>(s =&gt; s.id == req.params.id);
+  <span class="kw">if</span> (index === -<span class="nm">1</span>) <span class="kw">return</span> res.<span class="fn">status</span>(<span class="nm">404</span>).<span class="fn">json</span>({ error: <span class="st">'Not found'</span> });
+  students[index] = { ...students[index], ...req.body };
+  res.<span class="fn">json</span>(students[index]);
+});
+
+<span class="cm">// DELETE student</span>
+app.<span class="fn">delete</span>(<span class="st">'/students/:id'</span>, (req, res) =&gt; {
+  students = students.<span class="fn">filter</span>(s =&gt; s.id != req.params.id);
+  res.<span class="fn">status</span>(<span class="nm">204</span>).<span class="fn">send</span>();  <span class="cm">// 204 = No Content</span>
+});
+
+app.<span class="fn">listen</span>(<span class="nm">3000</span>, () =&gt; console.<span class="fn">log</span>(<span class="st">'Server running on port 3000'</span>));</pre>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     §3 — PHP
+═══════════════════════════════════════════════════════ -->
+<section class="section" id="sec-php">
+  <div class="sec-hd">
+    <span class="sec-num">§ 03</span>
+    <div>
+      <div class="sec-tag">Server-side Language</div>
+      <div class="sec-title">PHP — Hypertext Preprocessor</div>
+      <div class="sec-intro">PHP is the most widely deployed server-side language on the web. WordPress (43% of all websites), Facebook (originally), and Wikipedia run PHP. It embeds directly in HTML and runs on Apache/Nginx servers with zero configuration.</div>
+    </div>
+  </div>
+
+  <div class="lang-card">
+    <div class="lc-header" style="border-left:4px solid var(--php)">
+      <div class="lc-dot" style="background:var(--php)"></div>
+      <div>
+        <div class="lc-name" style="color:var(--php)">PHP</div>
+        <div class="lc-sub">Created by Rasmus Lerdorf · 1994 · Powers 77% of all websites with server-side code</div>
+      </div>
+      <span class="lc-badge" style="background:var(--php-d);color:var(--php);border:1px solid var(--php)">Embedded HTML</span>
+    </div>
+    <div class="lc-body">
+      <div class="two-col" style="margin-bottom:0">
+        <div>
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:10px">Key features</div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:7px;font-size:13.5px;color:var(--ink2)">
+            <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--php)">→</span> Embeds directly inside HTML with <code>&lt;?php ?&gt;</code></li>
+            <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--php)">→</span> Runs on Apache/Nginx — no extra setup</li>
+            <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--php)">→</span> Built-in MySQL support (<code>mysqli</code>, PDO)</li>
+            <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--php)">→</span> Session management and cookies built-in</li>
+            <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--php)">→</span> Laravel, Symfony, CodeIgniter frameworks</li>
+            <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--php)">→</span> Easy to deploy on shared hosting (cPanel)</li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:10px">$_GET vs $_POST vs $_REQUEST</div>
+          <table class="cmp" style="margin:0">
+            <tr><th>Variable</th><th>Contains</th></tr>
+            <tr><td><code>$_GET</code></td><td style="color:var(--ink2)">URL query string ?name=Arjun</td></tr>
+            <tr><td><code>$_POST</code></td><td style="color:var(--ink2)">Form data sent via POST</td></tr>
+            <tr><td><code>$_REQUEST</code></td><td style="color:var(--ink2)">GET + POST combined</td></tr>
+            <tr><td><code>$_SESSION</code></td><td style="color:var(--ink2)">Per-user session data</td></tr>
+            <tr><td><code>$_COOKIE</code></td><td style="color:var(--ink2)">Cookies from browser</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cb">
+    <div class="cb-bar"><span class="cbd cr"></span><span class="cbd cy"></span><span class="cbd cg"></span><span class="cb-fn">students.php — PHP REST API with MySQL</span></div>
+    <pre><span class="tg">&lt;?php</span>
+<span class="cm">// Set response header to JSON</span>
+<span class="fn">header</span>(<span class="st">'Content-Type: application/json'</span>);
+<span class="fn">header</span>(<span class="st">'Access-Control-Allow-Origin: *'</span>);  <span class="cm">// allow CORS</span>
+
+<span class="cm">// Connect to MySQL database</span>
+$conn = <span class="kw">new</span> <span class="fn">mysqli</span>(<span class="st">'localhost'</span>, <span class="st">'root'</span>, <span class="st">''</span>, <span class="st">'vtu_db'</span>);
+<span class="kw">if</span> ($conn-&gt;connect_error) {
+    <span class="fn">http_response_code</span>(<span class="nm">500</span>);
+    <span class="kw">echo</span> <span class="fn">json_encode</span>([<span class="st">'error'</span> =&gt; <span class="st">'DB connection failed'</span>]);
+    <span class="kw">exit</span>;
+}
+
+<span class="cm">// Route by HTTP method</span>
+$method = $_SERVER[<span class="st">'REQUEST_METHOD'</span>];
+
+<span class="kw">switch</span> ($method) {
+
+    <span class="kw">case</span> <span class="st">'GET'</span>:
+        <span class="cm">// GET /students.php?id=1 → one student</span>
+        <span class="kw">if</span> (<span class="fn">isset</span>($_GET[<span class="st">'id'</span>])) {
+            $id   = (int)$_GET[<span class="st">'id'</span>];   <span class="cm">// cast to int prevents SQL injection</span>
+            $result = $conn-&gt;<span class="fn">query</span>(<span class="st">"SELECT * FROM students WHERE id=$id"</span>);
+            <span class="kw">echo</span> <span class="fn">json_encode</span>($result-&gt;<span class="fn">fetch_assoc</span>());
+        } <span class="kw">else</span> {
+            <span class="cm">// GET /students.php → all students</span>
+            $result = $conn-&gt;<span class="fn">query</span>(<span class="st">"SELECT * FROM students"</span>);
+            $rows = [];
+            <span class="kw">while</span> ($row = $result-&gt;<span class="fn">fetch_assoc</span>()) $rows[] = $row;
+            <span class="kw">echo</span> <span class="fn">json_encode</span>($rows);
+        }
+        <span class="kw">break</span>;
+
+    <span class="kw">case</span> <span class="st">'POST'</span>:
+        <span class="cm">// POST with JSON body</span>
+        $data = <span class="fn">json_decode</span>(<span class="fn">file_get_contents</span>(<span class="st">'php://input'</span>), <span class="kw">true</span>);
+        $name = $conn-&gt;<span class="fn">real_escape_string</span>($data[<span class="st">'name'</span>]);
+        $gpa  = (float)$data[<span class="st">'gpa'</span>];
+        $conn-&gt;<span class="fn">query</span>(<span class="st">"INSERT INTO students(name,gpa) VALUES('$name',$gpa)"</span>);
+        <span class="fn">http_response_code</span>(<span class="nm">201</span>);
+        <span class="kw">echo</span> <span class="fn">json_encode</span>([<span class="st">'id'</span> =&gt; $conn-&gt;insert_id]);
+        <span class="kw">break</span>;
+
+    <span class="kw">case</span> <span class="st">'DELETE'</span>:
+        $id = (int)$_GET[<span class="st">'id'</span>];
+        $conn-&gt;<span class="fn">query</span>(<span class="st">"DELETE FROM students WHERE id=$id"</span>);
+        <span class="fn">http_response_code</span>(<span class="nm">204</span>);
+        <span class="kw">break</span>;
+}
+$conn-&gt;<span class="fn">close</span>();
+<span class="tg">?&gt;</span></pre>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     §4 — PYTHON
+═══════════════════════════════════════════════════════ -->
+<section class="section" id="sec-python">
+  <div class="sec-hd">
+    <span class="sec-num">§ 04</span>
+    <div>
+      <div class="sec-tag">Server-side Language</div>
+      <div class="sec-title">Python — Flask &amp; Django</div>
+      <div class="sec-intro">Python is the fastest-growing web backend language. Flask is a micro-framework — minimal and flexible. Django is a full-featured framework with built-in admin, ORM, authentication, and security. Python also leads in AI/ML integration with web apps.</div>
+    </div>
+  </div>
+
+  <div class="lang-card">
+    <div class="lc-header" style="border-left:4px solid var(--py)">
+      <div class="lc-dot" style="background:var(--py)"></div>
+      <div>
+        <div class="lc-name" style="color:var(--py)">Python</div>
+        <div class="lc-sub">Flask (2010) · Django (2005) · Instagram, Pinterest, Disqus run Django</div>
+      </div>
+      <span class="lc-badge" style="background:var(--py-d);color:var(--py);border:1px solid var(--py)">Flask / Django</span>
+    </div>
+    <div class="lc-body">
+      <div class="two-col" style="margin-bottom:0">
+        <div>
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:10px">Flask — micro framework</div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:7px;font-size:13.5px;color:var(--ink2)">
+            <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--py)">→</span> Minimal — just routing + templates</li>
+            <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--py)">→</span> <code>@app.route()</code> decorator for routing</li>
+            <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--py)">→</span> <code>jsonify()</code> for JSON responses</li>
+            <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--py)">→</span> Jinja2 templating engine</li>
+            <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--py)">→</span> Best for APIs and microservices</li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:10px">Django — full framework</div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:7px;font-size:13.5px;color:var(--ink2)">
+            <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--py)">→</span> "Batteries included" — everything built-in</li>
+            <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--py)">→</span> Auto-generated admin panel</li>
+            <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--py)">→</span> ORM — write Python, not SQL</li>
+            <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--py)">→</span> Built-in auth, forms, security</li>
+            <li style="padding-left:18px;position:relative"><span style="position:absolute;left:0;color:var(--py)">→</span> Best for full web applications</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cb">
+    <div class="cb-bar"><span class="cbd cr"></span><span class="cbd cy"></span><span class="cbd cg"></span><span class="cb-fn">app.py — Python Flask REST API</span></div>
+    <pre><span class="cm"># pip install flask</span>
+<span class="kw">from</span> flask <span class="kw">import</span> Flask, jsonify, request
+
+app = <span class="fn">Flask</span>(__name__)
+
+<span class="cm"># In-memory data</span>
+students = [
+    { <span class="st">'id'</span>: <span class="nm">1</span>, <span class="st">'name'</span>: <span class="st">'Arjun'</span>, <span class="st">'gpa'</span>: <span class="nm">8.7</span>, <span class="st">'course'</span>: <span class="st">'MCA'</span> },
+    { <span class="st">'id'</span>: <span class="nm">2</span>, <span class="st">'name'</span>: <span class="st">'Priya'</span>, <span class="st">'gpa'</span>: <span class="nm">9.1</span>, <span class="st">'course'</span>: <span class="st">'MCA'</span> },
+]
+next_id = <span class="nm">3</span>
+
+<span class="cm"># @app.route decorator maps URL + method to a function</span>
+
+<span class="dc">@app.route</span>(<span class="st">'/students'</span>, methods=[<span class="st">'GET'</span>])
+<span class="kw">def</span> <span class="fn">get_students</span>():
+    <span class="kw">return</span> <span class="fn">jsonify</span>(students)   <span class="cm"># converts list to JSON response</span>
+
+<span class="dc">@app.route</span>(<span class="st">'/students/&lt;int:id&gt;'</span>, methods=[<span class="st">'GET'</span>])
+<span class="kw">def</span> <span class="fn">get_student</span>(id):
+    student = <span class="fn">next</span>((s <span class="kw">for</span> s <span class="kw">in</span> students <span class="kw">if</span> s[<span class="st">'id'</span>] == id), <span class="kw">None</span>)
+    <span class="kw">if not</span> student:
+        <span class="kw">return</span> <span class="fn">jsonify</span>({<span class="st">'error'</span>: <span class="st">'Not found'</span>}), <span class="nm">404</span>
+    <span class="kw">return</span> <span class="fn">jsonify</span>(student)
+
+<span class="dc">@app.route</span>(<span class="st">'/students'</span>, methods=[<span class="st">'POST'</span>])
+<span class="kw">def</span> <span class="fn">add_student</span>():
+    <span class="kw">global</span> next_id
+    data = request.<span class="fn">get_json</span>()          <span class="cm"># parse JSON body</span>
+    <span class="kw">if not</span> data.get(<span class="st">'name'</span>):
+        <span class="kw">return</span> <span class="fn">jsonify</span>({<span class="st">'error'</span>: <span class="st">'Name required'</span>}), <span class="nm">400</span>
+    new_student = {
+        <span class="st">'id'</span>    : next_id,
+        <span class="st">'name'</span>  : data[<span class="st">'name'</span>],
+        <span class="st">'gpa'</span>   : data.get(<span class="st">'gpa'</span>, <span class="nm">0</span>),
+        <span class="st">'course'</span>: data.get(<span class="st">'course'</span>, <span class="st">'MCA'</span>)
+    }
+    students.<span class="fn">append</span>(new_student)
+    next_id += <span class="nm">1</span>
+    <span class="kw">return</span> <span class="fn">jsonify</span>(new_student), <span class="nm">201</span>   <span class="cm"># 201 = Created</span>
+
+<span class="dc">@app.route</span>(<span class="st">'/students/&lt;int:id&gt;'</span>, methods=[<span class="st">'DELETE'</span>])
+<span class="kw">def</span> <span class="fn">delete_student</span>(id):
+    <span class="kw">global</span> students
+    students = [s <span class="kw">for</span> s <span class="kw">in</span> students <span class="kw">if</span> s[<span class="st">'id'</span>] != id]
+    <span class="kw">return</span> <span class="st">''</span>, <span class="nm">204</span>
+
+<span class="kw">if</span> __name__ == <span class="st">'__main__'</span>:
+    app.<span class="fn">run</span>(debug=<span class="kw">True</span>, port=<span class="nm">5000</span>)</pre>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     §5 — COMPARISON
+═══════════════════════════════════════════════════════ -->
+<section class="section" id="sec-compare">
+  <div class="sec-hd">
+    <span class="sec-num">§ 05</span>
+    <div>
+      <div class="sec-tag">Analysis</div>
+      <div class="sec-title">Node.js vs PHP vs Python — Side by Side</div>
+    </div>
+  </div>
+
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="cmp" style="margin:0">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th style="color:var(--node)">Node.js</th>
+          <th style="color:var(--php)">PHP</th>
+          <th style="color:var(--py)">Python</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Language</td><td>JavaScript</td><td>PHP</td><td>Python</td></tr>
+        <tr><td>Created</td><td>2009</td><td>1994</td><td>1991 (Flask 2010)</td></tr>
+        <tr><td>Model</td><td>Event-driven, non-blocking</td><td>Synchronous, blocking</td><td>Synchronous (async possible)</td></tr>
+        <tr><td>Framework</td><td>Express.js, Fastify, Nest.js</td><td>Laravel, Symfony, CodeIgniter</td><td>Flask, Django, FastAPI</td></tr>
+        <tr><td>Database</td><td>Any (Mongoose, Sequelize)</td><td>MySQL (mysqli, PDO)</td><td>SQLAlchemy, Django ORM</td></tr>
+        <tr><td>Best for</td><td>REST APIs, real-time, SPAs</td><td>Traditional web apps, CMS</td><td>APIs, AI/ML, data processing</td></tr>
+        <tr><td>Hosting</td><td>VPS, Docker, AWS, Heroku</td><td>Shared hosting, cPanel</td><td>VPS, AWS, Google Cloud</td></tr>
+        <tr><td>Learning curve</td><td>Easy (if you know JS)</td><td>Easy (beginner friendly)</td><td>Easy (clean syntax)</td></tr>
+        <tr><td>Used by</td><td>Netflix, LinkedIn, PayPal</td><td>WordPress, Facebook (early)</td><td>Instagram, Pinterest, NASA</td></tr>
+        <tr><td>Package manager</td><td>npm / yarn</td><td>Composer</td><td>pip</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout c-py">
+    <strong>VTU Exam tip:</strong> The key difference is the execution model. Node.js is <em>non-blocking</em> — it handles thousands of concurrent requests on one thread. PHP and Python (Flask) are <em>synchronous</em> — each request waits for the previous one to complete. This makes Node.js better for real-time apps like chat, live dashboards, and multiplayer games.
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     §6 — REST APIs
+═══════════════════════════════════════════════════════ -->
+<section class="section" id="sec-rest">
+  <div class="sec-hd">
+    <span class="sec-num">§ 06</span>
+    <div>
+      <div class="sec-tag">Web Services</div>
+      <div class="sec-title">RESTful Web Services &amp; APIs</div>
+      <div class="sec-intro">REST (Representational State Transfer) is an architectural style for building web APIs. A RESTful API lets different applications communicate over HTTP using standard methods — GET, POST, PUT, DELETE — and exchange data in JSON format.</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-h" style="color:var(--rest)">6 REST Constraints (Roy Fielding, 2000)</div>
+      <div class="card-b">
+        <ol style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:13.5px">
+          <li style="padding-left:22px;position:relative"><span style="position:absolute;left:0;font-weight:700;color:var(--rest)">1.</span><strong style="color:var(--ink)">Client-Server</strong> — UI and data storage are separated</li>
+          <li style="padding-left:22px;position:relative"><span style="position:absolute;left:0;font-weight:700;color:var(--rest)">2.</span><strong style="color:var(--ink)">Stateless</strong> — each request contains all info needed. Server stores no session.</li>
+          <li style="padding-left:22px;position:relative"><span style="position:absolute;left:0;font-weight:700;color:var(--rest)">3.</span><strong style="color:var(--ink)">Cacheable</strong> — responses can be cached by client</li>
+          <li style="padding-left:22px;position:relative"><span style="position:absolute;left:0;font-weight:700;color:var(--rest)">4.</span><strong style="color:var(--ink)">Uniform Interface</strong> — consistent URL structure and methods</li>
+          <li style="padding-left:22px;position:relative"><span style="position:absolute;left:0;font-weight:700;color:var(--rest)">5.</span><strong style="color:var(--ink)">Layered System</strong> — client doesn't know if it talks to server or proxy</li>
+          <li style="padding-left:22px;position:relative"><span style="position:absolute;left:0;font-weight:700;color:var(--rest)">6.</span><strong style="color:var(--ink)">Code on Demand</strong> — optional: server can send executable code</li>
+        </ol>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--rest)">HTTP Methods → CRUD mapping</div>
+      <table class="cmp" style="margin:0">
+        <tr><th>HTTP Method</th><th>CRUD</th><th>Example</th></tr>
+        <tr><td><span class="http GET">GET</span></td><td>Read</td><td><code>GET /students</code></td></tr>
+        <tr><td><span class="http POST">POST</span></td><td>Create</td><td><code>POST /students</code></td></tr>
+        <tr><td><span class="http PUT">PUT</span></td><td>Update (full)</td><td><code>PUT /students/1</code></td></tr>
+        <tr><td><span class="http PATCH">PATCH</span></td><td>Update (partial)</td><td><code>PATCH /students/1</code></td></tr>
+        <tr><td><span class="http DELETE">DELETE</span></td><td>Delete</td><td><code>DELETE /students/1</code></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- REST URL design -->
+  <div class="card">
+    <div class="card-h">REST URL Design — Good vs Bad</div>
+    <table class="cmp" style="margin:0">
+      <thead><tr><th>❌ Bad (not RESTful)</th><th>✅ Good (RESTful)</th><th>Reason</th></tr></thead>
+      <tbody>
+        <tr><td><code>/getStudents</code></td><td><code>GET /students</code></td><td>Verb belongs in HTTP method, not URL</td></tr>
+        <tr><td><code>/addNewStudent</code></td><td><code>POST /students</code></td><td>Use nouns for resources</td></tr>
+        <tr><td><code>/deleteStudent?id=1</code></td><td><code>DELETE /students/1</code></td><td>Use path parameter for ID</td></tr>
+        <tr><td><code>/student_details/1</code></td><td><code>GET /students/1</code></td><td>Use plural nouns consistently</td></tr>
+        <tr><td><code>/getStudentCourses/1</code></td><td><code>GET /students/1/courses</code></td><td>Nested resource shows relationship</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- HTTP Status codes -->
+  <div class="card">
+    <div class="card-h">HTTP Status Codes every developer must know</div>
+    <div class="two-col" style="margin-bottom:0">
+      <table class="cmp" style="margin:0">
+        <tr><th>Code</th><th>Meaning</th><th>Use when</th></tr>
+        <tr><td style="color:var(--node)">200</td><td>OK</td><td>GET / PUT success</td></tr>
+        <tr><td style="color:var(--node)">201</td><td>Created</td><td>POST success, new resource made</td></tr>
+        <tr><td style="color:var(--node)">204</td><td>No Content</td><td>DELETE success, nothing to return</td></tr>
+        <tr><td style="color:var(--py)">301</td><td>Moved Permanently</td><td>URL changed permanently</td></tr>
+        <tr><td style="color:var(--py)">304</td><td>Not Modified</td><td>Cached version is still valid</td></tr>
+      </table>
+      <table class="cmp" style="margin:0">
+        <tr><th>Code</th><th>Meaning</th><th>Use when</th></tr>
+        <tr><td style="color:var(--rest)">400</td><td>Bad Request</td><td>Invalid input from client</td></tr>
+        <tr><td style="color:var(--rest)">401</td><td>Unauthorized</td><td>Not logged in</td></tr>
+        <tr><td style="color:var(--rest)">403</td><td>Forbidden</td><td>Logged in but no permission</td></tr>
+        <tr><td style="color:var(--rest)">404</td><td>Not Found</td><td>Resource doesn't exist</td></tr>
+        <tr><td style="color:var(--rest)">500</td><td>Internal Server Error</td><td>Bug/crash on server</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="cb">
+    <div class="cb-bar"><span class="cbd cr"></span><span class="cbd cy"></span><span class="cbd cg"></span><span class="cb-fn">Calling a REST API from AngularJS using $http</span></div>
+    <pre><span class="cm">// AngularJS — calling the Node.js / PHP / Python REST API</span>
+app.<span class="fn">controller</span>(<span class="st">'StudentCtrl'</span>, <span class="kw">function</span>($scope, $http) {
+
+  <span class="cm">// GET — fetch all students from server</span>
+  $http.<span class="fn">get</span>(<span class="st">'http://localhost:3000/students'</span>)
+    .<span class="fn">then</span>(<span class="kw">function</span>(response) {
+      $scope.students = response.data;   <span class="cm">// parsed JSON array</span>
+    })
+    .<span class="fn">catch</span>(<span class="kw">function</span>(error) {
+      $scope.errorMsg = <span class="st">'Failed to load students'</span>;
+    });
+
+  <span class="cm">// POST — add new student to server</span>
+  $scope.<span class="fn">addStudent</span> = <span class="kw">function</span>() {
+    $http.<span class="fn">post</span>(<span class="st">'http://localhost:3000/students'</span>, $scope.newStudent)
+      .<span class="fn">then</span>(<span class="kw">function</span>(response) {
+        $scope.students.<span class="fn">push</span>(response.data);  <span class="cm">// add to UI list</span>
+        $scope.newStudent = {};                 <span class="cm">// clear form</span>
+      });
+  };
+
+  <span class="cm">// DELETE — remove a student</span>
+  $scope.<span class="fn">remove</span> = <span class="kw">function</span>(id) {
+    $http.<span class="fn">delete</span>(<span class="st">'http://localhost:3000/students/'</span> + id)
+      .<span class="fn">then</span>(<span class="kw">function</span>() {
+        $scope.students = $scope.students.<span class="fn">filter</span>(s =&gt; s.id !== id);
+      });
+  };
+});</pre>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     §7 — SQL
+═══════════════════════════════════════════════════════ -->
+<section class="section" id="sec-sql">
+  <div class="sec-hd">
+    <span class="sec-num">§ 07</span>
+    <div>
+      <div class="sec-tag">Database Integration</div>
+      <div class="sec-title">SQL Databases — Relational</div>
+      <div class="sec-intro">SQL databases store data in tables with rows and columns — like a structured spreadsheet. Relationships between tables are defined using primary keys and foreign keys. MySQL, PostgreSQL, SQLite, and Microsoft SQL Server are all relational databases.</div>
+    </div>
+  </div>
+
+  <div class="three-col">
+    <div class="card">
+      <div class="card-h" style="color:var(--sql)">Core SQL commands</div>
+      <div class="card-b" style="font-size:13px;font-family:var(--mono)">
+        <code style="display:block;margin-bottom:6px;color:var(--node)">CREATE TABLE</code> Define a new table<br><br>
+        <code style="display:block;margin-bottom:6px;color:var(--node)">INSERT INTO</code> Add a row<br><br>
+        <code style="display:block;margin-bottom:6px;color:var(--py)">SELECT</code> Query rows<br><br>
+        <code style="display:block;margin-bottom:6px;color:var(--py)">UPDATE</code> Modify rows<br><br>
+        <code style="display:block;margin-bottom:6px;color:var(--rest)">DELETE</code> Remove rows<br><br>
+        <code style="display:block;margin-bottom:6px;color:var(--sql)">JOIN</code> Combine tables
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--sql)">Data types</div>
+      <table class="cmp" style="margin:0;font-size:12.5px">
+        <tr><th>Type</th><th>Example</th></tr>
+        <tr><td>INT</td><td>id, age, marks</td></tr>
+        <tr><td>VARCHAR(n)</td><td>name, email</td></tr>
+        <tr><td>TEXT</td><td>description, bio</td></tr>
+        <tr><td>FLOAT/DECIMAL</td><td>gpa, price</td></tr>
+        <tr><td>BOOLEAN</td><td>is_active</td></tr>
+        <tr><td>DATE/DATETIME</td><td>created_at</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--sql)">Constraints</div>
+      <table class="cmp" style="margin:0;font-size:12.5px">
+        <tr><th>Constraint</th><th>Meaning</th></tr>
+        <tr><td>PRIMARY KEY</td><td>Unique row ID</td></tr>
+        <tr><td>NOT NULL</td><td>Cannot be empty</td></tr>
+        <tr><td>UNIQUE</td><td>No duplicates</td></tr>
+        <tr><td>FOREIGN KEY</td><td>Links to another table</td></tr>
+        <tr><td>DEFAULT</td><td>Default value</td></tr>
+        <tr><td>CHECK</td><td>Validates a condition</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="cb">
+    <div class="cb-bar"><span class="cbd cr"></span><span class="cbd cy"></span><span class="cbd cg"></span><span class="cb-fn">students.sql — Create, Insert, Query, Join</span></div>
+    <pre><span class="cm">-- Create the students table</span>
+<span class="kw">CREATE TABLE</span> students (
+  id      <span class="fn">INT</span> <span class="kw">PRIMARY KEY AUTO_INCREMENT</span>,
+  name    <span class="fn">VARCHAR</span>(<span class="nm">100</span>) <span class="kw">NOT NULL</span>,
+  roll    <span class="fn">VARCHAR</span>(<span class="nm">20</span>)  <span class="kw">UNIQUE NOT NULL</span>,
+  gpa     <span class="fn">DECIMAL</span>(<span class="nm">3</span>,<span class="nm">1</span>) <span class="kw">DEFAULT</span> <span class="nm">0.0</span>,
+  course  <span class="fn">VARCHAR</span>(<span class="nm">50</span>),
+  created_at <span class="fn">DATETIME</span> <span class="kw">DEFAULT</span> <span class="fn">NOW</span>()
+);
+
+<span class="cm">-- Insert rows</span>
+<span class="kw">INSERT INTO</span> students (name, roll, gpa, course) <span class="kw">VALUES</span>
+  (<span class="st">'Arjun Sharma'</span>, <span class="st">'4MCA001'</span>, <span class="nm">8.7</span>, <span class="st">'MCA'</span>),
+  (<span class="st">'Priya Nair'</span>,   <span class="st">'4MCA002'</span>, <span class="nm">9.1</span>, <span class="st">'MCA'</span>),
+  (<span class="st">'Ravi Kumar'</span>,   <span class="st">'4MCA003'</span>, <span class="nm">7.5</span>, <span class="st">'MCA'</span>);
+
+<span class="cm">-- SELECT all</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> students;
+
+<span class="cm">-- SELECT with WHERE condition</span>
+<span class="kw">SELECT</span> name, gpa <span class="kw">FROM</span> students <span class="kw">WHERE</span> gpa &gt;= <span class="nm">8.0</span>;
+
+<span class="cm">-- SELECT with ORDER BY and LIMIT</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> students <span class="kw">ORDER BY</span> gpa <span class="kw">DESC LIMIT</span> <span class="nm">3</span>;
+
+<span class="cm">-- UPDATE a row</span>
+<span class="kw">UPDATE</span> students <span class="kw">SET</span> gpa = <span class="nm">9.2</span> <span class="kw">WHERE</span> id = <span class="nm">1</span>;
+
+<span class="cm">-- DELETE a row</span>
+<span class="kw">DELETE FROM</span> students <span class="kw">WHERE</span> id = <span class="nm">3</span>;
+
+<span class="cm">-- Aggregate functions</span>
+<span class="kw">SELECT</span>
+  <span class="fn">COUNT</span>(*) <span class="kw">AS</span> total,
+  <span class="fn">AVG</span>(gpa) <span class="kw">AS</span> avg_gpa,
+  <span class="fn">MAX</span>(gpa) <span class="kw">AS</span> highest,
+  <span class="fn">MIN</span>(gpa) <span class="kw">AS</span> lowest
+<span class="kw">FROM</span> students;
+
+<span class="cm">-- JOIN — link students to a courses table</span>
+<span class="kw">CREATE TABLE</span> courses (
+  id   <span class="fn">INT</span> <span class="kw">PRIMARY KEY AUTO_INCREMENT</span>,
+  name <span class="fn">VARCHAR</span>(<span class="nm">100</span>),
+  student_id <span class="fn">INT</span>,
+  <span class="kw">FOREIGN KEY</span> (student_id) <span class="kw">REFERENCES</span> students(id)
+);
+
+<span class="kw">SELECT</span> s.name, s.gpa, c.name <span class="kw">AS</span> course_name
+<span class="kw">FROM</span> students s
+<span class="kw">JOIN</span> courses c <span class="kw">ON</span> s.id = c.student_id;</pre>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     §8 — NOSQL
+═══════════════════════════════════════════════════════ -->
+<section class="section" id="sec-nosql">
+  <div class="sec-hd">
+    <span class="sec-num">§ 08</span>
+    <div>
+      <div class="sec-tag">Database Integration</div>
+      <div class="sec-title">NoSQL Databases — Non-Relational</div>
+      <div class="sec-intro">NoSQL databases store data without fixed schemas — as documents, key-value pairs, graphs, or wide columns. MongoDB is the most popular NoSQL database, storing data as JSON-like documents. No tables, no rows, no JOINs.</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-h" style="color:var(--nosql)">Types of NoSQL databases</div>
+      <table class="cmp" style="margin:0">
+        <tr><th>Type</th><th>Database</th><th>Use case</th></tr>
+        <tr><td>Document</td><td>MongoDB, Firestore</td><td>JSON-like records, flexible schema</td></tr>
+        <tr><td>Key-Value</td><td>Redis, DynamoDB</td><td>Sessions, caching, fast lookups</td></tr>
+        <tr><td>Graph</td><td>Neo4j</td><td>Social networks, recommendations</td></tr>
+        <tr><td>Wide Column</td><td>Cassandra</td><td>Time series, IoT data, analytics</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-h" style="color:var(--nosql)">SQL vs NoSQL — when to use which</div>
+      <table class="cmp" style="margin:0">
+        <tr><th>SQL (MySQL)</th><th>NoSQL (MongoDB)</th></tr>
+        <tr><td>Fixed schema (columns defined)</td><td>Flexible schema (add fields anytime)</td></tr>
+        <tr><td>Strong relationships (JOINs)</td><td>Embedded documents, no JOINs</td></tr>
+        <tr><td>ACID transactions</td><td>Eventual consistency</td></tr>
+        <tr><td>Banking, ERP, HR systems</td><td>Catalogs, social, real-time apps</td></tr>
+        <tr><td>Structured, stable data</td><td>Variable, rapidly changing data</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="cb">
+    <div class="cb-bar"><span class="cbd cr"></span><span class="cbd cy"></span><span class="cbd cg"></span><span class="cb-fn">mongo.js — MongoDB with Node.js (Mongoose ODM)</span></div>
+    <pre><span class="cm">// npm install mongoose</span>
+<span class="kw">const</span> mongoose = <span class="fn">require</span>(<span class="st">'mongoose'</span>);
+
+<span class="cm">// Connect to MongoDB</span>
+mongoose.<span class="fn">connect</span>(<span class="st">'mongodb://localhost:27017/vtu_db'</span>);
+
+<span class="cm">// Define a Schema — structure of each document</span>
+<span class="kw">const</span> studentSchema = <span class="kw">new</span> mongoose.<span class="fn">Schema</span>({
+  name   : { type: String, required: <span class="kw">true</span> },
+  roll   : { type: String, unique: <span class="kw">true</span> },
+  gpa    : { type: Number, min: <span class="nm">0</span>, max: <span class="nm">10</span> },
+  course : { type: String, <span class="kw">default</span>: <span class="st">'MCA'</span> },
+  createdAt: { type: Date, <span class="kw">default</span>: Date.now }
+});
+
+<span class="cm">// Create a Model from the Schema</span>
+<span class="kw">const</span> Student = mongoose.<span class="fn">model</span>(<span class="st">'Student'</span>, studentSchema);
+
+<span class="cm">// CREATE — insert a document</span>
+<span class="kw">const</span> arjun = <span class="kw">new</span> <span class="fn">Student</span>({ name: <span class="st">'Arjun'</span>, roll: <span class="st">'4MCA001'</span>, gpa: <span class="nm">8.7</span> });
+<span class="kw">await</span> arjun.<span class="fn">save</span>();
+
+<span class="cm">// READ all documents</span>
+<span class="kw">const</span> allStudents = <span class="kw">await</span> Student.<span class="fn">find</span>();
+
+<span class="cm">// READ with filter — gpa >= 8</span>
+<span class="kw">const</span> topStudents = <span class="kw">await</span> Student.<span class="fn">find</span>({ gpa: { $gte: <span class="nm">8</span> } });
+
+<span class="cm">// READ one by id</span>
+<span class="kw">const</span> one = <span class="kw">await</span> Student.<span class="fn">findById</span>(<span class="st">'64abc123...'</span>);
+
+<span class="cm">// UPDATE — set gpa to 9.0 where name is Arjun</span>
+<span class="kw">await</span> Student.<span class="fn">updateOne</span>({ name: <span class="st">'Arjun'</span> }, { gpa: <span class="nm">9.0</span> });
+
+<span class="cm">// DELETE one document</span>
+<span class="kw">await</span> Student.<span class="fn">deleteOne</span>({ roll: <span class="st">'4MCA001'</span> });
+
+<span class="cm">// MongoDB query operators:</span>
+<span class="cm">// $gte = >=    $lte = <=    $ne = !=</span>
+<span class="cm">// $in = in array    $regex = pattern match</span>
+Student.<span class="fn">find</span>({ course: { $in: [<span class="st">'MCA'</span>, <span class="st">'BCA'</span>] } });
+Student.<span class="fn">find</span>({ name: { $regex: <span class="st">/^A/i</span> } }); <span class="cm">// names starting with A</span></pre>
+  </div>
+
+  <div class="callout c-nosql">
+    <strong>MongoDB document example — the student object looks exactly like JSON:</strong><br><br>
+    <span style="font-family:var(--mono);font-size:12.5px">
+      { "_id": "64abc123...", "name": "Arjun", "roll": "4MCA001", "gpa": 8.7, "course": "MCA", "createdAt": "2024-01-15T..." }
+    </span><br><br>
+    No table structure required. You can add a <code>city</code> field to some documents and not others — SQL would require an ALTER TABLE for this.
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     §9 — QUICK REFERENCE
+═══════════════════════════════════════════════════════ -->
+<section class="section" id="sec-qr">
+  <div class="sec-hd">
+    <span class="sec-num">✦</span>
+    <div>
+      <div class="sec-tag">Exam Prep</div>
+      <div class="sec-title">Quick Reference — Server-Side &amp; REST</div>
+    </div>
+  </div>
+
+  <div class="qr-grid">
+    <div class="qr-card"><span class="qr-m" style="color:var(--node)">Node.js</span><span class="qr-d">JavaScript on the server. Non-blocking event loop. npm for packages. Express.js for web APIs. Best for REST APIs and real-time apps.</span></div>
+    <div class="qr-card"><span class="qr-m" style="color:var(--php)">PHP</span><span class="qr-d">Runs inside HTML with &lt;?php ?&gt;. Synchronous. Easy MySQL integration. Powers 77% of server-side web. Laravel is the main framework.</span></div>
+    <div class="qr-card"><span class="qr-m" style="color:var(--py)">Python (Flask)</span><span class="qr-d">@app.route() decorator maps URLs to functions. jsonify() returns JSON. pip for packages. Django is the full-featured alternative.</span></div>
+    <div class="qr-card"><span class="qr-m" style="color:var(--rest)">REST</span><span class="qr-d">Stateless HTTP API using GET/POST/PUT/DELETE. JSON responses. URLs are nouns (resources), methods are verbs. Defined by Roy Fielding 2000.</span></div>
+    <div class="qr-card"><span class="qr-m" style="color:var(--rest)">Status codes</span><span class="qr-d">200=OK, 201=Created, 204=No Content, 400=Bad Request, 401=Unauthorized, 403=Forbidden, 404=Not Found, 500=Server Error.</span></div>
+    <div class="qr-card"><span class="qr-m" style="color:var(--sql)">SQL</span><span class="qr-d">Tables with fixed schema. PRIMARY KEY, FOREIGN KEY. SELECT/INSERT/UPDATE/DELETE. JOIN combines tables. MySQL, PostgreSQL, SQLite.</span></div>
+    <div class="qr-card"><span class="qr-m" style="color:var(--nosql)">MongoDB</span><span class="qr-d">Documents (JSON-like). No fixed schema. find(), save(), updateOne(), deleteOne(). Mongoose adds schema validation in Node.js.</span></div>
+    <div class="qr-card"><span class="qr-m" style="color:var(--node)">Non-blocking I/O</span><span class="qr-d">Node.js handles multiple requests on one thread. While waiting for DB response, it processes other requests. Uses event loop + callbacks/promises.</span></div>
+    <div class="qr-card"><span class="qr-m" style="color:var(--sql)">SQL vs NoSQL</span><span class="qr-d">SQL: fixed schema, JOINs, ACID, banking/ERP. NoSQL: flexible schema, no JOINs, scalable, social/real-time apps. Not either/or — many apps use both.</span></div>
+  </div>
+
+  <div class="callout c-rest" style="margin-top:20px">
+    <strong>5 most likely VTU exam questions on this module:</strong><br>
+    (1) Explain client-server architecture with diagram. What is server-side programming?<br>
+    (2) Compare Node.js, PHP, and Python for server-side web development.<br>
+    (3) What is a RESTful API? Explain HTTP methods and status codes with examples.<br>
+    (4) Explain SQL DDL and DML commands with examples — CREATE, INSERT, SELECT, JOIN.<br>
+    (5) Differentiate between SQL and NoSQL databases with examples of each.
+  </div>
+</section>
+
+</main>
+
+<footer class="pg-foot">
+  VTU MCA — Web Technologies · Module 6 · Server-Side Programming &amp; Web Services
+</footer>
+
+</body>
+</html>
